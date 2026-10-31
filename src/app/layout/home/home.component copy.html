@@ -1,0 +1,642 @@
+@if(isBrowser) {
+<header
+    class="w-full bg-white/80 dark:bg-secondary-950 backdrop-blur-xl text-secondary-900 dark:text-white py-3 md:py-4 border-b border-white/20 dark:border-secondary-700/30 sticky top-0 z-50 transition-all duration-500 shadow-[0_4px_30px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
+    <!-- Línea de gradiente animada en la parte superior -->
+    <div
+        class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary-500 to-tertiary-500 opacity-0 hover:opacity-100 transition-opacity duration-500">
+    </div>
+
+    <div class="container mx-auto px-4 md:px-6 flex justify-between items-center relative">
+        <!-- Logo Premium -->
+        <div class="flex items-center gap-3 relative z-[60] group cursor-pointer animate-logo">
+            <div
+                class="relative w-10 h-10 md:w-11 md:h-11 flex items-center justify-center transition-all duration-500 group-hover:scale-110">
+                <!-- Glow effect -->
+                <div
+                    class="absolute inset-0 bg-gradient-to-br from-primary-400 to-tertiary-400 rounded-xl blur-xl opacity-0 group-hover:opacity-40 transition-opacity duration-500">
+                </div>
+
+                <!-- Contenedor del logo con borde gradiente -->
+                <div
+                    class="relative w-full h-full bg-white dark:bg-secondary-900 rounded-xl p-1.5 shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                    <img src="./public/logo/icon.png" alt="fanspi Academy"
+                        class="w-full h-full object-contain transition-transform duration-500 group-hover:rotate-3">
+                </div>
+            </div>
+
+            <div class="flex flex-col">
+                <span
+                    class="text-xl md:text-2xl font-bold tracking-tight text-secondary-900 dark:text-white transition-colors duration-300">
+                    fanspi<span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-primary-500 font-light ">Academy</span>
+                </span>
+                <span
+                    class="text-[10px] text-secondary-500 dark:text-secondary-400 -mt-1 tracking-widest uppercase transition-opacity duration-300">
+                    {{ 'learningPlatform' | translate }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Navegación Desktop Premium -->
+        <nav class="hidden lg:flex items-center space-x-1 bg-secondary-100/50 dark:bg-secondary-900/50 backdrop-blur-md px-2 py-1.5 rounded-2xl border border-secondary-200/50 dark:border-secondary-700/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary-500/5"
+            data-aos="fade-down" data-aos-duration="800" data-aos-delay="100">
+            <a href="#cursos"
+                class="group relative px-4 py-2 text-sm font-medium text-secondary-600 hover:text-primary-600 dark:text-secondary-300 dark:hover:text-primary-400 transition-colors duration-300 rounded-xl hover:bg-white/50 dark:hover:bg-secondary-700/50">
+                Catálogo
+                <span
+                    class="absolute bottom-1 left-1/2 w-0 h-0.5 bg-gradient-to-r from-primary-500 to-tertiary-500 group-hover:w-1/2 group-hover:-translate-x-1/2 transition-all duration-300 rounded-full"></span>
+            </a>
+            <a href="#categorias"
+                class="group relative px-4 py-2 text-sm font-medium text-secondary-600 hover:text-primary-600 dark:text-secondary-300 dark:hover:text-primary-400 transition-colors duration-300 rounded-xl hover:bg-white/50 dark:hover:bg-secondary-700/50">
+                Categorías
+                <span
+                    class="absolute bottom-1 left-1/2 w-0 h-0.5 bg-gradient-to-r from-primary-500 to-tertiary-500 group-hover:w-1/2 group-hover:-translate-x-1/2 transition-all duration-300 rounded-full"></span>
+            </a>
+            <a href="#comunidad"
+                class="group relative px-4 py-2 text-sm font-medium text-secondary-600 hover:text-primary-600 dark:text-secondary-300 dark:hover:text-primary-400 transition-colors duration-300 rounded-xl hover:bg-white/50 dark:hover:bg-secondary-700/50">
+                Comunidad
+                <span
+                    class="absolute bottom-1 left-1/2 w-0 h-0.5 bg-gradient-to-r from-primary-500 to-tertiary-500 group-hover:w-1/2 group-hover:-translate-x-1/2 transition-all duration-300 rounded-full"></span>
+            </a>
+        </nav>
+
+        <!-- Acciones Desktop Premium -->
+        <div class="hidden lg:flex items-center gap-4 transition-all duration-300" data-aos="fade-down"
+            data-aos-duration="800" data-aos-delay="200">
+            <a routerLink="/auth/login"
+                class="relative group px-5 py-2.5 text-sm font-semibold text-secondary-600 hover:text-primary-600 dark:text-secondary-300 dark:hover:text-primary-400 transition-all duration-300">
+                <span class="relative z-10">
+                    {{ 'logIn' | translate }}
+                </span>
+                <div
+                    class="absolute inset-0 bg-secondary-100 dark:bg-secondary-900 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-0">
+                </div>
+            </a>
+
+            <a routerLink="/auth/register" [ngClass]="buttonPrimaryClass()" class="group relative">
+                <span class="relative tracking-wide">
+                    {{ 'signUp' | translate }}
+                </span>
+            </a>
+        </div>
+
+        <!-- Botón Hamburguesa Premium -->
+        <button (click)="toggleMenu()"
+            class="lg:hidden relative z-[60] w-11 h-11 flex flex-col justify-center items-center gap-[5px] focus:outline-none group transition-all duration-300 hover:scale-110 active:scale-95"
+            data-aos="fade-left">
+            <!-- Fondo del botón -->
+            <div
+                class="absolute inset-0 bg-secondary-100 dark:bg-secondary-900 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            </div>
+
+            <span
+                class="relative w-6 h-[2px] bg-secondary-600 dark:bg-secondary-300 rounded-full transition-all duration-300 ease-in-out origin-center group-hover:bg-primary-600 dark:group-hover:bg-primary-400"
+                [class.translate-y-[7px]]="isMobileMenuOpen" [class.rotate-45]="isMobileMenuOpen"></span>
+            <span
+                class="relative w-6 h-[2px] bg-secondary-600 dark:bg-secondary-300 rounded-full transition-all duration-300 ease-in-out group-hover:bg-primary-600 dark:group-hover:bg-primary-400"
+                [class.opacity-0]="isMobileMenuOpen" [class.translate-x-4]="isMobileMenuOpen"></span>
+            <span
+                class="relative w-6 h-[2px] bg-secondary-600 dark:bg-secondary-300 rounded-full transition-all duration-300 ease-in-out origin-center group-hover:bg-primary-600 dark:group-hover:bg-primary-400"
+                [class.-translate-y-[7px]]="isMobileMenuOpen" [class.-rotate-45]="isMobileMenuOpen"></span>
+        </button>
+    </div>
+
+    <!-- OVERLAY MENÚ MOBILE Premium -->
+    <div class="fixed inset-0 z-50 bg-white/95 dark:bg-secondary-900/95 backdrop-blur-2xl flex flex-col justify-center items-center h-screen w-full lg:hidden transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]"
+        [class.opacity-0]="!isMobileMenuOpen" [class.invisible]="!isMobileMenuOpen"
+        [class.opacity-100]="isMobileMenuOpen" [class.visible]="isMobileMenuOpen">
+
+        <!-- Efectos de fondo animados -->
+        <div class="absolute top-[-10%] right-[-10%] w-96 h-96 bg-gradient-to-br from-primary-600 to-primary-400 rounded-full blur-[120px] opacity-20 transition-transform duration-1000 ease-out"
+            [class.scale-50]="!isMobileMenuOpen" [class.scale-100]="isMobileMenuOpen"></div>
+        <div class="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-gradient-to-tr from-tertiary-600 to-tertiary-400 rounded-full blur-[120px] opacity-15 transition-transform duration-1000 ease-out delay-200"
+            [class.scale-50]="!isMobileMenuOpen" [class.scale-100]="isMobileMenuOpen"></div>
+
+        <nav class="flex flex-col items-center gap-2 md:gap-3 relative z-10 w-full px-6 text-center transition-all duration-500 delay-100"
+            [class.translate-y-12]="!isMobileMenuOpen" [class.opacity-0]="!isMobileMenuOpen"
+            [class.translate-y-0]="isMobileMenuOpen" [class.opacity-100]="isMobileMenuOpen">
+
+            <a href="#cursos" (click)="toggleMenu()"
+                class="group relative text-3xl md:text-5xl font-extrabold text-secondary-900 dark:text-white transition-all duration-300 hover:scale-105 py-2">
+                <span
+                    class="bg-clip-text text-transparent bg-gradient-to-r from-secondary-900 to-secondary-600 dark:from-white dark:to-secondary-300 group-hover:from-primary-600 group-hover:to-tertiary-600 transition-all duration-300">Catálogo</span>
+            </a>
+
+            <a href="#categorias" (click)="toggleMenu()"
+                class="group relative text-3xl md:text-5xl font-extrabold text-secondary-900 dark:text-white transition-all duration-300 hover:scale-105 py-2">
+                <span
+                    class="bg-clip-text text-transparent bg-gradient-to-r from-secondary-900 to-secondary-600 dark:from-white dark:to-secondary-300 group-hover:from-primary-600 group-hover:to-tertiary-600 transition-all duration-300">Categorías</span>
+            </a>
+
+            <a href="#comunidad" (click)="toggleMenu()"
+                class="group relative text-3xl md:text-5xl font-extrabold text-secondary-900 dark:text-white transition-all duration-300 hover:scale-105 py-2">
+                <span
+                    class="bg-clip-text text-transparent bg-gradient-to-r from-secondary-900 to-secondary-600 dark:from-white dark:to-secondary-300 group-hover:from-primary-600 group-hover:to-tertiary-600 transition-all duration-300">Comunidad</span>
+            </a>
+
+            <div
+                class="w-24 h-px bg-gradient-to-r from-transparent via-secondary-300 dark:via-secondary-700 to-transparent my-6">
+            </div>
+
+            <a routerLink="/auth/login" (click)="toggleMenu()"
+                class="text-xl font-medium text-secondary-600 hover:text-primary-600 dark:text-secondary-400 dark:hover:text-primary-400 transition-all duration-300 py-2">
+                {{ 'logIn' | translate }}
+            </a>
+
+            <a routerLink="/auth/register" (click)="toggleMenu()" [ngClass]="buttonPrimaryClass()" class="mt-4 w-full">
+                {{ 'signUp' | translate }}
+            </a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <!-- Hero Section -->
+    <section class="relative bg-secondary-900 pt-16 pb-24 lg:pt-24 lg:pb-32 overflow-hidden px-4 md:px-0">
+        <!-- 🖼️ CAPA 1: Imagen de Fondo -->
+        <div
+            class="absolute inset-0 bg-cover bg-center bg-no-repeat bg-[url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1920&q=80')]">
+
+            <!-- 🎨 CAPA 2: Máscara de Color Adaptable (Light/Dark) -->
+            <div class="absolute inset-0 bg-secondary-50/90 dark:bg-secondary-900/85 transition-colors duration-300">
+            </div>
+
+            <!-- ✨ CAPA 3: Tinte de Gradiente (Primary + Tertiary) -->
+            <div
+                class="absolute inset-0 bg-gradient-to-br from-primary-600/20 to-tertiary-600/20 dark:from-primary-900/40 dark:to-tertiary-900/40 transition-colors duration-300">
+            </div>
+
+            <!-- 📐 CAPA 4: Patrón de Rejilla Sutil -->
+            <div
+                class="absolute inset-0 opacity-15 dark:opacity-5 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]">
+            </div>
+        </div>
+
+        <!-- 📦 CONTENIDO PRINCIPAL -->
+        <div
+            class="container mx-auto px-0 md:px-6 relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12">
+            <div class="w-full lg:w-1/2 text-center lg:text-left">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-white/90 backdrop-blur-sm border border-tertiary-200 text-primary-600 dark:bg-secondary-900/90 dark:backdrop-blur-sm dark:border-tertiary-900 dark:text-primary-400 text-xs font-bold uppercase tracking-widest mb-6 transition-colors duration-300"
+                    data-aos="fade-up" data-aos-duration="600">
+                    <i class="fas fa-rocket text-tertiary-500 dark:text-tertiary-400"></i> Impulsa tu carrera
+                </div>
+
+                <h1
+                    class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-secondary-900 dark:text-white mb-6 leading-tight tracking-tight flex flex-wrap justify-center lg:justify-start gap-x-3 gap-y-2 transition-colors duration-300">
+                    <span class="reveal-word" style="animation-delay: 0.1s">Aprende</span>
+                    <span class="reveal-word" style="animation-delay: 0.2s">las</span>
+                    <span class="reveal-word" style="animation-delay: 0.3s">habilidades</span>
+                    <span class="w-full h-0"></span>
+                    <span
+                        class="reveal-word text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-primary-600"
+                        style="animation-delay: 0.5s">más</span>
+                    <span
+                        class="reveal-word text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-primary-500"
+                        style="animation-delay: 0.6s">demandadas</span>
+                    <span
+                        class="reveal-word text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-primary-600"
+                        style="animation-delay: 0.7s">hoy.</span>
+                </h1>
+
+                <p class="text-base md:text-lg text-secondary-700 dark:text-secondary-300 mb-8 md:mb-10 max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed transition-colors duration-300"
+                    data-aos="fade-up" data-aos-duration="800" data-aos-delay="900">
+                    Desde Desarrollo Web y Finanzas Digitales, hasta Diseño Creativo. fanspi Academy te ofrece educación
+                    práctica de clase mundial impartida por expertos de la industria.
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start w-full"
+                    data-aos="fade-up" data-aos-duration="800" data-aos-delay="1100">
+                    <a href="#cursos"
+                        class="w-full sm:w-auto bg-primary-600 hover:bg-tertiary-600 text-white font-semibold text-base md:text-lg px-8 py-4 rounded-xl transition-all shadow-[0_0_20px_-5px_rgba(var(--color-primary-600),0.5)] text-center hover:scale-105">
+                        Explorar Catálogo
+                    </a>
+                    <div
+                        class="flex items-center gap-3 text-secondary-700 dark:text-secondary-300 text-sm font-medium sm:px-4 mt-2 sm:mt-0 transition-colors duration-300">
+                        <i class="fas fa-infinity text-primary-500 dark:text-tertiary-500 animate-pulse"></i> Acceso
+                        Vitalicio
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta Info -->
+            <div class="w-full lg:w-5/12 max-w-lg relative mt-8 lg:mt-0" data-aos="fade-left" data-aos-duration="1200"
+                data-aos-delay="500">
+                <div
+                    class="absolute -inset-1 bg-gradient-to-r from-primary-600 to-tertiary-500 rounded-2xl blur opacity-30 hidden md:block">
+                </div>
+                <div
+                    class="bg-white/95 dark:bg-secondary-900 backdrop-blur-md border border-secondary-200 dark:border-secondary-700 p-6 md:p-8 rounded-2xl shadow-2xl relative w-full transition-colors duration-300">
+                    <h3
+                        class="text-secondary-900 dark:text-white text-lg md:text-xl font-bold mb-6 border-b border-secondary-200 dark:border-secondary-700 pb-4 transition-colors duration-300">
+                        Escuelas de Aprendizaje</h3>
+                    <ul class="space-y-4">
+                        <li
+                            class="flex items-start gap-4 hover:translate-x-2 transition-transform cursor-default group/item">
+                            <div
+                                class="w-10 h-10 md:w-8 md:h-8 rounded bg-primary-50 border border-primary-200 flex items-center justify-center shrink-0 dark:bg-primary-900/30 dark:border-primary-800 transition-colors duration-300 group-hover/item:bg-primary-100 dark:group-hover/item:bg-primary-900/50">
+                                <i class="fas fa-laptop-code text-primary-500 dark:text-primary-400"></i>
+                            </div>
+                            <div>
+                                <h4
+                                    class="text-secondary-900 dark:text-white font-semibold text-sm md:text-base transition-colors duration-300 group-hover/item:text-primary-600 dark:group-hover/item:text-primary-400">
+                                    Tecnología y Código</h4>
+                                <p
+                                    class="text-secondary-500 dark:text-secondary-400 text-xs md:text-sm transition-colors duration-300">
+                                    Angular, NestJS, Arquitectura Web.</p>
+                            </div>
+                        </li>
+                        <li
+                            class="flex items-start gap-4 hover:translate-x-2 transition-transform cursor-default group/item">
+                            <div
+                                class="w-10 h-10 md:w-8 md:h-8 rounded bg-tertiary-50 border border-tertiary-200 flex items-center justify-center shrink-0 dark:bg-tertiary-900/30 dark:border-tertiary-800 transition-colors duration-300 group-hover/item:bg-tertiary-100 dark:group-hover/item:bg-tertiary-900/50">
+                                <i class="fab fa-bitcoin text-tertiary-600 dark:text-tertiary-400"></i>
+                            </div>
+                            <div>
+                                <h4
+                                    class="text-secondary-900 dark:text-white font-semibold text-sm md:text-base transition-colors duration-300 group-hover/item:text-tertiary-600 dark:group-hover/item:text-tertiary-400">
+                                    Finanzas y Cripto</h4>
+                                <p
+                                    class="text-secondary-500 dark:text-secondary-400 text-xs md:text-sm transition-colors duration-300">
+                                    Bitcoin, Trading, Finanzas.</p>
+                            </div>
+                        </li>
+                        <li
+                            class="flex items-start gap-4 hover:translate-x-2 transition-transform cursor-default group/item">
+                            <div
+                                class="w-10 h-10 md:w-8 md:h-8 rounded bg-secondary-100 border border-secondary-200 flex items-center justify-center shrink-0 dark:bg-secondary-900 dark:border-secondary-700 transition-colors duration-300 group-hover/item:bg-tertiary-100 dark:group-hover/item:bg-tertiary-900/30">
+                                <i class="fas fa-palette text-tertiary-500 dark:text-tertiary-400"></i>
+                            </div>
+                            <div>
+                                <h4
+                                    class="text-secondary-900 dark:text-white font-semibold text-sm md:text-base transition-colors duration-300 group-hover/item:text-tertiary-600 dark:group-hover/item:text-tertiary-400">
+                                    Diseño Creativo</h4>
+                                <p
+                                    class="text-secondary-500 dark:text-secondary-400 text-xs md:text-sm transition-colors duration-300">
+                                    Photoshop, Illustrator, UI/UX.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Banner Disciplinas -->
+    <div
+        class="bg-gradient-to-r from-primary-600 to-primary-500 border-y border-primary-500 dark:border-primary-700 py-4 overflow-hidden transition-all duration-300">
+        <div class="container mx-auto px-4 md:px-6" data-aos="zoom-in" data-aos-duration="800" data-aos-offset="50">
+            <p
+                class="text-center text-primary-100 dark:text-secondary-100 text-xs md:text-sm font-semibold uppercase tracking-widest mb-4">
+                Aprende herramientas de la industria</p>
+            <div class="flex flex-wrap justify-center gap-6 md:gap-16 text-2xl md:text-3xl text-white/90">
+                <i
+                    class="fab fa-angular hover:text-tertiary-300 transition-colors hover:-translate-y-2 transform duration-300"></i>
+                <i
+                    class="fab fa-node-js hover:text-tertiary-300 transition-colors hover:-translate-y-2 transform duration-300"></i>
+                <i
+                    class="fab fa-bitcoin hover:text-tertiary-300 transition-colors hover:-translate-y-2 transform duration-300"></i>
+                <i
+                    class="fas fa-paint-brush hover:text-tertiary-300 transition-colors hover:-translate-y-2 transform duration-300"></i>
+                <i
+                    class="fas fa-chart-line hover:text-tertiary-300 transition-colors hover:-translate-y-2 transform duration-300"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Catálogo de Cursos -->
+    <section id="cursos"
+        class="py-16 md:py-24 bg-secondary-50 dark:bg-secondary-950 overflow-x-hidden transition-colors duration-300">
+        <div class="container mx-auto px-4 md:px-6">
+            <div
+                class="mb-10 md:mb-12 border-b border-secondary-200 dark:border-secondary-900 pb-6 flex flex-col xl:flex-row xl:items-end justify-between gap-4 text-center md:text-left transition-colors duration-300">
+                <div data-aos="fade-right" data-aos-duration="800">
+                    <h2
+                        class="text-3xl md:text-4xl font-extrabold text-secondary-900 dark:text-white tracking-tight transition-colors duration-300">
+                        Cursos Destacados</h2>
+                    <p
+                        class="text-secondary-500 dark:text-secondary-400 mt-2 text-base md:text-lg transition-colors duration-300">
+                        Formación práctica impartida por profesionales activos.</p>
+                </div>
+                <div class="flex flex-wrap justify-center xl:justify-end gap-2 mt-4 xl:mt-0" data-aos="fade-left"
+                    data-aos-duration="800" data-aos-delay="200">
+                    <button
+                        class="bg-primary-600 hover:bg-tertiary-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-md text-xs md:text-sm font-medium transition-all hover:scale-105">Todos</button>
+                    <button
+                        class="bg-secondary-100 text-secondary-600 border border-secondary-200 hover:bg-tertiary-100 hover:text-tertiary-700 hover:border-tertiary-300 px-3 py-1.5 md:px-4 md:py-2 rounded-md text-xs md:text-sm font-medium transition-all dark:bg-secondary-900 dark:text-secondary-300 dark:border-secondary-700 dark:hover:bg-tertiary-900/30 dark:hover:text-tertiary-400 dark:hover:border-tertiary-800">Programación</button>
+                    <button
+                        class="bg-secondary-100 text-secondary-600 border border-secondary-200 hover:bg-tertiary-100 hover:text-tertiary-700 hover:border-tertiary-300 px-3 py-1.5 md:px-4 md:py-2 rounded-md text-xs md:text-sm font-medium transition-all dark:bg-secondary-900 dark:text-secondary-300 dark:border-secondary-700 dark:hover:bg-tertiary-900/30 dark:hover:text-tertiary-400 dark:hover:border-tertiary-800">Diseño</button>
+                    <button
+                        class="bg-secondary-100 text-secondary-600 border border-secondary-200 hover:bg-tertiary-100 hover:text-tertiary-700 hover:border-tertiary-300 px-3 py-1.5 md:px-4 md:py-2 rounded-md text-xs md:text-sm font-medium transition-all dark:bg-secondary-900 dark:text-secondary-300 dark:border-secondary-700 dark:hover:bg-tertiary-900/30 dark:hover:text-tertiary-400 dark:hover:border-tertiary-800">Cripto
+                        & Finanzas</button>
+                    <button
+                        class="bg-secondary-100 text-secondary-600 border border-secondary-200 hover:bg-tertiary-100 hover:text-tertiary-700 hover:border-tertiary-300 px-3 py-1.5 md:px-4 md:py-2 rounded-md text-xs md:text-sm font-medium transition-all dark:bg-secondary-900 dark:text-secondary-300 dark:border-secondary-700 dark:hover:bg-tertiary-900/30 dark:hover:text-tertiary-400 dark:hover:border-tertiary-800">Negocios</button>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-6 md:gap-8">
+                <!-- Curso 1 -->
+                <div data-aos="fade-up" data-aos-duration="700" data-aos-offset="100"
+                    class="group bg-white border border-secondary-200 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-xl hover:border-tertiary-300 dark:hover:border-tertiary-700 hover:-translate-y-1 transition-all duration-300 flex flex-col md:flex-row gap-4 md:gap-6 items-center relative dark:bg-secondary-900 dark:border-secondary-700">
+                    <div
+                        class="absolute -top-3 right-4 md:right-6 bg-primary-600 group-hover:bg-tertiary-600 text-white text-[10px] md:text-xs font-bold px-3 py-1 rounded-full shadow-sm transition-colors">
+                        Bestseller</div>
+                    <div
+                        class="w-full md:w-72 h-48 md:h-56 bg-secondary-100 dark:bg-secondary-900 rounded-lg md:rounded-xl flex-shrink-0 flex items-center justify-center relative overflow-hidden transition-colors duration-300">
+                        <i
+                            class="fab fa-angular text-6xl md:text-7xl text-primary-500 opacity-80 group-hover:scale-110 transition-transform duration-500"></i>
+                        <div class="absolute inset-0 bg-gradient-to-t from-secondary-950 to-transparent"></div>
+                        <span
+                            class="absolute bottom-3 left-3 bg-secondary-900 text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded">24
+                            hrs de video</span>
+                    </div>
+                    <div class="flex-1 flex flex-col w-full h-full text-center md:text-left pt-2 md:pt-0">
+                        <div class="flex items-center justify-center md:justify-start gap-2 mb-2">
+                            <span
+                                class="bg-primary-100 text-primary-700 text-[10px] md:text-xs font-bold px-2 py-1 rounded dark:bg-primary-900/30 dark:text-primary-400">PROGRAMACIÓN</span>
+                            <span
+                                class="text-secondary-500 dark:text-secondary-400 text-xs md:text-sm transition-colors duration-300"><i
+                                    class="fas fa-layer-group"></i> Nivel Avanzado</span>
+                        </div>
+                        <h3
+                            class="text-xl md:text-2xl font-bold text-secondary-900 dark:text-white mb-2 group-hover:text-primary-600 dark:group-hover:text-tertiary-400 transition-colors">
+                            Arquitectura Full-Stack: Angular & NestJS</h3>
+                        <p
+                            class="text-secondary-600 dark:text-secondary-400 text-sm mb-4 leading-relaxed line-clamp-2 md:line-clamp-3 transition-colors duration-300">
+                            Aprende a conectar un frontend moderno con una API escalable. Incluye modelado de bases de
+                            datos, seguridad y buenas prácticas.</p>
+                        <div
+                            class="mt-auto pt-4 border-t border-secondary-100 dark:border-secondary-700 flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors duration-300">
+                            <div
+                                class="text-2xl md:text-3xl font-black text-secondary-900 dark:text-white transition-colors duration-300">
+                                $39<span class="text-sm font-normal text-secondary-500 dark:text-secondary-400">.00
+                                    USD</span></div>
+                            <button
+                                class="w-full sm:w-auto bg-primary-600 hover:bg-tertiary-600 text-white px-6 py-3 md:py-2.5 rounded-lg text-sm font-bold shadow-md transition-all hover:shadow-tertiary-600/30 active:scale-95">Inscribirse
+                                Ahora</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Curso 2 -->
+                <div data-aos="fade-up" data-aos-duration="700" data-aos-offset="100"
+                    class="group bg-white border border-secondary-200 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-xl hover:border-tertiary-300 dark:hover:border-tertiary-700 hover:-translate-y-1 transition-all duration-300 flex flex-col md:flex-row gap-4 md:gap-6 items-center dark:bg-secondary-900 dark:border-secondary-700">
+                    <div
+                        class="w-full md:w-72 h-48 md:h-56 bg-blue-100 dark:bg-blue-900 rounded-lg md:rounded-xl flex-shrink-0 flex flex-col items-center justify-center relative overflow-hidden transition-colors duration-300">
+                        <div
+                            class="border-4 border-blue-400 text-blue-500 dark:text-blue-300 font-bold text-4xl p-2 rounded mb-2 group-hover:scale-110 transition-transform">
+                            Ps</div>
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-blue-900/90 to-transparent dark:from-blue-950/90">
+                        </div>
+                        <span
+                            class="absolute bottom-3 left-3 bg-blue-950 text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded">18
+                            hrs de video</span>
+                    </div>
+                    <div class="flex-1 flex flex-col w-full h-full text-center md:text-left">
+                        <div class="flex items-center justify-center md:justify-start gap-2 mb-2">
+                            <span
+                                class="bg-tertiary-100 text-tertiary-700 text-[10px] md:text-xs font-bold px-2 py-1 rounded dark:bg-tertiary-900/30 dark:text-tertiary-400">DISEÑO
+                                CREATIVO</span>
+                            <span
+                                class="text-secondary-500 dark:text-secondary-400 text-xs md:text-sm transition-colors duration-300"><i
+                                    class="fas fa-palette"></i> Principiante</span>
+                        </div>
+                        <h3
+                            class="text-xl md:text-2xl font-bold text-secondary-900 dark:text-white mb-2 group-hover:text-tertiary-600 dark:group-hover:text-tertiary-400 transition-colors">
+                            Masterclass en Adobe Photoshop</h3>
+                        <p
+                            class="text-secondary-600 dark:text-secondary-400 text-sm mb-4 leading-relaxed line-clamp-2 md:line-clamp-3 transition-colors duration-300">
+                            Domina el retoque fotográfico, fotomontajes, creación de banners para redes sociales y
+                            diseño publicitario. No necesitas experiencia previa.</p>
+                        <div
+                            class="mt-auto pt-4 border-t border-secondary-100 dark:border-secondary-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors duration-300">
+                            <div
+                                class="text-2xl md:text-3xl font-black text-secondary-900 dark:text-white transition-colors duration-300">
+                                $29<span class="text-sm font-normal text-secondary-500 dark:text-secondary-400">.00
+                                    USD</span></div>
+                            <button
+                                class="w-full sm:w-auto bg-tertiary-600 hover:bg-primary-600 text-white px-6 py-3 md:py-2.5 rounded-lg text-sm font-bold shadow-md transition-all hover:shadow-primary-600/30 active:scale-95">Inscribirse
+                                Ahora</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Curso 3 -->
+                <div data-aos="fade-up" data-aos-duration="700" data-aos-offset="100"
+                    class="group bg-white border border-secondary-200 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-xl hover:border-tertiary-300 dark:hover:border-tertiary-700 hover:-translate-y-1 transition-all duration-300 flex flex-col md:flex-row gap-4 md:gap-6 items-center dark:bg-secondary-900 dark:border-secondary-700">
+                    <div
+                        class="w-full md:w-72 h-48 md:h-56 bg-secondary-100 border border-secondary-200 dark:bg-secondary-900 dark:border-secondary-700 rounded-lg md:rounded-xl flex-shrink-0 flex items-center justify-center relative overflow-hidden transition-colors duration-300">
+                        <i
+                            class="fab fa-bitcoin text-6xl md:text-7xl text-tertiary-500 opacity-90 group-hover:rotate-12 transition-transform duration-300"></i>
+                        <span
+                            class="absolute bottom-3 left-3 bg-secondary-900 text-white border border-secondary-700 text-[10px] md:text-xs font-bold px-2 py-1 rounded">12
+                            hrs de video</span>
+                    </div>
+                    <div class="flex-1 flex flex-col w-full h-full text-center md:text-left">
+                        <div class="flex items-center justify-center md:justify-start gap-2 mb-2">
+                            <span
+                                class="bg-tertiary-100 text-tertiary-700 text-[10px] md:text-xs font-bold px-2 py-1 rounded dark:bg-tertiary-900/30 dark:text-tertiary-400">CRIPTO
+                                Y FINANZAS</span>
+                            <span
+                                class="text-secondary-500 dark:text-secondary-400 text-xs md:text-sm transition-colors duration-300"><i
+                                    class="fas fa-chart-line"></i> Intermedio</span>
+                        </div>
+                        <h3
+                            class="text-xl md:text-2xl font-bold text-secondary-900 dark:text-white mb-2 group-hover:text-tertiary-600 dark:group-hover:text-tertiary-400 transition-colors">
+                            Bitcoin y Trading: Ecosistema Blockchain</h3>
+                        <p
+                            class="text-secondary-600 dark:text-secondary-400 text-sm mb-4 leading-relaxed line-clamp-2 md:line-clamp-3 transition-colors duration-300">
+                            Entiende qué es Bitcoin, cómo funcionan las finanzas descentralizadas (DeFi), seguridad en
+                            Wallets, y fundamentos de trading.</p>
+                        <div
+                            class="mt-auto pt-4 border-t border-secondary-100 dark:border-secondary-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors duration-300">
+                            <div
+                                class="text-2xl md:text-3xl font-black text-secondary-900 dark:text-white transition-colors duration-300">
+                                $35<span class="text-sm font-normal text-secondary-500 dark:text-secondary-400">.00
+                                    USD</span></div>
+                            <button
+                                class="w-full sm:w-auto bg-tertiary-600 hover:bg-primary-600 text-white px-6 py-3 md:py-2.5 rounded-lg text-sm font-bold shadow-md transition-all hover:shadow-primary-600/30 active:scale-95">Inscribirse
+                                Ahora</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Curso 4 -->
+                <div data-aos="fade-up" data-aos-duration="700" data-aos-offset="100"
+                    class="group bg-white border border-secondary-200 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-xl hover:border-tertiary-300 dark:hover:border-tertiary-700 hover:-translate-y-1 transition-all duration-300 flex flex-col md:flex-row gap-4 md:gap-6 items-center dark:bg-secondary-900 dark:border-secondary-700">
+                    <div
+                        class="w-full md:w-72 h-48 md:h-56 bg-secondary-100 border border-secondary-200 dark:bg-secondary-900 dark:border-secondary-700 rounded-lg md:rounded-xl flex-shrink-0 flex items-center justify-center relative overflow-hidden transition-colors duration-300">
+                        <i
+                            class="fas fa-qrcode text-5xl md:text-6xl text-primary-600 opacity-80 group-hover:scale-110 transition-transform"></i>
+                        <span
+                            class="absolute bottom-3 left-3 bg-white dark:bg-secondary-900 text-secondary-900 dark:text-white border border-secondary-200 dark:border-secondary-700 text-[10px] md:text-xs font-bold px-2 py-1 rounded transition-colors duration-300">8
+                            hrs de video</span>
+                    </div>
+                    <div class="flex-1 flex flex-col w-full h-full text-center md:text-left">
+                        <div class="flex items-center justify-center md:justify-start gap-2 mb-2">
+                            <span
+                                class="bg-green-100 text-green-700 text-[10px] md:text-xs font-bold px-2 py-1 rounded dark:bg-green-900/30 dark:text-green-400">NEGOCIOS
+                                E-COMMERCE</span>
+                            <span
+                                class="text-secondary-500 dark:text-secondary-400 text-xs md:text-sm transition-colors duration-300"><i
+                                    class="fas fa-store"></i> Soluciones Empresariales</span>
+                        </div>
+                        <h3
+                            class="text-xl md:text-2xl font-bold text-secondary-900 dark:text-white mb-2 group-hover:text-primary-600 dark:group-hover:text-tertiary-400 transition-colors">
+                            Ventas Online: CyberSource y Pagos QR</h3>
+                        <p
+                            class="text-secondary-600 dark:text-secondary-400 text-sm mb-4 leading-relaxed line-clamp-2 md:line-clamp-3 transition-colors duration-300">
+                            Implementación nativa de cobros por QR simples y tarjetas mediante el Business Center de
+                            CyberSource en tu tienda.</p>
+                        <div
+                            class="mt-auto pt-4 border-t border-secondary-100 dark:border-secondary-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors duration-300">
+                            <div
+                                class="text-2xl md:text-3xl font-black text-secondary-900 dark:text-white transition-colors duration-300">
+                                $45<span class="text-sm font-normal text-secondary-500 dark:text-secondary-400">.00
+                                    USD</span></div>
+                            <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+                                <button
+                                    class="w-full sm:w-12 h-12 md:h-10 border-2 border-secondary-200 text-secondary-600 rounded-lg hover:bg-tertiary-100 hover:border-tertiary-300 hover:text-tertiary-700 transition-all flex items-center justify-center gap-2 hover:scale-105 dark:border-secondary-700 dark:text-secondary-400 dark:hover:bg-tertiary-900/30 dark:hover:border-tertiary-700 dark:hover:text-tertiary-400">
+                                    <i class="fas fa-qrcode"></i> <span class="sm:hidden font-semibold">Pagar con
+                                        QR</span>
+                                </button>
+                                <button
+                                    class="w-full sm:w-auto bg-primary-600 hover:bg-tertiary-600 text-white px-6 py-3 md:py-2.5 rounded-lg text-sm font-bold shadow-md transition-all hover:shadow-primary-600/30 active:scale-95">Inscribirse
+                                    Ahora</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Características -->
+    <section
+        class="py-16 md:py-20 border-t border-secondary-200 dark:border-secondary-900 bg-white dark:bg-secondary-900 overflow-hidden transition-colors duration-300">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 text-center md:text-left">
+                <div class="flex flex-col items-center md:items-start group/item" data-aos="fade-up"
+                    data-aos-duration="600">
+                    <div
+                        class="w-12 h-12 md:w-14 md:h-14 bg-primary-50 text-primary-600 rounded-lg flex items-center justify-center text-xl md:text-2xl mb-4 md:mb-6 dark:bg-primary-900/30 dark:text-primary-400 transition-all duration-300 group-hover/item:bg-tertiary-100 group-hover/item:text-tertiary-600 dark:group-hover/item:bg-tertiary-900/30 dark:group-hover/item:text-tertiary-400">
+                        <i class="fas fa-hammer"></i>
+                    </div>
+                    <h3
+                        class="text-lg md:text-xl font-bold text-secondary-900 dark:text-white mb-2 md:mb-3 transition-colors duration-300">
+                        Aprende Haciendo</h3>
+                    <p
+                        class="text-secondary-600 dark:text-secondary-400 text-sm md:text-base leading-relaxed transition-colors duration-300">
+                        Cada curso está orientado a proyectos reales, sin teoría de relleno.</p>
+                </div>
+                <div class="flex flex-col items-center md:items-start group/item" data-aos="fade-up"
+                    data-aos-duration="600" data-aos-delay="150">
+                    <div
+                        class="w-12 h-12 md:w-14 md:h-14 bg-primary-50 text-primary-600 rounded-lg flex items-center justify-center text-xl md:text-2xl mb-4 md:mb-6 dark:bg-primary-900/30 dark:text-primary-400 transition-all duration-300 group-hover/item:bg-tertiary-100 group-hover/item:text-tertiary-600 dark:group-hover/item:bg-tertiary-900/30 dark:group-hover/item:text-tertiary-400">
+                        <i class="fas fa-infinity"></i>
+                    </div>
+                    <h3
+                        class="text-lg md:text-xl font-bold text-secondary-900 dark:text-white mb-2 md:mb-3 transition-colors duration-300">
+                        Acceso de por Vida</h3>
+                    <p
+                        class="text-secondary-600 dark:text-secondary-400 text-sm md:text-base leading-relaxed transition-colors duration-300">
+                        Pago único para acceder al contenido y futuras actualizaciones sin mensualidades.</p>
+                </div>
+                <div class="flex flex-col items-center md:items-start group/item" data-aos="fade-up"
+                    data-aos-duration="600" data-aos-delay="300">
+                    <div
+                        class="w-12 h-12 md:w-14 md:h-14 bg-primary-50 text-primary-600 rounded-lg flex items-center justify-center text-xl md:text-2xl mb-4 md:mb-6 dark:bg-primary-900/30 dark:text-primary-400 transition-all duration-300 group-hover/item:bg-tertiary-100 group-hover/item:text-tertiary-600 dark:group-hover/item:bg-tertiary-900/30 dark:group-hover/item:text-tertiary-400">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h3
+                        class="text-lg md:text-xl font-bold text-secondary-900 dark:text-white mb-2 md:mb-3 transition-colors duration-300">
+                        Certificación Digital</h3>
+                    <p
+                        class="text-secondary-600 dark:text-secondary-400 text-sm md:text-base leading-relaxed transition-colors duration-300">
+                        Al finalizar, recibe un certificado digital verificable para destacar en tu LinkedIn.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer
+    class="bg-secondary-50 dark:bg-secondary-950 text-secondary-600 dark:text-secondary-400 py-12 md:py-16 border-t-6 border-primary-600 transition-colors duration-300">
+    <div class="container mx-auto px-4 md:px-6" data-aos="fade-in" data-aos-duration="1000" data-aos-offset="0">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 mb-10 md:mb-12 text-center md:text-left">
+            <div class="md:col-span-5 flex flex-col items-center md:items-start">
+                <div class="flex items-center gap-2 mb-6">
+                    <img src="./public/logo/icon.png" alt="Logo fanspi Academy" class="w-8 h-8 md:w-10 md:h-10">
+                    <span
+                        class="text-xl font-bold text-secondary-900 dark:text-white tracking-tight transition-colors duration-300">fanspi<span
+                            class="text-primary-600 dark:text-primary-400 font-light">Academy</span></span>
+                </div>
+                <p class="text-sm leading-relaxed mb-6 max-w-sm transition-colors duration-300">Plataforma global de
+                    educación en línea enfocada en empoderar creativos, emprendedores y desarrolladores con habilidades
+                    reales.</p>
+                <div class="flex justify-center md:justify-start gap-4">
+                    <a href="#"
+                        class="w-10 h-10 rounded-full bg-secondary-200 text-secondary-600 flex items-center justify-center hover:bg-tertiary-500 hover:text-white transition-all hover:-translate-y-1 transform dark:bg-secondary-900 dark:text-secondary-400"><i
+                            class="fab fa-instagram"></i></a>
+                    <a href="#"
+                        class="w-10 h-10 rounded-full bg-secondary-200 text-secondary-600 flex items-center justify-center hover:bg-tertiary-500 hover:text-white transition-all hover:-translate-y-1 transform dark:bg-secondary-900 dark:text-secondary-400"><i
+                            class="fab fa-youtube"></i></a>
+                    <a href="#"
+                        class="w-10 h-10 rounded-full bg-secondary-200 text-secondary-600 flex items-center justify-center hover:bg-tertiary-500 hover:text-white transition-all hover:-translate-y-1 transform dark:bg-secondary-900 dark:text-secondary-400"><i
+                            class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="md:col-span-3 md:col-start-7">
+                <h4
+                    class="text-secondary-900 dark:text-white font-bold mb-4 md:mb-5 uppercase tracking-widest text-xs transition-colors duration-300">
+                    Categorías</h4>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="#"
+                            class="text-secondary-600 hover:text-primary-600 transition-colors dark:text-secondary-400 dark:hover:text-tertiary-400">Programación
+                            y Web</a></li>
+                    <li><a href="#"
+                            class="text-secondary-600 hover:text-primary-600 transition-colors dark:text-secondary-400 dark:hover:text-tertiary-400">Diseño
+                            Gráfico</a></li>
+                    <li><a href="#"
+                            class="text-secondary-600 hover:text-primary-600 transition-colors dark:text-secondary-400 dark:hover:text-tertiary-400">Finanzas
+                            y Blockchain</a></li>
+                    <li><a href="#"
+                            class="text-secondary-600 hover:text-primary-600 transition-colors dark:text-secondary-400 dark:hover:text-tertiary-400">Marketing
+                            y Negocios</a></li>
+                </ul>
+            </div>
+            <div class="md:col-span-4 mt-6 md:mt-0">
+                <h4
+                    class="text-secondary-900 dark:text-white font-bold mb-4 md:mb-5 uppercase tracking-widest text-xs transition-colors duration-300">
+                    Medios de Pago Soportados</h4>
+                <div
+                    class="flex justify-center md:justify-start gap-4 text-3xl mb-4 text-secondary-400 dark:text-secondary-600 transition-colors duration-300">
+                    <i
+                        class="fab fa-cc-visa text-secondary-500 hover:text-tertiary-500 dark:text-secondary-400 dark:hover:text-tertiary-400 transition-colors"></i>
+                    <i
+                        class="fab fa-cc-mastercard text-secondary-500 hover:text-tertiary-500 dark:text-secondary-400 dark:hover:text-tertiary-400 transition-colors"></i>
+                    <i
+                        class="fab fa-cc-paypal text-secondary-500 hover:text-tertiary-500 dark:text-secondary-400 dark:hover:text-tertiary-400 transition-colors"></i>
+                    <i
+                        class="fas fa-qrcode text-secondary-500 hover:text-tertiary-500 dark:text-secondary-400 dark:hover:text-tertiary-400 transition-colors"></i>
+                </div>
+                <p class="text-xs transition-colors duration-300">Tus transacciones se procesan de forma segura en USD.
+                </p>
+            </div>
+        </div>
+        <div
+            class="pt-8 border-t border-secondary-200 dark:border-secondary-900 flex flex-col md:flex-row justify-between items-center text-xs gap-4 md:gap-0 transition-colors duration-300">
+            <p class="text-secondary-600 dark:text-secondary-400 transition-colors duration-300">&copy; 2026 fanspi
+                Academy. Aprende a tu ritmo.</p>
+            <div class="flex gap-4 md:gap-6">
+                <a href="#"
+                    class="text-secondary-600 hover:text-primary-600 transition-colors dark:text-secondary-400 dark:hover:text-tertiary-400">Términos
+                    de Uso</a>
+                <a href="#"
+                    class="text-secondary-600 hover:text-primary-600 transition-colors dark:text-secondary-400 dark:hover:text-tertiary-400">Políticas
+                    de Privacidad</a>
+            </div>
+        </div>
+    </div>
+</footer>
+}

@@ -1,0 +1,10 @@
+<div class="modal-background" [@fade]="modalState" (click)="closeModal()">
+    <div class="w-screen">
+        <div class="bg-background-light dark:bg-background-dark shadow-lg border border-zinc-600 dark:border-zinc-800  relative rounded-xl overflow-auto"
+            (click)="($event.stopPropagation())">
+            <div class="overscroll-contain overflow-auto h-screen shadow-xl leading-6 sm:leading-7">
+                <ng-content></ng-content>
+            </div>
+        </div>
+    </div>
+</div>

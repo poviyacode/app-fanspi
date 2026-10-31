@@ -1,0 +1,81 @@
+@if (userService.suggestedUsers().length > 0) {
+  <h4 class="text-xl mb-5 font-semibold">
+    {{'suggestions' | translate}}
+  </h4>
+
+  <div class="space-y-2 pt-0 text-zinc-50">
+    @for (item of userService.suggestedUsers(); track $index) {
+      <article #theLastList class="rounded-lg">
+        <div class="relative shadow-md">
+
+          @if (item.Cover![0].type === 'image') {
+            <div
+              class="bg-cover flex justify-end items-end px-6 h-20 md:h-28 w-full object-cover rounded-md"
+              [style.background-image]="item.Cover && item.Cover[0].cloudflare && item.Cover[0].cloudflare.result.variants[0] ? 'url(' + item.Cover[0].cloudflare.result.variants[0] + ')' : (item.Cover && item.Cover[0].url ? 'url(' + item.Cover[0].url + ')' : '')">
+              <div class="overlay"></div>
+              <div class="space-y-1 text-center">
+                <div class="flex justify-center items-center space-x-2 text-sm">
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (item.Cover![0].type === 'video') {
+            <div
+              class="bg-cover flex justify-end items-end px-6 h-20 md:h-28 w-full object-cover rounded-md"
+              [style.background-image]="item.Cover && item.Cover[0].cloudflare && item.Cover[0].cloudflare ? 'url(https://customer-6kruyx7h361tmu11.cloudflarestream.com/' + item.Cover[0].cloudflare.result.thumbnail + ')' : (item.Cover && item.Cover[0].url ? 'url(' + item.Cover[0].url + ')' : '')">
+              <div class="overlay"></div>
+              <div class="space-y-1 text-center">
+                <div class="flex justify-center items-center space-x-2 text-sm">
+                </div>
+              </div>
+            </div>
+          }
+
+          <div class="-mt-20 flex justify-between w-full pl-1">
+            <div
+              [style.background-image]="item.Profile && item.Profile[0].cloudflare && item.Profile[0].cloudflare.result.variants[0] ? 'url(' + item.Profile[0].cloudflare.result.variants[0] + ')' : (item.Profile && item.Profile[0].url ? 'url(' + item.Profile[0].url + ')' : '')"
+              class="border-2 border-zinc-50 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-700 flex bg-cover justify-center px-6 pt-6 pb-6 rounded-full w-20 h-20 md:w-20 md:h-20 z-10 flex-shrink-0">
+              <div class="flex justify-end items-end text-center">
+              </div>
+            </div>
+
+            <div class="mt-8 truncate w-full pl-2 relative">
+              <p class="font-semibold text-base text-left truncate ">
+                <a routerLink="/{{item.username}}" class="text-white hover:underline">{{item.name}}</a>
+              </p>
+
+              <p class="text-sm  text-left truncate">
+                <a routerLink="/{{item.username}}" class="text-white hover:underline">
+                  {{'@'}}{{item.username}}
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </article>
+    }
+  </div>
+} @else if (loading) {
+  <div class="my-10 space-y-2">
+    @for (item of postLoading; track $index) {
+      <section
+        class="border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-800/40  p-1  h-20 md:h-28 w-full mx-auto space-y-2 shadow-md">
+        <div class="animate-pulse flex space-x-4">
+          <div class="rounded-full bg-zinc-100 dark:bg-zinc-800 h-20 w-20"></div>
+          <div class="flex-1 space-y-6 py-1">
+            <div class="flex flex-col space-y-1">
+              <div class="h-2 bg-zinc-100 dark:bg-zinc-800 rounded w-32">
+
+              </div>
+              <div class="h-2 bg-zinc-100 dark:bg-zinc-800 rounded w-24">
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    }
+  </div>
+}

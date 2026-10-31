@@ -1,0 +1,253 @@
+@if (capturedImage) {
+  <img [src]="capturedImage" alt="Captura">
+}
+<section @flyInOut class="my-6 bg-white dark:bg-zinc-800/80 p-3 rounded-lg">
+  @if (isVerifiedPersonal()) {
+    <!-- PERSONAL -->
+    <form [formGroup]="myFormPersonal" id="form" novalidate autocomplete="off" class="space-y-2">
+
+      <fieldset class=" font-bold uppercase">
+        {{'personalData' | translate}}
+      </fieldset>
+      <fieldset class="mb-4 flex space-x-4">
+        <div class="w-3/6 flex flex-col">
+          <label for="name" class="mb-2 font-semibold">{{'name' | translate}} </label>
+          <div class="relative">
+            <input formControlName="name" type="text" id="text" [ngClass]="inputClass(myFormPersonal,'name') "
+              class="pl-7" />
+              <div class="flex absolute inset-y-0 let-0 items-center pl-1 pointer-events-none">
+                <i appIcon iconName="user-regular" [size]="'w-5 h-5'"
+                [color]="'text-primary-600 dark:text-primary-400'"></i>
+              </div>
+            </div>
+          </div>
+          <div class="w-3/6 flex flex-col">
+            <label for="lastname" class="mb-2 font-semibold">{{'lastname' | translate}}
+            </label>
+            <div class="relative">
+              <input formControlName="lastname" type="text" id="text"
+                [ngClass]="inputClass(myFormPersonal,'lastname')" class="pl-7" />
+                <div class="flex absolute inset-y-0 let-0 items-center pl-1 pointer-events-none">
+                  <i appIcon iconName="user-regular" [size]="'w-5 h-5'"
+                  [color]="'text-primary-600 dark:text-primary-400'"></i>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset class="mb-4 hidden space-x-4">
+            <div class="w-full flex flex-col">
+              <label for="email" class="mb-2 font-semibold">{{'email' |
+              translate}}</label>
+              <div class="relative">
+                <input formControlName="email" type="text" id="text" [ngClass]="inputClass(myFormPersonal,'email')"
+                  class="pl-7" />
+                  <div class="flex absolute inset-y-0 let-0 items-center pl-1 pointer-events-none">
+                    <i appIcon iconName="user-regular" [size]="'w-5 h-5'"
+                    [color]="'text-primary-600 dark:text-primary-400'"></i>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset class="mb-4 flex space-x-4">
+              <div class="w-3/6 flex flex-col">
+                <label for="country" class="mb-2 font-semibold ">
+                  {{'country' | translate}}
+                </label>
+                <div class="relative">
+                  <select formControlName="country" (change)="onCountryState($event)"
+                    [ngClass]="selectClass(myFormPersonal,'country')">
+                    @for (item of countries(); track item) {
+                      <option value="{{item._id}}">
+                      {{item.name!}}</option>
+                    }
+                  </select>
+                </div>
+              </div>
+              <div class="w-3/6 flex flex-col">
+                <label for="countryState" class="mb-2 font-semibold ">
+                  {{'state' | translate}}
+                </label>
+                <div class="relative">
+                  <select formControlName="countryState" [ngClass]="selectClass(myFormPersonal,'countryState')">
+                    @for (item of countryStates(); track item) {
+                      <option value="{{item._id}}">
+                      {{item.name}}</option>
+                    }
+                  </select>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset class="mb-4 flex space-x-4">
+              <div class="w-3/6 flex flex-col">
+                <label for="city" class="mb-2 font-semibold">{{'city' | translate}} </label>
+                <div class="relative">
+                  <input formControlName="city" type="text" id="text" [ngClass]="inputClass(myFormPersonal,'city')"
+                    class="pl-7" />
+                    <div class="flex absolute inset-y-0 let-0 items-center pl-1 pointer-events-none">
+                      <i appIcon iconName="map-regular" [size]="'w-5 h-5'"
+                      [color]="'text-primary-600 dark:text-primary-400'"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="w-3/6 flex flex-col">
+                  <label for="address_line1" class="mb-2 font-semibold">{{ 'address' |
+                    translate
+                  }}</label>
+                  <div class="relative">
+                    <input formControlName="address_line1" type="text" id="text"
+                      [ngClass]="inputClass(myFormPersonal,'address_line1')" class="pl-7" />
+                      <div class="flex absolute inset-y-0 let-0 items-center pl-1 pointer-events-none">
+                        <i appIcon iconName="map-regular" [size]="'w-5 h-5'"
+                        [color]="'text-primary-600 dark:text-primary-400'"></i>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+                <fieldset class="mb-4 flex space-x-4">
+                  <div class="w-3/6 flex flex-col">
+                    <label for="postal_code" class="mb-2 font-semibold">{{'postalCode' |
+                      translate}}
+                    </label>
+                    <div class="relative">
+                      <input formControlName="postal_code" type="text" id="text"
+                        [ngClass]="inputClass(myFormPersonal,'postal_code')" class="pl-7" />
+                        <div class="flex absolute inset-y-0 let-0 items-center pl-1 pointer-events-none">
+                          <i appIcon iconName="map-pin-solid" [size]="'w-5 h-5'"
+                          [color]="'text-primary-600 dark:text-primary-400'"></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="sm:w-3/6 flex flex-col">
+                      <label for="phone" class="mb-2 font-semibold">{{ 'phone' | translate }}</label>
+                      <div
+                        class="flex justify-start items-center w-full bg-zinc-50 dark:bg-zinc-700 rounded-xl border border-zinc-100 dark:border-zinc-700">
+                        <div class="w-24">
+                          <select formControlName="phonePrefix" [ngClass]="selectClass(myFormPersonal,'phonePrefix')">
+                            @for (item of countries(); track item) {
+                              <option value="{{item.phonePrefix}}">
+                                {{item.code}} - {{item.name}}
+                              </option>
+                            }
+                          </select>
+                        </div>
+                        <input id="text" placeholder="+1" readonly [value]="$safeNavigationMigration(myFormPersonal.get('phonePrefix')?.value)"
+                          [ngClass]="{'w-12 rounded-lg py-2 px-1 focus:outline-none focus:ring bg-zinc-50 dark:bg-zinc-700 focus:ring-zinc-200 active:ring-zinc-200 focus:dark:ring-zinc-700 active:ring active:dark:ring-zinc-700 pointer-events-none': true }">
+                          <input formControlName="phone" id="text" [ngClass]="inputClass(myFormPersonal, 'phone')"
+                            autocomplete="off" />
+                          </div>
+                        </div>
+                      </fieldset>
+                    </form>
+                  }
+
+                  <!-- STRIPE -->
+                  <form [formGroup]="myFormStripe" (submit)="submitStripe()"
+                    class="space-y-2 {{selectedPaymentMethod() === 'STRIPE' ? 'none' : 'hidden'}}">
+
+                    <fieldset class="input">
+                      <label for="card" class="block mb-2 font-semibold">
+                        {{'cardNumber' | translate}}
+                      </label>
+                      <div class="relative">
+                        <div id="card"
+                          class="w-full py-3 px-2 focus:outline-none focus:ring bg-zinc-100/40 dark:bg-zinc-800/90 rounded-md border border-gray-400/50 focus:ring-zinc-200 active:ring-zinc-200 focus:dark:ring-zinc-700 active:dark:ring-zinc-700 focus:border-blue-500 dark:focus:border-blue-500">
+                        </div>
+                        <span class="absolute inset-y-0 right-3 flex items-center ">
+                          <i appIcon iconName="credit-card-regular" [size]="'w-5 h-5'"
+                          [color]="'text-primary-600 dark:text-primary-400'"></i>
+                        </span>
+                      </div>
+                    </fieldset>
+
+                    <fieldset class="flex space-x-4">
+                      <div class="input w-1/2">
+                        <label for="exp" class="block mb-2 font-semibold">
+                          {{'expirationDate' | translate}}
+                        </label>
+                        <div class="relative">
+                          <div id="exp"
+                            class="w-full py-3 px-2 focus:outline-none focus:ring bg-zinc-100/40 dark:bg-zinc-800/90 rounded-md border border-gray-400/50 focus:ring-zinc-200 active:ring-zinc-200 focus:dark:ring-zinc-700 active:dark:ring-zinc-700 focus:border-blue-500 dark:focus:border-blue-500">
+                          </div>
+                          <span class="absolute inset-y-0 right-3 flex items-center ">
+                            <i appIcon iconName="calendar-alt-solid" [size]="'w-5 h-5'"
+                            [color]="'text-primary-600 dark:text-primary-400'"></i>
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="input w-1/2">
+                        <label for="cvc" class="block mb-2 font-semibold">CVC</label>
+                        <div class="relative">
+                          <div id="cvc"
+                            class="w-full py-3 px-2 focus:outline-none focus:ring bg-zinc-100/40 dark:bg-zinc-800/90 rounded-md border border-gray-400/50 focus:ring-zinc-200 active:ring-zinc-200 focus:dark:ring-zinc-700 active:dark:ring-zinc-700 focus:border-blue-500 dark:focus:border-blue-500">
+                          </div>
+                          <span class="absolute inset-y-0 right-3 flex items-center text-primary-600 dark:text-primary-400">
+                            <i appIcon iconName="lock-solid" [size]="'w-5 h-5'"
+                            [color]="'text-primary-600 dark:text-primary-400'"></i>
+                          </span>
+                        </div>
+                      </div>
+                    </fieldset>
+
+                    <fieldset class="flex items-center">
+                      <label for="termsOne" class="flex items-center cursor-pointer">
+                        <div class="relative">
+                          <input id="termsOne" formControlName="termsOne" type="checkbox" class="sr-only peer" />
+                          <div
+                            class="block w-10 h-6 rounded-full bg-zinc-300 dark:bg-zinc-700 peer-checked:bg-primary-600 transition duration-300">
+                          </div>
+
+                          <div
+                            class="absolute left-1 top-1 w-4 h-4 bg-white dark:bg-zinc-50 rounded-full transition transform peer-checked:translate-x-full shadow-md duration-300">
+                          </div>
+                        </div>
+                        <div class="ml-3 font-medium text-sm text-zinc-800 dark:text-zinc-200">
+                          {{'termsTransactionOne' | translate}}
+                        </div>
+                      </label>
+                    </fieldset>
+
+                    <fieldset class="flex items-center">
+                      <label for="termsTwo" class="flex items-center cursor-pointer">
+                        <div class="relative">
+                          <input id="termsTwo" formControlName="termsTwo" type="checkbox" class="sr-only peer" />
+                          <div
+                            class="block w-10 h-6 rounded-full bg-zinc-300 dark:bg-zinc-700 peer-checked:bg-primary-600 transition duration-300">
+                          </div>
+
+                          <div
+                            class="absolute left-1 top-1 w-4 h-4 bg-white dark:bg-zinc-50 rounded-full transition transform peer-checked:translate-x-full shadow-md duration-300">
+                          </div>
+                        </div>
+                        <div class="ml-3 font-medium text-sm text-zinc-800 dark:text-zinc-200">
+                          {{'termsTransactionTwo' | translate}}
+                        </div>
+                      </label>
+                    </fieldset>
+
+                    <fieldset class="flex justify-between space-x-5 ">
+                      <button type="button" (click)="onCancelTransaction()"
+                        class="w-full bg-zinc-600 hover:bg-zinc-700 text-white font-semibold py-3 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out disabled:opacity-50 flex items-center justify-center">
+                        <i appIcon iconName="arrow-back-regular" [size]="'w-6 h-6'" [color]="'text-white'"></i>
+                        {{'return' | translate}}
+                      </button>
+                      <button
+                        [disabled]="myFormPersonal.invalid || myFormPersonal.disabled || myFormStripe.invalid || myFormStripe.disabled"
+                        type="submit"
+                        class="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out disabled:opacity-50 flex items-center justify-center">
+                        <i appIcon iconName="lock-solid" [size]="'w-6 h-6'" [color]="'text-white'"></i>
+                        {{'payNow' | translate}}
+                      </button>
+                    </fieldset>
+
+                    <div class="text-center my-4 text-zinc-600  dark:text-zinc-300">
+                      <span class="text-sm">
+                        {{'securePaymentsProcessedBy' | translate}}
+                      </span>
+                      <a href="https://www.stripe.com/" target="_blank" class="text-blue-500 hover:underline font-bold">
+                        Stripe
+                      </a>
+                    </div>
+                  </form>
+
+                </section>

@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+
+@theme {
+   /* =========================================
+     SPACING EXTENDIDO (Width & Height)
+     ========================================= */
+   --width-112: 28rem;
+   /* 448px */
+   --width-128: 32rem;
+   /* 512px */
+   --width-160: 40rem;
+   /* 640px */
+
+   --height-112: 28rem;
+   /* 448px */
+   --height-128: 32rem;
+   /* 512px */
+   --height-160: 40rem;
+   /* 640px */
+
+   --height-112: 28rem;
+   --height-112: 28rem;
+   --height-128: 32rem;
+   --height-160: 40rem;
+   --height-192: 48rem;
+
+   --width-112: 28rem;
+   --width-128: 32rem;
+   --width-160: 40rem;
+   --width-192: 48rem;
+
+   --color-background-light: #f2f4f7;
+   --color-background-dark: #000000;
+
+   /* =========================================
+     PALETA PRIMARIA (Teal/Cyan - OKLCH)
+     ========================================= */
+   --color-primary-50: oklch(97.07% 0.042 166.18);
+   --color-primary-100: oklch(94.56% 0.076 165.56);
+   --color-primary-200: oklch(90.28% 0.146 161.99);
+   --color-primary-300: oklch(88.01% 0.196 157.49);
+   --color-primary-400: oklch(83.02% 0.21 153.73);
+   --color-primary-500: oklch(64.2% 0.162 153.75);
+   --color-primary-600: oklch(55.06% 0.136 154.67);
+   --color-primary-700: oklch(44.54% 0.109 155.17);
+   --color-primary-800: oklch(33.36% 0.08 156.03);
+   --color-primary-900: oklch(22.62% 0.05 160.88);
+   --color-primary-950: oklch(14.93% 0.031 165.84);
+
+   /* Colores secundarios */
+
+   --color-secondary-50: oklch(98.5% 0.002 240);
+   --color-secondary-100: oklch(96.0% 0.003 250);
+   --color-secondary-200: oklch(92.0% 0.006 255);
+   --color-secondary-300: oklch(86.0% 0.009 255);
+   --color-secondary-400: oklch(67.0% 0.015 260);
+   --color-secondary-500: oklch(47.0% 0.020 260);
+   --color-secondary-600: oklch(36.0% 0.022 260);
+   --color-secondary-700: oklch(28.0% 0.020 260);
+   --color-secondary-800: oklch(28.0% 0.020 260);
+   --color-secondary-900: oklch(14.0% 0.015 260);
+   --color-secondary-950: oklch(06.0% 0.010 260);
+   /* =========================================
+     PALETA TERCIARIA (Acento cálido - OKLCH)
+     Hue: ~40° para contraste complementario
+     ========================================= */
+
+   --color-tertiary-50: #fcdcdc;
+   --color-tertiary-100: #fac9c9;
+   --color-tertiary-200: #f6a4a4;
+   --color-tertiary-300: #f37f7f;
+   --color-tertiary-400: #ef5959;
+   --color-tertiary-500: #ec3434;
+   --color-tertiary-600: #d41414;
+   --color-tertiary-700: #a10f0f;
+   --color-tertiary-800: #6d0a0a;
+   --color-tertiary-900: #3a0505;
+   --color-tertiary-950: #210303;
+
+   /* =========================================
+     COLORES DE ESTADO (Accesibilidad WCAG)
+     ========================================= */
+   --color-success-500: oklch(72.3% 0.125 140.5);
+   --color-warning-500: oklch(79.5% 0.184 75.2);
+   --color-error-500: oklch(63.7% 0.237 25.3);
+   --color-info-500: oklch(70.1% 0.145 215.8);
+}

@@ -1,0 +1,42 @@
+@if (isStable) {
+<router-outlet></router-outlet>
+
+@if (this.toastService.toast() && this.toastService.toast()?.type) {
+<div
+    class="toast
+         bg-zinc-50 dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-800 py-1 px-2 rounded-lg space-x-1 flex items-center font-semibold text-sm flex-shrink-0 whitespace-nowrap shadow-lg">
+    @if (this.toastService.toast()?.type == 'success') {
+    <i appIcon iconName="circle-check-solid" [size]="'w-5 h-5'" [color]="'text-green-500'"></i>
+    <span class="lowercase">{{ $safeNavigationMigration(this.toastService.toast()?.message)! | translate}}</span>
+    }
+    @if (this.toastService.toast()?.type == 'error') {
+    <i appIcon iconName="circle-xmark-regular" [size]="'w-5 h-5'" [color]="'text-red-500'"></i>
+    <span class="lowercase">{{ $safeNavigationMigration(this.toastService.toast()?.message)! | translate }}</span>
+    }
+</div>
+}
+
+@if (this.spinnerSevice.spinner()) {
+<div id="spinner">
+    <div class="flex justify-center items-center space-x-2 h-full">
+        <span class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-primary-500"></span>
+        </span>
+
+        <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"
+                style="animation-delay: 150ms;"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-800"></span>
+        </span>
+
+        <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"
+                style="animation-delay: 300ms;"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary-700"></span>
+        </span>
+    </div>
+</div>
+}
+
+}

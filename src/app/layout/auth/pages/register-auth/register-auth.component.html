@@ -1,0 +1,306 @@
+@if (isBrowser) {
+  <ng-container #container></ng-container>
+  <!-- ============================================
+  HEADER - Minimalista y Profesional
+  ============================================ -->
+  <header
+    class="w-full bg-white/90 dark:bg-secondary-950 backdrop-blur-xl text-secondary-900 dark:text-white py-3 md:py-4 border-b border-secondary-200/50 dark:border-secondary-800/50 sticky top-0 z-50 transition-all duration-500 shadow-sm"
+    role="banner" itemscope itemtype="https://schema.org/EducationalOrganization">
+
+    <div class="container mx-auto px-4 md:px-6 flex justify-between items-center">
+
+      <!-- Logo Institucional -->
+      <a routerLink="/" itemprop="url" aria-label="fanspi Academy - Inicio" title="Volver al inicio"
+        class="flex items-center gap-3 relative z-[60] group cursor-pointer animate-logo">
+        <div
+          class="relative w-10 h-10 md:w-11 md:h-11 flex items-center justify-center transition-all duration-500 group-hover:scale-110">
+          <!-- Glow effect -->
+          <div
+            class="absolute inset-0 bg-gradient-to-br from-primary-400 to-tertiary-400 rounded-xl blur-xl opacity-0 group-hover:opacity-40 transition-opacity duration-500">
+          </div>
+
+          <!-- Contenedor del logo con borde gradiente -->
+          <div
+            class="relative w-full h-full bg-white dark:bg-secondary-900 rounded-xl p-1.5 shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+            <img src="./public/logo/icon.png" alt="fanspi Academy"
+              class="w-full h-full object-contain transition-transform duration-500 group-hover:rotate-3">
+            </div>
+          </div>
+
+          <div class="flex flex-col">
+            <span
+              class="text-xl md:text-2xl font-bold tracking-tight text-secondary-900 dark:text-white transition-colors duration-300">
+              fanspi<span
+            class="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-primary-500 font-light ">Academy</span>
+          </span>
+          <span
+            class="text-[10px] text-secondary-500 dark:text-secondary-400 -mt-1 tracking-widest uppercase transition-opacity duration-300">
+            {{ 'learningPlatform' | translate }}
+          </span>
+        </div>
+      </a>
+
+      <!-- Selector de Idioma -->
+      <div class="relative" role="group" aria-label="Seleccionar idioma">
+        <form [formGroup]="myformLanguage" class="flex items-center">
+          <select formControlName="language" [ngClass]="inputClass(myformLanguage,'language')" #langSelect
+            (change)="changeLang(langSelect.value)" class="" aria-label="Cambiar idioma">
+            @for (lang of langs; track $index) {
+              <option [value]="lang.value" class="bg-white dark:bg-secondary-800 notranslate">{{ lang.name }}</option>
+            }
+          </select>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================
+  MAIN - Registro Profesional con Trust Signals
+  ============================================ -->
+  <main
+    class="min-h-[calc(100vh-72px)] flex items-center justify-center bg-secondary-50 dark:bg-secondary-950 relative overflow-hidden py-8 md:py-12"
+    role="main">
+
+    <!-- Background Decorativo (sutil y profesional) -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+      <div
+        class="absolute top-1/4 -left-20 w-96 h-96 bg-primary-300/10 dark:bg-primary-900/10 rounded-full mix-blend-multiply filter blur-3xl animate-blob">
+      </div>
+      <div
+        class="absolute bottom-1/4 -right-20 w-96 h-96 bg-tertiary-300/10 dark:bg-tertiary-900/10 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000">
+      </div>
+      <div
+        class="absolute inset-0 bg-gradient-to-b from-transparent via-secondary-50/40 to-secondary-50 dark:via-secondary-950/40 dark:to-secondary-950">
+      </div>
+    </div>
+
+    <!-- Contenedor Principal -->
+    <article class="w-full max-w-lg px-4 z-10">
+
+      <!-- Tarjeta de Registro Premium -->
+      <div
+        class="bg-white/95 dark:bg-secondary-950 backdrop-blur-xl border border-secondary-200/50 dark:border-secondary-800/50 shadow-2xl rounded-3xl overflow-hidden">
+
+        <!-- Header de la Tarjeta con Valor Proposicional -->
+        <header
+          class="bg-gradient-to-r from-primary-600/5 to-tertiary-600/5 dark:from-primary-900/20 dark:to-tertiary-900/20 px-6 md:px-10 pt-8 pb-6 border-b border-secondary-200/50 dark:border-secondary-800/50">
+          <div class="text-center">
+            <h1 class="text-2xl md:text-3xl font-bold text-secondary-900 dark:text-white tracking-tight">
+              {{ 'createYourAccount' | translate }}
+            </h1>
+            <p class="text-secondary-600 dark:text-secondary-400 mt-2 text-sm leading-relaxed max-w-md mx-auto">
+              {{ 'joinfanspiAcademyDescription' | translate }}
+            </p>
+          </div>
+
+          <!-- Trust Badges -->
+          <div
+            class="flex items-center justify-center gap-4 mt-6 pt-4 border-t border-secondary-200/50 dark:border-secondary-800/50">
+            <div class="flex items-center gap-1.5 text-xs text-secondary-500 dark:text-secondary-400">
+              <i appIcon iconName="check-regular" [size]="'w-5 h-5'" [color]="'text-primary-500'"></i>
+              <span>{{ 'sslSecure' | translate }}</span>
+            </div>
+            <div class="flex items-center gap-1.5 text-xs text-secondary-500 dark:text-secondary-400">
+              <i appIcon iconName="groups-regular" [size]="'w-5 h-5'" [color]="'text-tertiary-500'"></i>
+              <span>{{ '10k+Students' | translate }}</span>
+            </div>
+            <div class="flex items-center gap-1.5 text-xs text-secondary-500 dark:text-secondary-400">
+              <i appIcon iconName="star-regular" [size]="'w-5 h-5'" [color]="'text-yellow-500'"></i>
+              <span>{{'4.9/5Rating' | translate}}</span>
+            </div>
+          </div>
+        </header>
+
+        <!-- Formulario -->
+        <div class="p-6 md:p-10">
+          <form [formGroup]="myForm" id="registration-form" novalidate autocomplete="on" (ngSubmit)="register()"
+            class="space-y-5" aria-label="Formulario de registro">
+
+            <!-- Nombre Completo -->
+            <fieldset class="space-y-2">
+              <label for="alias" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300">
+                {{ 'fullName' | translate }} <span class="text-tertiary-500">*</span>
+              </label>
+              <div class="relative">
+                <input formControlName="alias" type="text" id="alias" name="alias" class="w-full pl-10 pr-4 "
+                  placeholder="{{ 'enterYourName' | translate }}" [ngClass]="inputClass(myForm,'alias')" required
+                  autocomplete="name" aria-required="true" aria-describedby="alias-error" />
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary-400">
+                    <i appIcon iconName="user-regular" [size]="'w-5 h-5'" [color]="''"></i>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!-- Género y Edad -->
+              <fieldset class="grid grid-cols-2 gap-4">
+                <div class="space-y-2">
+                  <label for="gender" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300">{{
+                  'gender' | translate }}</label>
+                  <div class="relative">
+                    <select formControlName="gender" id="gender" name="gender" class="w-full appearance-none pl-10 pr-8 "
+                      [ngClass]="inputClass(myForm, 'gender')" autocomplete="sex">
+                      <option value="" disabled selected>{{ 'select' | translate }}</option>
+                      @for (item of genderArray; track item) {
+                        <option [value]="item.value">{{ item.name | translate }}</option>
+                      }
+                    </select>
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary-400">
+                      <i appIcon iconName="wc-regular" [size]="'w-5 h-5'" [color]="''"></i>
+                    </div>
+                    <i
+                    class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary-400 pointer-events-none"></i>
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <label for="age" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300">{{ 'age' |
+                  translate }}</label>
+                  <input formControlName="age" id="age" name="age" type="number" min="13" max="99" class="w-full px-4 "
+                    placeholder="25" [ngClass]="inputClass(myForm, 'age')" autocomplete="bday-year" />
+                  </div>
+                </fieldset>
+
+                <!-- País -->
+                <fieldset class="space-y-2">
+                  <label for="country" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300">
+                    {{ 'country' | translate }} <span class="text-tertiary-500">*</span>
+                  </label>
+                  <div class="relative">
+                    <select formControlName="country" id="country" name="country" class="w-full appearance-none pl-10 pr-8 "
+                      [ngClass]="inputClass(myForm, 'country')" required autocomplete="country" aria-required="true">
+                      <option value="" disabled selected>{{ 'selectCountry' | translate }}</option>
+                      @for (item of countries(); track item) {
+                        <option [value]="item.code">{{ item.name! | translate }}</option>
+                      }
+                    </select>
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary-400">
+                      <i appIcon iconName="flag-regular" [size]="'w-5 h-5'" [color]="''"></i>
+                    </div>
+                  </div>
+                </fieldset>
+
+                <!-- Email -->
+                <fieldset class="space-y-2">
+                  <label for="email" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300">
+                    {{ 'email' | translate }} <span class="text-tertiary-500">*</span>
+                  </label>
+                  <div class="relative">
+                    <input formControlName="email" type="email" id="email" name="email" class="w-full pl-10 pr-4 "
+                      placeholder="hello@email.com" [ngClass]="inputClass(myForm,'email')" required autocomplete="email"
+                      aria-required="true" />
+                      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary-400">
+                        <i appIcon iconName="mark-email-read-regular" [size]="'w-5 h-5'" [color]="''"></i>
+                      </div>
+                    </div>
+                  </fieldset>
+
+                  <!-- Password con Fortalecedor Visual -->
+                  <fieldset class="space-y-2">
+                    <label for="password" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300">
+                      {{ 'password' | translate }} <span class="text-tertiary-500">*</span>
+                    </label>
+                    <div class="relative">
+                      <input formControlName="password" type="password" id="password" name="new-password"
+                        class="w-full pl-10 pr-4 " placeholder="••••••••" [ngClass]="inputClass(myForm,'password')" required
+                        minlength="8" autocomplete="new-password" aria-required="true" />
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary-400">
+                          <i appIcon iconName="lock-regular" [size]="'w-5 h-5'" [color]="''"></i>
+                        </div>
+                      </div>
+                    </fieldset>
+
+                    <!-- Confirm Password -->
+                    <fieldset class="space-y-2">
+                      <label for="confirmPassword" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300">
+                        {{ 'confirmPassword' | translate }} <span class="text-tertiary-500">*</span>
+                      </label>
+                      <div class="relative">
+                        <input formControlName="confirmPassword" type="password" id="confirmPassword" name="confirm-new-password"
+                          class="w-full pl-10 pr-4 " placeholder="••••••••" [ngClass]="inputClass(myForm,'confirmPassword')"
+                          required autocomplete="new-password" aria-required="true" />
+                          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary-400">
+                            <i appIcon iconName="lock-regular" [size]="'w-5 h-5'" [color]="''"></i>
+                          </div>
+                        </div>
+
+                      </fieldset>
+
+                      <!-- Términos con Checkbox Mejorado -->
+                      <fieldset class="flex items-start gap-3 pt-2">
+                        <label for="terms" class="flex items-start cursor-pointer space-x-2">
+                          <div class="relative">
+                            <input id="terms" formControlName="terms" type="checkbox" class="sr-only peer" />
+                            <div
+                              class="block w-10 h-6 rounded-full bg-zinc-300 dark:bg-zinc-700 peer-checked:bg-primary-600 transition duration-300">
+                            </div>
+
+                            <div
+                              class="absolute left-1 top-1 w-4 h-4 bg-white dark:bg-zinc-50 rounded-full transition transform peer-checked:translate-x-full shadow-md duration-300">
+                            </div>
+                          </div>
+
+                          <div for="terms"
+                            class="text-sm text-secondary-600 dark:text-secondary-400 leading-relaxed cursor-pointer">
+                            {{ 'terms_policy.iAgreeTo' | translate }}
+                            <a routerLink="/legal/terms"
+                              class="text-primary-600 dark:text-primary-400 font-semibold hover:underline">{{
+                            'terms_policy.terms' | translate }}</a>
+                            {{ 'terms_policy.and' | translate }}
+                            <a routerLink="/legal/policy"
+                              class="text-primary-600 dark:text-primary-400 font-semibold hover:underline">{{
+                            'terms_policy.privacyPolicy' | translate }}</a>.
+                          </div>
+                        </label>
+                      </fieldset>
+
+                      <!-- Botón CTA con Loading State -->
+                      <button type="submit" [disabled]="myForm.status !== 'VALID' || isLoading" [ngClass]="buttonClass()"
+                        class="w-full " aria-label="Crear cuenta gratuita">
+                        <span>{{ 'signUp' | translate }}</span>
+                      </button>
+
+                      <!-- Valor Agregado Post-CTA -->
+                      <div class="flex items-center justify-center gap-4 mt-4 text-xs text-secondary-500 dark:text-secondary-400">
+                        <div class="flex items-center gap-1">
+                          <i class="fas fa-check text-success-500"></i>
+                          <span>{{ 'noCreditCard' | translate }}</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                          <i class="fas fa-check text-success-500"></i>
+                          <span>{{ 'cancelAnytime' | translate }}</span>
+                        </div>
+                      </div>
+
+                    </form>
+
+                    <!-- Footer con Login Link -->
+                    <footer class="mt-8 pt-6 border-t border-secondary-200/50 dark:border-secondary-800/50">
+                      <p class="text-center text-secondary-600 dark:text-secondary-400 text-sm">
+                        {{ 'alreadyHaveAccount' | translate }}
+                        <a routerLink="/auth/login"
+                          class="text-primary-600 dark:text-primary-400 font-bold hover:underline focus:outline-none focus:ring-2 focus:ring-primary-500/20 rounded">
+                          {{ 'signInHere' | translate }}
+                        </a>
+                      </p>
+                    </footer>
+                  </div>
+                </div>
+
+                <!-- Footer Académico con Certificaciones -->
+                <div class="text-center mt-8">
+                  <p class="text-secondary-500 dark:text-secondary-500 text-xs tracking-wider mb-3">
+                    &copy; {{currentYear}} <span itemprop="copyrightHolder">fanspi LLC</span>. {{ 'allRightsReserved' | translate }}
+                  </p>
+
+                  <!-- Trust Badges Footer -->
+                  <div class="flex items-center justify-center gap-4 opacity-60">
+                    <i class="fab fa-cc-visa text-xl text-secondary-400 dark:text-secondary-500"></i>
+                    <i class="fab fa-cc-mastercard text-xl text-secondary-400 dark:text-secondary-500"></i>
+                    <i class="fab fa-cc-paypal text-xl text-secondary-400 dark:text-secondary-500"></i>
+                    <i class="fas fa-lock text-xl text-secondary-400 dark:text-secondary-500"></i>
+                  </div>
+                </div>
+
+              </article>
+            </main>
+
+          }

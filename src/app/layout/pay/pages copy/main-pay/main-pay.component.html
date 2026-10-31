@@ -1,0 +1,173 @@
+@if (isBrowser) {
+<app-head-pay></app-head-pay>
+}
+<div class="max-w-4xl px-4 mx-auto sm:px-2 pb-6">
+    <div class="gap-8 md:grid md:grid-cols-3">
+        <div class="mt-0 col-span-2">
+            <fieldset class="mt-6">
+                <h2 class="text-lg font-semibold mb-4 uppercase">{{'selectPaymentMethod' | translate}}</h2>
+                <div class="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4">
+                    <!-- PayPal -->
+                    @if (isPayPalBusinessEEUU()) {
+                    <label [ngClass]="{
+                        'flex items-center space-x-2 cursor-pointer p-4 border rounded-lg shadow-sm transition-all duration-300 w-full': true,
+                        'border-blue-500 bg-blue-50 dark:bg-blue-900 hover:scale-[1.02] hover:shadow-md': selectedPaymentMethod() === 'PAYPAL',
+                        'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 hover:border-blue-500 hover:bg-blue-50 hover:dark:bg-blue-900': selectedPaymentMethod() !== 'PAYPAL'
+                        }">
+                        <input type="radio" name="paymentMethod" value="PAYPAL"
+                            (change)="onPaymentMethodChange('PAYPAL')" class="h-4 w-4"
+                            [checked]="selectedPaymentMethod() === 'PAYPAL'" />
+                        <span class="font-medium">{{'Paypal' | translate}}</span>
+                        <img src="./public/images/paypal.png" alt="{{'Paypal' | translate}}"
+                            class="w-6 h-6 ml-2 transition-transform duration-300"
+                            [class.scale-110]="selectedPaymentMethod() === 'PAYPAL'" />
+                    </label>
+                    }
+
+                    <!-- Stripe LLC -->
+                    @if (isStripeLLC()) {
+                    <label [ngClass]="{
+                        'flex items-center space-x-2 cursor-pointer p-4 border rounded-lg shadow-sm transition-all duration-300 w-full': true,
+                        'border-blue-500 bg-blue-50 dark:bg-blue-900 hover:scale-[1.02] hover:shadow-md': selectedPaymentMethod() === 'STRIPE_LLC',
+                        'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 hover:border-blue-500 hover:bg-blue-50 hover:dark:bg-blue-900': selectedPaymentMethod() !== 'STRIPE_LLC'
+                        }">
+                        <input type="radio" name="paymentMethod" value="STRIPE_LLC"
+                            (change)="onPaymentMethodChange('STRIPE_LLC')" class="h-4 w-4"
+                            [checked]="selectedPaymentMethod() === 'STRIPE_LLC'" />
+                        <span class="font-medium">{{'card' | translate}}</span>
+                        <img src="./public/images/card.png" alt="{{'Stripe' | translate}}"
+                            class="w-6 h-6 ml-2 transition-transform duration-300"
+                            [class.scale-110]="selectedPaymentMethod() === 'STRIPE_LLC'" />
+                    </label>
+                    }
+
+                    <!-- Stripe INC -->
+                    @if (isStripeINC()) {
+                    <label [ngClass]="{
+                        'flex items-center space-x-2 cursor-pointer p-4 border rounded-lg shadow-sm transition-all duration-300 w-full': true,
+                        'border-blue-500 bg-blue-50 dark:bg-blue-900 hover:scale-[1.02] hover:shadow-md': selectedPaymentMethod() === 'STRIPE_INC',
+                        'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 hover:border-blue-500 hover:bg-blue-50 hover:dark:bg-blue-900': selectedPaymentMethod() !== 'STRIPE_INC'
+                        }">
+                        <input type="radio" name="paymentMethod" value="STRIPE_INC"
+                            (change)="onPaymentMethodChange('STRIPE_INC')" class="h-4 w-4"
+                            [checked]="selectedPaymentMethod() === 'STRIPE_INC'" />
+                        <span class="font-medium">{{'card' | translate}}</span>
+                        <img src="./public/images/card.png" alt="{{'Stripe' | translate}}"
+                            class="w-6 h-6 ml-2 transition-transform duration-300"
+                            [class.scale-110]="selectedPaymentMethod() === 'STRIPE_INC'" />
+                    </label>
+                    }
+
+                    <!-- CyberSource ATC BO -->
+                    @if (isCyberSourceATCBO()) {
+                    <label [ngClass]="{
+                        'flex items-center space-x-2 cursor-pointer p-4 border rounded-lg shadow-sm transition-all duration-300 w-full': true,
+                        'border-blue-500 bg-blue-50 dark:bg-blue-900 hover:scale-[1.02] hover:shadow-md': selectedPaymentMethod() === 'CYBERSOURSE_ATC_BO',
+                        'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 hover:border-blue-500 hover:bg-blue-50 hover:dark:bg-blue-900': selectedPaymentMethod() !== 'CYBERSOURSE_ATC_BO'
+                        }">
+                        <input type="radio" name="paymentMethod" value="CYBERSOURSE_ATC_BO"
+                            (change)="onPaymentMethodChange('CYBERSOURSE_ATC_BO')" class="h-4 w-4"
+                            [checked]="selectedPaymentMethod() === 'CYBERSOURSE_ATC_BO'" />
+                        <span class="font-medium">{{'USDC' | translate}}</span>
+                        <img src="./public/images/usd-coin.png" alt="{{'USDC' | translate}}"
+                            class="w-6 h-6 ml-2 transition-transform duration-300"
+                            [class.scale-110]="selectedPaymentMethod() === 'CYBERSOURSE_ATC_BO'" />
+                    </label>
+                    }
+                    <!-- QR ATC BO -->
+                    @if (isQrAtc()) {
+                    <label [ngClass]="{
+                        'flex items-center space-x-2 cursor-pointer p-4 border rounded-lg shadow-sm transition-all duration-300 w-full': true,
+                        'border-blue-500 bg-blue-50 dark:bg-blue-900 hover:scale-[1.02] hover:shadow-md': selectedPaymentMethod() === 'QR_ATC_BO',
+                        'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 hover:border-blue-500 hover:bg-blue-50 hover:dark:bg-blue-900': selectedPaymentMethod() !== 'QR_ATC_BO'
+                        }">
+                        <input type="radio" name="paymentMethod" value="QR_ATC_BO"
+                            (change)="onPaymentMethodChange('QR_ATC_BO')" class="h-4 w-4"
+                            [checked]="selectedPaymentMethod() === 'QR_ATC_BO'" />
+                        <span class="font-medium">{{'QR' | translate}}</span>
+                        <img src="./public/images/qr-code-pay.png" alt="{{'QR' | translate}}"
+                            class="w-6 h-6 ml-2 transition-transform duration-300"
+                            [class.scale-110]="selectedPaymentMethod() === 'QR_ATC_BO'" />
+                    </label>
+                    }
+                </div>
+            </fieldset>
+            <ng-container #container></ng-container>
+
+        </div>
+        <div class="mt-5 sm:mt-5">
+            <div class="border border-zinc-100 dark:border-zinc-800 shadow-xl sm:rounded-md sm:overflow-hidden">
+                <div class="p-5 space-y-6  bg-white dark:bg-zinc-800/40  sm:px-8 sm:pt-8 sm:pb-8 ">
+                    <div class="mt-2 font-bold  uppercase sm:mt-0">
+                        {{'transactionDetails' | translate}}
+                    </div>
+                    <div class="py-2 border-b border-zinc-200 dark:border-zinc-700">
+                        <div class="flex justify-between text-base ">
+                            <span>{{'subtotal' | translate}}</span>
+                            <span>
+                                {{ $safeNavigationMigration(paymentOrderService.amountCalculation()?.amountPay) |
+                                number:'1.2-2' }}
+                                {{ paymentOrderService.amountCalculation()?.MoneyPay?.iso }}
+                            </span>
+                        </div>
+                        <div class="flex justify-between text-base">
+                            <span>{{'tax' | translate}}</span>
+                            <span>
+                                {{ $safeNavigationMigration(paymentOrderService.amountCalculation()?.amountSurcharge) |
+                                number:'1.2-2' }}
+                                {{ paymentOrderService.amountCalculation()?.MoneyPay?.iso }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between pt-0 text-base font-semibold">
+                        <span>{{'totalPayment' | translate}}</span>
+                        <span>
+                            {{ $safeNavigationMigration(paymentOrderService.amountCalculation()?.amountBalance)|
+                            number:'1.2-2' }}
+                            {{ paymentOrderService.amountCalculation()?.MoneyPay?.iso }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="my-5 text-zinc-600 dark:text-zinc-300">
+                <div class="flex justify-center">
+                    <img class="h-12" src="./public/images/visa_verified.png" alt="">
+                </div>
+                <div class="mt-5 text-xs text-zinc-600 dark:text-zinc-300">
+                    <div>
+                        • {{'msgOnePayment' | translate}}
+                    </div>
+                    <div>
+                        • {{'msgTwoPayment' | translate}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-zinc-600 dark:text-zinc-300">
+        <div class="">
+            <div class="block text-sm font-medium  ">
+                {{'messageAcceptPayment' | translate}}
+            </div>
+        </div>
+
+        <div class="hidden sm:block">
+            <div class="py-5">
+                <div class="border-t border-zinc-200 dark:border-zinc-700"></div>
+            </div>
+        </div>
+
+        <div class="flex justify-center">
+            <div>
+                <div class="flex items-center mb-2 space-x-2 font-bold uppercase  text-xs ">
+                    <i appIcon iconName="lock-solid" [size]="'w-6 h-6'"
+                        [color]="'text-primary-600 dark:text-primary-400'"></i>
+                    <span>{{'paymentProtected' | translate}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

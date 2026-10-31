@@ -1,0 +1,198 @@
+@if (isBrowser) {
+<ng-container #container></ng-container>
+<!-- ============================================
+     HEADER - Minimalista y Profesional
+     ============================================ -->
+<header
+    class="w-full bg-white/90 dark:bg-secondary-950 backdrop-blur-xl text-secondary-900 dark:text-white py-3 md:py-4 border-b border-secondary-200/50 dark:border-secondary-800/50 sticky top-0 z-50 transition-all duration-500 shadow-sm"
+    role="banner" itemscope itemtype="https://schema.org/EducationalOrganization">
+
+    <div class="container mx-auto px-4 md:px-6 flex justify-between items-center">
+
+        <!-- Logo Institucional -->
+        <a routerLink="/" itemprop="url" aria-label="fanspi Academy - Inicio" title="Volver al inicio"
+            class="flex items-center gap-3 relative z-[60] group cursor-pointer animate-logo">
+            <div
+                class="relative w-10 h-10 md:w-11 md:h-11 flex items-center justify-center transition-all duration-500 group-hover:scale-110">
+                <!-- Glow effect -->
+                <div
+                    class="absolute inset-0 bg-gradient-to-br from-primary-400 to-tertiary-400 rounded-xl blur-xl opacity-0 group-hover:opacity-40 transition-opacity duration-500">
+                </div>
+
+                <!-- Contenedor del logo con borde gradiente -->
+                <div
+                    class="relative w-full h-full bg-white dark:bg-secondary-900 rounded-xl p-1.5 shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                    <img src="./public/logo/icon.png" alt="fanspi Academy"
+                        class="w-full h-full object-contain transition-transform duration-500 group-hover:rotate-3">
+                </div>
+            </div>
+
+            <div class="flex flex-col">
+                <span
+                    class="text-xl md:text-2xl font-bold tracking-tight text-secondary-900 dark:text-white transition-colors duration-300">
+                    fanspi<span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-primary-500 font-light ">Academy</span>
+                </span>
+                <span
+                    class="text-[10px] text-secondary-500 dark:text-secondary-400 -mt-1 tracking-widest uppercase transition-opacity duration-300">
+                    {{ 'learningPlatform' | translate }}
+                </span>
+            </div>
+        </a>
+
+        <!-- Selector de Idioma -->
+        <div class="relative" role="group" aria-label="Seleccionar idioma">
+            <form [formGroup]="myformLanguage" class="flex items-center">
+                <select formControlName="language" [ngClass]="inputClass(myformLanguage,'language')" #langSelect
+                    (change)="changeLang(langSelect.value)" class="" aria-label="Cambiar idioma">
+                    @for (lang of langs; track $index) {
+                    <option [value]="lang.value" class="bg-white dark:bg-secondary-800 notranslate">{{ lang.name }}
+                    </option>
+                    }
+                </select>
+            </form>
+        </div>
+    </div>
+</header>
+
+<!-- ============================================
+     MAIN - Registro Profesional con Trust Signals
+     ============================================ -->
+<main
+    class="min-h-[calc(100vh-72px)] flex items-center justify-center bg-secondary-50 dark:bg-secondary-950 relative overflow-hidden py-8 md:py-12"
+    role="main">
+
+    <!-- Background Decorativo (sutil y profesional) -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div
+            class="absolute top-1/4 -left-20 w-96 h-96 bg-primary-300/10 dark:bg-primary-900/10 rounded-full mix-blend-multiply filter blur-3xl animate-blob">
+        </div>
+        <div
+            class="absolute bottom-1/4 -right-20 w-96 h-96 bg-tertiary-300/10 dark:bg-tertiary-900/10 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000">
+        </div>
+        <div
+            class="absolute inset-0 bg-gradient-to-b from-transparent via-secondary-50/40 to-secondary-50 dark:via-secondary-950/40 dark:to-secondary-950">
+        </div>
+    </div>
+
+    <!-- Contenedor Principal -->
+    <article class="w-full max-w-lg px-4 z-10">
+
+        <!-- Tarjeta de Registro Premium -->
+        <div
+            class="bg-white/95 dark:bg-secondary-950 backdrop-blur-xl border border-secondary-200/50 dark:border-secondary-800/50 shadow-2xl rounded-3xl overflow-hidden">
+
+            <!-- Header de la Tarjeta con Valor Proposicional -->
+            <header
+                class="bg-gradient-to-r from-primary-600/5 to-tertiary-600/5 dark:from-primary-900/20 dark:to-tertiary-900/20 px-6 md:px-10 pt-8 pb-6 border-b border-secondary-200/50 dark:border-secondary-800/50">
+                <div class="text-center">
+                    <h1 class="text-2xl md:text-3xl font-bold text-secondary-900 dark:text-white tracking-tight">
+                        {{ 'welcomeBack' | translate }}
+                    </h1>
+                    <p class="text-secondary-600 dark:text-secondary-400 mt-2 text-sm leading-relaxed max-w-md mx-auto">
+                        {{ 'accessYourLearningDashboard' | translate }}
+                    </p>
+                </div>
+
+                <!-- Trust Badges -->
+                <div
+                    class="flex items-center justify-center gap-4 mt-6 pt-4 border-t border-secondary-200/50 dark:border-secondary-800/50">
+                    <div class="flex items-center gap-1.5 text-xs text-secondary-500 dark:text-secondary-400">
+                        <i appIcon iconName="check-regular" [size]="'w-5 h-5'" [color]="'text-primary-500'"></i>
+                        <span>{{ 'sslSecure' | translate }}</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-xs text-secondary-500 dark:text-secondary-400">
+                        <i appIcon iconName="groups-regular" [size]="'w-5 h-5'" [color]="'text-tertiary-500'"></i>
+                        <span>{{ '10k+Students' | translate }}</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-xs text-secondary-500 dark:text-secondary-400">
+                        <i appIcon iconName="star-regular" [size]="'w-5 h-5'" [color]="'text-yellow-500'"></i>
+                        <span>{{'4.9/5Rating' | translate}}</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Formulario -->
+            <div class="p-6 md:p-10">
+                <form [formGroup]="myForm" id="form" novalidate autocomplete="off" (ngSubmit)="login()"
+                    class="space-y-6 backdrop-blur-sm">
+
+                    <!-- Input Email Romántico -->
+                    <div class="space-y-2">
+                        <label class="hidden text-sm font-medium ">
+                            <i appIcon iconName="heart-check-regular" [size]="'w-6 h-6'" [color]="''"></i>
+                            {{ 'email' | translate }}
+                        </label>
+                        <div class="relative">
+                            <input formControlName="username" type="email" class="w-full pl-10 text-lg"
+                                placeholder="{{ 'email' | translate }}" [ngClass]="inputClass(myForm,'username')" />
+                            <div class="absolute inset-y-0 left-0 pl-2 flex items-center ">
+                                <i appIcon iconName="mark-email-read-regular" [size]="'w-6 h-6'" [color]="''"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input Password Íntimo -->
+                    <div class="space-y-2">
+                        <label class="hidden text-sm font-medium ">
+                            <i appIcon iconName="lock-regular" [size]="'w-6 h-6'" [color]="''"></i>
+                            {{ 'password' | translate }}
+                        </label>
+                        <div class="relative">
+                            <input formControlName="password" type="password" class="w-full pl-10 text-lg"
+                                placeholder="{{ 'password' | translate }}" [ngClass]="inputClass(myForm,'password')" />
+                            <div class="absolute inset-y-0 left-0 pl-2 flex items-center ">
+                                <i appIcon iconName="lock-regular" [size]="'w-6 h-6'" [color]="''"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botón de Acción Principal -->
+                    <button type="submit" [disabled]="myForm.status !== 'VALID'" [ngClass]="buttonClass()"
+                        class="mt-4 w-full">
+                        <span class="tracking-wider">{{ 'logIn' | translate }}</span>
+                    </button>
+
+                    <!-- Enlaces Secundarios -->
+
+                    <div class="text-center">
+                        <a routerLink="/auth/forgot-password"
+                            class="inline-flex items-center font-semibold underline decoration-2 underline-offset-4 hover:decoration-primary-300 transition-all">
+                            {{ 'forgotPassword' | translate }}
+                        </a>
+                    </div>
+                </form>
+
+                <!-- Footer con Register Link -->
+                <footer class="mt-8 pt-6 border-t border-secondary-200/50 dark:border-secondary-800/50">
+                    <p class="text-center text-secondary-600 dark:text-secondary-400 text-sm">
+                        {{ 'noAccountYet' | translate }}
+                        <a routerLink="/auth/register"
+                            class="text-primary-600 dark:text-primary-400 font-bold hover:underline focus:outline-none focus:ring-2 focus:ring-primary-500/20 rounded">
+                            {{ 'signUp' | translate }}
+                        </a>
+                    </p>
+                </footer>
+            </div>
+        </div>
+
+        <!-- Footer Académico con Certificaciones -->
+        <div class="text-center mt-8">
+            <p class="text-secondary-500 dark:text-secondary-500 text-xs tracking-wider mb-3">
+                &copy; {{currentYear}} <span itemprop="copyrightHolder">fanspi LLC</span>. {{ 'allRightsReserved' |
+                translate }}
+            </p>
+
+            <!-- Trust Badges Footer -->
+            <div class="flex items-center justify-center gap-4 opacity-60">
+                <i class="fab fa-cc-visa text-xl text-secondary-400 dark:text-secondary-500"></i>
+                <i class="fab fa-cc-mastercard text-xl text-secondary-400 dark:text-secondary-500"></i>
+                <i class="fab fa-cc-paypal text-xl text-secondary-400 dark:text-secondary-500"></i>
+                <i class="fas fa-lock text-xl text-secondary-400 dark:text-secondary-500"></i>
+            </div>
+        </div>
+
+    </article>
+</main>
+
+}

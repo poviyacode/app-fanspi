@@ -1,0 +1,410 @@
+@if (isBrowser) {
+<app-head-pay></app-head-pay>
+}
+<div class="max-w-4xl px-4 mx-auto sm:px-2 pb-6">
+  <div class="gap-8 md:grid md:grid-cols-3">
+    <div class="mt-0 col-span-2 space-y-6">
+
+      <fieldset class="mt-6">
+        <h2 class="text-lg font-semibold mb-4 uppercase">
+          {{'selectPaymentMethod' | translate}}
+        </h2>
+        <div class="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4">
+
+          <!-- CyberSource ATC BO -->
+          @if (isCyberSourceATCBO()) {
+          <label [ngClass]="{
+                        'flex items-center space-x-2 cursor-pointer p-4 border rounded-lg shadow-sm transition-all duration-300 w-full': true,
+                        'border-blue-500 bg-blue-50 dark:bg-blue-900 hover:scale-[1.02] hover:shadow-md': selectedPaymentMethod() === 'CYBERSOURSE_ATC_BO',
+                        'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 hover:border-blue-500 hover:bg-blue-50 hover:dark:bg-blue-900': selectedPaymentMethod() !== 'CYBERSOURSE_ATC_BO'
+                        }">
+            <input type="radio" name="paymentMethod" value="CYBERSOURSE_ATC_BO"
+              (change)="onPaymentMethodChange('CYBERSOURSE_ATC_BO')" class="h-4 w-4"
+              [checked]="selectedPaymentMethod() === 'CYBERSOURSE_ATC_BO'" />
+            <span class="font-medium">{{'card' | translate}}</span>
+            <img src="./public/images/usd-coin.png" alt="{{'card' | translate}}"
+              class="w-6 h-6 ml-2 transition-transform duration-300"
+              [class.scale-110]="selectedPaymentMethod() === 'CYBERSOURSE_ATC_BO'" />
+          </label>
+          }
+
+          <!-- PayPal -->
+          @if (isPayPalBusinessEEUU()) {
+          <label [ngClass]="{
+                        'flex items-center space-x-2 cursor-pointer p-4 border rounded-lg shadow-sm transition-all duration-300 w-full': true,
+                        'border-blue-500 bg-blue-50 dark:bg-blue-900 hover:scale-[1.02] hover:shadow-md': selectedPaymentMethod() === 'PAYPAL',
+                        'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 hover:border-blue-500 hover:bg-blue-50 hover:dark:bg-blue-900': selectedPaymentMethod() !== 'PAYPAL'
+                        }">
+            <input type="radio" name="paymentMethod" value="PAYPAL" (change)="onPaymentMethodChange('PAYPAL')"
+              class="h-4 w-4" [checked]="selectedPaymentMethod() === 'PAYPAL'" />
+            <span class="font-medium">{{'Paypal' | translate}}</span>
+            <img src="./public/images/paypal.png" alt="{{'Paypal' | translate}}"
+              class="w-6 h-6 ml-2 transition-transform duration-300"
+              [class.scale-110]="selectedPaymentMethod() === 'PAYPAL'" />
+          </label>
+          }
+
+          <!-- Stripe LLC -->
+          @if (isStripeLLC()) {
+          <label [ngClass]="{
+                        'flex items-center space-x-2 cursor-pointer p-4 border rounded-lg shadow-sm transition-all duration-300 w-full': true,
+                        'border-blue-500 bg-blue-50 dark:bg-blue-900 hover:scale-[1.02] hover:shadow-md': selectedPaymentMethod() === 'STRIPE_LLC',
+                        'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 hover:border-blue-500 hover:bg-blue-50 hover:dark:bg-blue-900': selectedPaymentMethod() !== 'STRIPE_LLC'
+                        }">
+            <input type="radio" name="paymentMethod" value="STRIPE_LLC" (change)="onPaymentMethodChange('STRIPE_LLC')"
+              class="h-4 w-4" [checked]="selectedPaymentMethod() === 'STRIPE_LLC'" />
+            <span class="font-medium">{{'card' | translate}}</span>
+            <img src="./public/images/card.png" alt="{{'Stripe' | translate}}"
+              class="w-6 h-6 ml-2 transition-transform duration-300"
+              [class.scale-110]="selectedPaymentMethod() === 'STRIPE_LLC'" />
+          </label>
+          }
+
+          <!-- Stripe INC -->
+          @if (isStripeINC()) {
+          <label [ngClass]="{
+                        'flex items-center space-x-2 cursor-pointer p-4 border rounded-lg shadow-sm transition-all duration-300 w-full': true,
+                        'border-blue-500 bg-blue-50 dark:bg-blue-900 hover:scale-[1.02] hover:shadow-md': selectedPaymentMethod() === 'STRIPE_INC',
+                        'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 hover:border-blue-500 hover:bg-blue-50 hover:dark:bg-blue-900': selectedPaymentMethod() !== 'STRIPE_INC'
+                        }">
+            <input type="radio" name="paymentMethod" value="STRIPE_INC" (change)="onPaymentMethodChange('STRIPE_INC')"
+              class="h-4 w-4" [checked]="selectedPaymentMethod() === 'STRIPE_INC'" />
+            <span class="font-medium">{{'card' | translate}}</span>
+            <img src="./public/images/card.png" alt="{{'Stripe' | translate}}"
+              class="w-6 h-6 ml-2 transition-transform duration-300"
+              [class.scale-110]="selectedPaymentMethod() === 'STRIPE_INC'" />
+          </label>
+          }
+
+          <!-- QR ATC BO -->
+          @if (isQrAtc()) {
+          <label [ngClass]="{
+                        'flex items-center space-x-2 cursor-pointer p-4 border rounded-lg shadow-sm transition-all duration-300 w-full': true,
+                        'border-blue-500 bg-blue-50 dark:bg-blue-900 hover:scale-[1.02] hover:shadow-md': selectedPaymentMethod() === 'QR_ATC_BO',
+                        'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 hover:border-blue-500 hover:bg-blue-50 hover:dark:bg-blue-900': selectedPaymentMethod() !== 'QR_ATC_BO'
+                        }">
+            <input type="radio" name="paymentMethod" value="QR_ATC_BO" (change)="onPaymentMethodChange('QR_ATC_BO')"
+              class="h-4 w-4" [checked]="selectedPaymentMethod() === 'QR_ATC_BO'" />
+            <span class="font-medium">{{'QR' | translate}}</span>
+            <img src="./public/images/qr-code-pay.png" alt="{{'QR' | translate}}"
+              class="w-6 h-6 ml-2 transition-transform duration-300"
+              [class.scale-110]="selectedPaymentMethod() === 'QR_ATC_BO'" />
+          </label>
+          }
+        </div>
+      </fieldset>
+
+      <fieldset
+        class="p-8 rounded-[2rem] bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shadow-sm">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-sm font-black uppercase tracking-widest text-zinc-500">
+            {{'paymentAmount' | translate}}
+          </h2>
+          <span
+            class="text-[10px] font-bold px-2 py-1 bg-primary-50 dark:bg-primary-500/10 text-primary-600 rounded-md">
+            {{'secureTransaction' | translate}}
+          </span>
+        </div>
+
+        <div
+          class="relative group w-full flex items-center py-6 pl-4 pr-4 bg-zinc-50 dark:bg-zinc-800/50 border-2 border-transparent rounded-2xl">
+          <div class="pointer-events-none">
+            <span class="text-2xl font-black text-zinc-300 group-focus-within:text-primary-500 transition-colors">
+              {{ paymentOrderService.paymentOrderPay()?.Money?.symbol }}
+            </span>
+          </div>
+
+          <div
+            class="ml-2 mr-2  w-full min-w-0  text-2xl sm:text-3xl font-black text-zinc-900 dark:text-white outline-none transition-all focus:bg-white dark:focus:bg-zinc-900 focus:border-primary-500 focus:ring-8 focus:ring-primary-500/5 placeholder:text-zinc-300 truncate select-all">
+            {{ formattedPartialAmount | number:'1.2-2' }}
+          </div>
+
+          <button type="button" (click)="openAddAmountModal()"
+            class=" px-4 py-2 bg-white dark:bg-zinc-800 shadow-sm border border-zinc-200 dark:border-zinc-700 rounded-xl text-[10px] font-black uppercase tracking-tighter text-zinc-600 dark:text-zinc-400 hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all z-10">
+            {{'edit' | translate}}
+          </button>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-zinc-200/50 dark:border-zinc-700/30">
+          <button (click)="onEditProfileInfo()" type="button"
+            class="inline-flex items-center justify-center space-x-2 px-4 py-2 bg-white dark:bg-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-700/50 text-zinc-700 dark:text-zinc-200 text-xs font-bold uppercase tracking-wider rounded-lg border border-zinc-200 dark:border-zinc-700 shadow-sm transition-all active:scale-95">
+            <i appIcon iconName="edit-regular" [size]="'w-3.5 h-3.5'" [color]="'text-zinc-500'"></i>
+            <span>{{ 'editPersonalInfo' | translate }}</span> </button>
+        </div>
+
+      </fieldset>
+
+      @if (getErrorMessage(); as errorMessage) {
+      <fieldset
+        class="mt-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-xl p-4 text-center shadow-inner">
+        <div
+          class="flex items-center justify-center space-x-2 text-red-700 dark:text-red-400 font-bold text-sm mb-1 uppercase tracking-wider">
+          <i appIcon iconName="exclamation-regular" [size]="'w-4 h-4'" [color]="'text-red-500'"></i>
+          <span>{{ 'processorResponse' | translate }}</span>
+        </div>
+
+        <p class="text-sm font-medium text-zinc-700 dark:text-zinc-300 italic">
+          "{{ errorMessage }}"
+        </p>
+
+        <p class="text-xs text-zinc-400 dark:text-zinc-500 mt-2">
+          {{ 'pleaseVerifyData' | translate }}
+        </p>
+
+      </fieldset>
+      }
+      <fieldset>
+        <ng-container #container></ng-container>
+      </fieldset>
+
+    </div>
+
+    <div class="mt-5 sm:mt-5">
+      <div [class]="cardClass()" class="p-3 space-y-6">
+        <!-- Encabezado: Título y Estado con Badge -->
+        <div class="flex flex-col items-center space-y-3">
+          <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">
+            {{ 'transactionDetails' | translate }}
+          </h3>
+
+          <span class="inline-flex items-center px-3 py-1 text-xs font-bold rounded-lg transition-all duration-300"
+            [ngClass]="{
+                            'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:ring-emerald-800': 
+                                paymentOrderService.paymentOrderPay()?.status === 'PAID',
+                            'bg-amber-100 text-amber-700 ring-1 ring-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:ring-amber-800': 
+                                paymentOrderService.paymentOrderPay()?.status === 'PENDING',
+                            'bg-sky-100 text-sky-700 ring-1 ring-sky-200 dark:bg-sky-900/30 dark:text-sky-400 dark:ring-sky-800': 
+                                paymentOrderService.paymentOrderPay()?.status === 'PETITION'
+                        }">
+            <span class="mr-1.5 h-1.5 w-1.5 rounded-full bg-current animate-pulse"></span>
+            {{ (paymentOrderService.paymentOrderPay()?.status?.toLowerCase() || '') | translate }}
+          </span>
+        </div>
+
+        <!-- Sección de Montos y Progreso -->
+        <div class="space-y-4 py-6 border-y border-zinc-100 dark:border-zinc-800/50">
+
+          <!-- Código de Colección (Sutil) -->
+          <div class="flex justify-between items-center text-xs font-medium uppercase tracking-tighter">
+            <span class="text-zinc-400">{{'code' | translate}}</span>
+            <span class="text-zinc-900 dark:text-zinc-100 font-mono">
+              {{ paymentOrderService.paymentOrderPay()?.codeCollection }}
+            </span>
+          </div>
+
+          <!-- Fila de Monto Total -->
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-medium text-zinc-500">{{'totalOrderAmount' | translate}}</span>
+            <span class="text-sm font-bold text-zinc-900 dark:text-zinc-100">
+              {{ paymentOrderService.paymentOrderPay()?.totalAmountOrder ?? 0 | number:'1.2-2' }}
+              <small class="text-[10px] opacity-60">{{ paymentOrderService.paymentOrderPay()?.Money?.iso
+                }}</small>
+            </span>
+          </div>
+
+          <!-- Fila de Pagado (Con estilo positivo) -->
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-medium text-emerald-600 dark:text-emerald-500">
+              {{'totalPaid' | translate}}
+            </span>
+            <span class="text-sm font-black text-emerald-600 dark:text-emerald-500">
+              - {{ ($safeNavigationMigration(paymentOrderService.paymentOrderPay()?.totalAmountOrder)! -
+              $safeNavigationMigration(paymentOrderService.paymentOrderPay()?.remainingAmount)!) | number:'1.2-2' }}
+              <small class="text-[10px]">{{ paymentOrderService.paymentOrderPay()?.Money?.iso }}</small>
+            </span>
+          </div>
+
+          <!-- Barra de Progreso Mejorada -->
+          <div class="space-y-2">
+            <div class="w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-2 overflow-hidden border border-zinc-200/20">
+              <div
+                class="bg-gradient-to-r from-emerald-400 to-emerald-600 h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_8px_rgba(16,185,129,0.4)]"
+                [style.width.%]="((paymentOrderService.paymentOrderPay()?.totalAmountOrder! - paymentOrderService.paymentOrderPay()?.remainingAmount!)! / paymentOrderService.paymentOrderPay()?.totalAmountOrder!) * 100">
+              </div>
+            </div>
+            <div class="flex justify-end">
+              <span class="text-[10px] font-black text-emerald-600 uppercase">
+                {{ ((($safeNavigationMigration(paymentOrderService.paymentOrderPay()?.totalAmountOrder)! -
+                $safeNavigationMigration(paymentOrderService.paymentOrderPay()?.remainingAmount)!)! /
+                $safeNavigationMigration(paymentOrderService.paymentOrderPay()?.totalAmountOrder)!) * 100) |
+                number:'1.0-0' }}%
+                {{'completed' | translate}}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Input del Monto Parcial o Visualización del Pago en Curso -->
+        <div
+          class="p-4 rounded-2xl border-2 border-dashed border-zinc-200 dark:border-zinc-700 bg-zinc-50/30 dark:bg-zinc-800/20">
+          <div class="flex justify-between items-center">
+            <div class="flex flex-col">
+              <span class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+                {{ 'amountToPay' | translate }}
+              </span>
+              <span class="text-xs text-zinc-500">
+                {{ 'enteringAmount' | translate }}
+              </span>
+            </div>
+
+            <!-- Aquí vinculas la variable que captura el monto del input -->
+            <div class="flex items-baseline space-x-1">
+              <span class="text-xl font-black text-zinc-900 dark:text-white">
+                {{ formattedPartialAmount | number:'1.2-2' }}
+              </span>
+              <span class="text-[10px] font-bold text-zinc-400">
+                {{ paymentOrderService.paymentOrderPay()?.Money?.iso }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flecha indicadora de operación (Opcional para diseño) -->
+        <div class="flex justify-center -my-4 relative z-10">
+          <div class="bg-white dark:bg-zinc-900 p-1 rounded-full border border-zinc-200 dark:border-zinc-700">
+            <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </div>
+        </div>
+        <!-- Saldo Pendiente (El Héroe del Card) -->
+        <div
+          class="bg-indigo-50/50 dark:bg-indigo-500/5 p-4 rounded-2xl border border-indigo-100/50 dark:border-indigo-500/10 flex justify-between items-center transition-all hover:scale-[1.01]">
+          <span class="text-sm font-bold text-indigo-900 dark:text-indigo-300 uppercase tracking-wider">{{'balanceDue'
+            | translate}}</span>
+          <div class="text-right">
+            <span class="text-2xl font-black text-indigo-600 dark:text-indigo-400">
+              {{ paymentOrderService.paymentOrderPay()?.remainingAmount ?? 0 | number:'1.2-2' }}
+            </span>
+            <span class="ml-1 text-xs font-bold text-indigo-500/60">{{
+              paymentOrderService.paymentOrderPay()?.Money?.iso }}</span>
+          </div>
+        </div>
+
+        <!-- Historial de Abonos Elegante -->
+        @if (paymentOrderService.paymentOrderPay()?.installments?.length > 0) {
+        <div class="pt-2">
+          <details class="group">
+            <summary
+              class="flex justify-between items-center font-bold cursor-pointer list-none text-[10px] text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors">
+              <span>{{'viewPaymentHistory' | translate}}</span>
+              <span class="transition-transform group-open:rotate-180 p-1 bg-zinc-100 dark:bg-zinc-800 rounded-md">
+                <svg fill="none" height="12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                  stroke-width="3" viewBox="0 0 24 24" width="12">
+                  <path d="M6 9l6 6 6-6"></path>
+                </svg>
+              </span>
+            </summary>
+
+            <div class="my-4 space-y-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
+              @for (payment of paymentOrderService.paymentOrderPay()?.installments; track payment) {
+              <div
+                class="flex justify-between items-center p-3 rounded-xl bg-zinc-50/50 dark:bg-zinc-800/30 border border-zinc-100 dark:border-zinc-800 transition-all hover:border-emerald-200 dark:hover:border-emerald-800">
+                <div class="flex flex-col">
+                  <span class="text-[10px] font-bold text-zinc-800 dark:text-zinc-200">{{ payment.date
+                    | date:'mediumDate' }}</span>
+                  <span class="text-[9px] text-zinc-400 uppercase">
+                    {{ payment.date | date:'shortTime'}}
+                  </span>
+                </div>
+                <span class="text-sm font-black text-emerald-600 dark:text-emerald-400">
+                  +{{ $safeNavigationMigration(payment?.partialAmount) | number:'1.2-2' }}
+                  {{ payment?.partialMoney?.iso }}
+                </span>
+              </div>
+              }
+            </div>
+          </details>
+        </div>
+        }
+      </div>
+    </div>
+
+  </div>
+
+  <div class="text-zinc-600 dark:text-zinc-300 m-10">
+    <div class="">
+      <div class="block text-sm font-medium  ">
+        {{'messageAcceptPayment' | translate}}
+      </div>
+    </div>
+
+    <div class="hidden sm:block">
+      <div class="py-5">
+        <div class="border-t border-zinc-200 dark:border-zinc-700"></div>
+      </div>
+    </div>
+
+    <div class="flex justify-center">
+      <div>
+        <div class="flex items-center mb-2 space-x-2 font-bold uppercase  text-xs ">
+          <i appIcon iconName="lock-solid" [size]="'w-6 h-6'" [color]="'text-primary-600 dark:text-primary-400'"></i>
+          <span>{{'paymentProtected' | translate}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@if (dialogService.activeModal() === 'addAmount') {
+<div [ngClass]="modalClass()" (click)="$event.stopPropagation()" @flyInOut>
+  <section class="p-4 sm:p-6 overflow-y-auto max-h-[80vh]">
+    <fieldset [formGroup]="paymentForm">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-sm font-black uppercase tracking-widest text-zinc-500">
+          {{'paymentAmount' | translate}}
+        </h2>
+        <span class="text-[10px] font-bold px-2 py-1 bg-primary-50 dark:bg-primary-500/10 text-primary-600 rounded-md">
+          {{'secureTransaction' | translate}}
+        </span>
+      </div>
+
+      <div class="relative group w-full flex items-center overflow-x-auto">
+        <!-- Prefijo de Moneda -->
+        <div class="absolute left-4 z-10 pointer-events-none">
+          <span class="text-2xl font-black text-zinc-300 group-focus-within:text-primary-500 transition-colors">
+            {{ paymentOrderService.paymentOrderPay()?.Money?.symbol }}
+          </span>
+        </div>
+
+        <!-- INPUT REFORMADO -->
+        <input type="text" formControlName="amount" [maxLength]="8" (keypress)="onlyNumbers($event)"
+          (paste)="$event.preventDefault()" inputmode="decimal"
+          class="block w-28 min-w-0 flex-1 pl-10 pr-10 py-6 bg-zinc-50 dark:bg-zinc-800/50 border-2 border-transparent rounded-2xl text-2xl sm:text-3xl font-black text-zinc-900 dark:text-white outline-none transition-all focus:bg-white dark:focus:bg-zinc-900 focus:border-primary-500 focus:ring-8 focus:ring-primary-500/5 placeholder:text-zinc-300"
+          placeholder="0.00" />
+
+        <!-- Botón de Acción Rápida -->
+        <button type="button" (click)="setFullAmount()"
+          class="absolute right-4 px-4 py-2 bg-white dark:bg-zinc-800 shadow-sm border border-zinc-200 dark:border-zinc-700 rounded-xl text-[10px] font-black uppercase tracking-tighter text-zinc-600 dark:text-zinc-400 hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all z-20">
+          {{'payTotal' | translate}}
+        </button>
+      </div>
+
+      <!-- Errores de Validación -->
+      @if (paymentForm.get('amount')?.invalid && paymentForm.get('amount')?.touched) {
+      <div class="mt-3 flex items-center space-x-2 text-rose-500">
+        <span class="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+        <span class="text-[10px] font-bold uppercase tracking-wide">
+          {{ (paymentForm.get('amount')?.errors?.['exceeded'] ? 'errorExceeded' : 'errorMinAmount') |
+          translate }}
+        </span>
+      </div>
+      }
+    </fieldset>
+
+    <fieldset class="flex justify-between space-x-5 mt-6">
+      <button type="button" (click)="onCloseModalPaymentForm()" [disabled]="paymentForm.invalid || paymentForm.disabled"
+        [ngClass]="buttonSecondaryClass()" class="w-full">
+        <i appIcon iconName="close-regular" [size]="'w-6 h-6'" [color]="'text-white'"></i>
+        {{'cancel' | translate}}
+      </button>
+      <button type="submit" (click)="onSubmit()" [disabled]="paymentForm.invalid || paymentForm.disabled"
+        [ngClass]="buttonPrimaryClass()" class="w-full">
+        <i appIcon iconName="check-regular" [size]="'w-6 h-6'" [color]="'text-white'"></i>
+        {{'accept' | translate}}
+      </button>
+    </fieldset>
+
+  </section>
+</div>
+}

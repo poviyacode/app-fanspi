@@ -1,0 +1,257 @@
+@if (isBrowser) {
+<ng-container #container></ng-container>
+
+<section (click)="onScrollTop()"
+  class="sticky flex justify-between items-center cursor-pointer top-0 w-full p-2 sm:p-4 bg-white dark:bg-background-dark text-zinc-600 dark:text-zinc-200 shadow-lg z-20 transition-all duration-300">
+  <div class="flex items-center space-x-4">
+    <div
+      class="font-bold bg-gradient-to-r from-blue-500 to-indigo-500 dark:from-blue-700 dark:to-indigo-700 text-white p-4 rounded-lg shadow-md">
+      #
+    </div>
+    <div>
+      <h1 class="font-bold text-3xl text-gray-900 dark:text-white leading-tight">
+        #{{ tag }}
+      </h1>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        <span class="font-semibold text-blue-500 dark:text-blue-300">
+          {{ totalPages }}
+        </span>
+       <span class="font-semibold">{{ 'posts' | translate }}</span>
+      </p>
+    </div>
+  </div>
+  <div>
+    <button (click)="shareTag()"
+      class="flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-transform duration-300 transform hover:scale-110 focus:outline-none"
+      aria-label="Share tag">
+      <i appIcon iconName="share-regular" [size]="'w-8 h-8'" [color]="'text-zinc-800 dark:text-white'"></i>
+    </button>
+  </div>
+</section>
+
+<main class="mx-0 sm:mx-2 mt-2 mb-20 sm:mb-2">
+  @if (this.postService.posts().length > 0) {
+  <div class="space-y-0 px-0 md:px-0">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+      @for (item of this.postService.posts(); track $index) {
+      <article #theLastList
+        class="
+                            border  {{
+                        item.plan == 1
+                          ? 'border-blue-600'
+                          : item.plan == 2
+                          ? 'border-purple-500'
+                          : 'border-zinc-100 dark:border-zinc-800 '
+                      }}
+                            my-0 break-inside  bg-white dark:bg-zinc-800/40 dark:text-zinc-200 flex flex-col bg-clip-border w-full shadow-md rounded-2xl">
+        <div class="flex p-4 items-center justify-between w-full">
+          <div class="flex truncate">
+            <a class="inline-block mr-4 w-fit" routerLink="/{{ item.User!.username }}">
+              @if (item.User && item.User.Profile && item.User.Profile.length
+              > 0) {
+              <div class="rounded-full shadow-lg">
+                <img ngOptimizedImage priority="high" class="rounded-full max-w-none w-16 h-16 object-cover"
+                  [src]="item.User.Profile[0].cloudflare?.result?.variants?.[0] || item.User.Profile[0].url || ''" />
+              </div>
+              } @else {
+              <div
+                class="rounded-full max-w-none w-16 h-16 object-cover bg-zinc-100 dark:bg-primary-800/10 flex justify-center items-center shadow-lg">
+                <i class="fa-regular fa-circle-user text-4xl sm:text-4xl text-primary-500"></i>
+              </div>
+              }
+            </a>
+            <div class="flex flex-col truncate">
+              <a class="inline-block text-lg font-bold dark:text-white truncate"
+                  routerLink="/{{ item.User!.username }}">{{
+                  item.User!.name ? item.User!.name : item.User!.username
+                  }}
+              </a>
+              <div class="text-zinc-500 dark:text-zinc-400 text-xs">
+                {{ item.createdAt | dateAgo }}
+              </div>
+            </div>
+          </div>
+          <div class="flex space-x-5 justify-between items-center w-fit">
+            <div class="flex">
+              @if (item.plan == 1 || item.plan ==2) {
+              <div class="py-1 text-sm text-white -top-1 right-4 rounded-full transform translate-x-2 -translate-y-3">
+                @if (item.plan == 2) {
+                <div class="text-xs bg-purple-800 text-white px-2 rounded-full">
+                  <i class="fa-solid fa-crown"></i>
+                  <span class="font-bold"> Gold</span>
+                </div>
+                } @if (item.plan == 1) {
+                <div class="text-xs bg-blue-800 text-white px-2 rounded-full">
+                  <i class="fa-solid fa-crown"></i>
+                  <span class="font-bold"> Top</span>
+                </div>
+                }
+              </div>
+              }
+            </div>
+
+            <!-- pin --->
+            <div class="flex-col justify-between items-stretch hidden">
+              @if (item.pined == true) {
+              <button (click)="onPinToTop(item)"
+                class="text-rose-500 dark:text-rose-500 hover:bg-white hover:dark:bg-zinc-800/30 w-8 h-8 rounded-full">
+                <i class="fa-solid fa-thumbtack"></i>
+              </button>
+              }
+            </div>
+
+          </div>
+        </div>
+
+        @if (item.PostMedia!.length > 0) {
+        <div id="content" class="relative">
+          <div (click)="onModalPost(item)" class="h-48 sm:h-56 md:h-72 w-full cursor-pointer">
+            <div #main class="relative">
+
+              <!-- image preview-->
+              <div class="h-48 sm:h-56 md:h-72 w-full" [attr.key]="item.code"
+                [style.background-image]="
+                        item.PostMedia![0].type === 'image' 
+                          ? 'url(' + (item.PostMedia![0].cloudflare ? item.PostMedia![0].cloudflare.result.variants[0] : item.PostMedia![0].url) + ')' 
+                          : 'url(' + (item.PostMedia![0].cloudflare ? item.PostMedia![0].cloudflare.result.thumbnail : item.PostMedia![0].urlSnapshot) + ')'"
+                style="background-repeat: no-repeat; background-size: 100% auto;">
+
+                <div class="lightbox backdrop-blur-xl bg-black/60 relative">
+                  <div class="flex justify-center items-center">
+
+                    <!-- <div *ngIf="loading" class="absolute inset-0 flex justify-center items-center">
+                              <div
+                                class="spinner-border text-white animate-spin w-8 h-8 border-4 border-t-transparent border-solid rounded-full">
+                              </div>
+                            </div>
+                             -->
+                    @if (item.PostMedia![0].type === 'image') {
+                    <img ngOptimizedImage priority="high" [src]="getImageUrl(item)" [attr.key]="item.code"
+                      [alt]="item.title || 'yuvinka'" class="h-48 sm:h-56 md:h-72 w-fit object-cover"
+                      (load)="loading = false" (error)="loading = false" />
+                    }
+                    @else if (item.PostMedia![0].type === 'video') {
+                    <div class="video-container h-48 sm:h-56 md:h-72 w-fit relative">
+                      <img ngOptimizedImage priority="high" [src]="getVideoThumbnailUrl(item)" [attr.key]="item.code"
+                        [alt]="item.title || 'yuvinka'" class="h-48 sm:h-56 md:h-72 w-fit object-cover -mr-2"
+                        (load)="loading = false" (error)="loading = false" />
+
+                      <div class="absolute inset-0 flex justify-center items-center">
+                        <div
+                          class="rounded-full bg-black hover:bg-primary-500 bg-opacity-50 w-16 h-16 flex justify-center items-center transition duration-300 transform hover:scale-110">
+                          <i class="fa-solid fa-play text-3xl text-white ml-1"></i>
+                        </div>
+                      </div>
+                    </div>
+                    }
+                  </div>
+                </div>
+              </div>
+
+              @if (authService.user()! && item.User?._id ===
+              authService.user()!._id) {
+              <div class="absolute left-2 top-2 text-xs">
+                @if (item.typeView === 'FREE') {
+                <span class="bg-amber-600 text-zinc-50 rounded-full uppercase px-2 font-normal text-xs">{{
+                  "free" | translate }}</span>
+                } @if (item.typeView === 'SUBSCRIBERS') {
+                <div class="{{
+                                  item.previewMedia
+                                    ? 'border-purple-600 border-2 rounded-full p-0.5'
+                                    : ''
+                                }} text-xs">
+                  <span class="{{
+                                    item.previewMedia ? 'bg-purple-800' : 'bg-purple-800'
+                                  }} text-zinc-50 rounded-full uppercase px-2 font-normal text-xs">{{ "suscribers" |
+                    translate }}</span>
+                </div>
+                }
+              </div>
+              } @if (item.PostMedia!.length > 1) {
+              <div class="absolute bottom-1 sm:bottom-2 left-1/2 transform -translate-x-1/2 flex justify-center">
+                <div class="bg-black bg-opacity-30 rounded-full px-2 py-0 shadow-lg flex justify-center items-center">
+                  <span class="text-white text-sm md:text-xs font-medium">
+                    1 / {{ item.PostMedia!.length }}
+                  </span>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+
+          @if (subscriptionExpiredQuery(item)) {
+          <div class="absolute inset-0 text-white dark:text-zinc-300 bg-zinc-100/50 dark:bg-zinc-800/50 m-0 space-y-2 
+                        {{ item.previewMedia ? 'rounded-md backdrop-blur-lg m-7 sm:m-10' : 'backdrop-blur-3xl' }}">
+            <div class="flex justify-center items-center h-full">
+              <span
+                class="bg-purple-800 flex items-center justify-center text-zinc-50 rounded-full uppercase px-2 py-2 font-normal text-xs">
+                <i class="fa-solid fa-lock"></i>
+              </span>
+            </div>
+          </div>
+          }
+
+        </div>
+        }
+
+        @if (item.title || item.description) {
+        <hr class="border border-zinc-100 dark:border-zinc-800 mb-2" />
+        }
+
+        @if (item.description) {
+        <p class="px-3 text-sm mb-2 truncate h-5" [innerHTML]="innerText(item.description)"></p>
+        }
+
+      </article>
+      }
+    </div>
+  </div>
+
+  @if(loading) {
+  <div class="flex justify-center items-center space-x-2 mt-5">
+    <span class="relative flex h-3 w-3">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+      <span class="relative inline-flex rounded-full h-3 w-3 bg-primary-500"></span>
+    </span>
+
+    <span class="relative flex h-2 w-2">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"
+        style="animation-delay: 150ms;"></span>
+      <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+    </span>
+
+    <span class="relative flex h-2.5 w-2.5">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"
+        style="animation-delay: 300ms;"></span>
+      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary-500"></span>
+    </span>
+  </div>
+  }
+
+  } @else if (loading) {
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+    @for (item of postLoading; track $index) {
+    <section
+      class="border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-background-dark p-4 w-full mx-auto space-y-2 shadow-md rounded-2xl">
+      <div class="animate-pulse flex space-x-4">
+        <div class="rounded-full bg-zinc-100 dark:bg-zinc-800 w-16 h-16 aspect-square"></div>
+        <div class="flex-1 space-y-6 py-1 truncate">
+          <div class="flex flex-col space-y-1">
+            <div class="h-2 bg-zinc-100 dark:bg-zinc-800 rounded w-32 truncate"></div>
+            <div class="h-2 bg-zinc-100 dark:bg-zinc-800 rounded w-24 truncate"></div>
+          </div>
+        </div>
+      </div>
+      <div class="animate-pulse h-2 bg-zinc-100 dark:bg-zinc-800 rounded"></div>
+      <div class="animate-pulse w-full h-48 sm:h-56 md:h-72 bg-zinc-100 dark:bg-zinc-800 rounded"></div>
+    </section>
+    }
+  </div>
+  } @else {
+  <div class="text-center font-light text-3xl mt-20">
+    {{ "there_is_no_data" | translate }}
+  </div>
+  }
+</main>
+
+}

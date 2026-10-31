@@ -1,0 +1,72 @@
+@if (isBrowser) {
+<section class="full-height flex justify-center items-center bg-gray-100 dark:bg-zinc-900">
+    <div class="w-full max-w-md p-6 bg-white dark:bg-zinc-800 rounded-lg shadow-lg text-center space-y-6">
+
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
+            {{'emailVerificationStatus' | translate}}
+        </h1>
+
+        @if(!loading() && emailVerified()) {
+        <div>
+            <p class="mb-5">
+                <i appIcon iconName="check-circle-regular" [size]="'w-20 h-20'" [color]="'text-green-500'"></i>
+            </p>
+
+            <p class="text-green-600 dark:text-green-400 font-semibold">
+                {{'emailConfirmed' | translate}}
+            </p>
+            <p class="text-gray-600 dark:text-gray-400">
+                {{'thankYouForVerifying' | translate}}
+                <span class="font-medium">{{ email() }}</span>.
+            </p>
+
+            <button type="button" (click)="redirectHome()" [ngClass]="buttonClass()"
+                class="mt-4 px-4 py-2 rounded-full">
+                {{'goToHome' | translate}}
+            </button>
+
+        </div>
+        } @else if(!loading()) {
+        <div>
+
+            <p class="mb-5">
+                <i appIcon iconName="cancel-circle-regular" [size]="'w-20 h-20'"
+                    [color]="'text-red-600 dark:text-red-400'"></i>
+            </p>
+
+            <p class="text-red-600 dark:text-red-400 font-semibold">
+                {{'emailNotConfirmed' | translate}}
+            </p>
+            <p class="text-gray-600 dark:text-gray-400">
+                {{'checkInbox' | translate}}
+                <span class="font-medium">{{ email() }}</span>.
+            </p>
+            <button [ngClass]="buttonClass()" class="mt-4 px-4 py-2 rounded-lg" (click)="resendVerificationEmail()">
+               {{'resendVerificationEmail' | translate}}
+            </button>
+        </div>
+        } @else {
+        <div class="flex justify-center items-center space-x-2 h-full">
+            <span class="relative flex h-3 w-3">
+                <span
+                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-primary-500"></span>
+            </span>
+
+            <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"
+                    style="animation-delay: 150ms;"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-800"></span>
+            </span>
+
+            <span class="relative flex h-2.5 w-2.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"
+                    style="animation-delay: 300ms;"></span>
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary-700"></span>
+            </span>
+        </div>
+        }
+
+    </div>
+</section>
+}

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>fanspi.com</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="./public/logo/icon.png">
+  <link rel="manifest" href="public/manifest.webmanifest">
+  <meta name="theme-color" content="#1976d2">
+  <meta name="referrer" content="no-referrer">
+  <!-- <script src="https://js.stripe.com/v3/"></script> -->
+
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-zinc-800 dark:text-zinc-200 font-light">
+  <app-root></app-root>
+  <noscript>
+
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-V98YJ7HR32"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+
+      gtag('config', 'G-V98YJ7HR32');
+    </script>
+    <script src="https://cdn.brevo.com/js/sdk-loader.js" async></script>
+    <script>
+      // Version: 2.0
+      window.Brevo = window.Brevo || [];
+      Brevo.push([
+        "init",
+        {
+          client_key: "gs5ylcn5kp94ik9qy617ktlw",
+          // Optional: Add other initialization options, see documentation
+        }
+      ]);
+    </script>
+  </noscript>
+</body>
+
+</html>

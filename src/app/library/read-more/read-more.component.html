@@ -1,0 +1,9 @@
+<div #textContainer [innerHTML]="text" 
+[class.collapsed]="isCollapsed" 
+[style.height]="isCollapsed ? maxHeight + 'px' : 'auto'"></div>
+<!-- Solo mostrar el botón si es colapsable -->
+@if (isCollapsable) {
+<div  class="cursor-pointer text-sm text-primary-500" (click)="onChange()">
+  {{ isCollapsed ? ('read.more' | translate) : ('read.less' | translate) }}
+</div>
+}

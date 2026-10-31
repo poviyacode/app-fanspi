@@ -1,0 +1,8 @@
+<div class="modal-background" [@fade]="modalState" (click)="closeModal()">
+    <div class="relative rounded-xl overflow-auto p-8 ">
+        <div (click)="($event.stopPropagation())"
+            class="overflow-auto h-screen  relative max-w-sm mx-auto bg-background-light dark:bg-background-dark  shadow-lg ring-1 ring-black/5 rounded-xl flex flex-col divide-y dark:divide-slate-200/5">
+            <ng-content></ng-content>
+        </div>
+    </div>
+</div>

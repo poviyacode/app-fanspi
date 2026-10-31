@@ -1,0 +1,11 @@
+<div class="modal-background" [@fade]="modalState" (click)="closeModal()">
+  <div class="max-w-6xl mx-auto w-full">
+    <div class="bg-background-light dark:bg-background-dark shadow-lg border border-zinc-600 dark:border-zinc-800" (click)="($event.stopPropagation())">
+        <div class="content-container">
+          <ng-content></ng-content>
+        </div>
+      </div>
+  </div>
+</div>
+
+  

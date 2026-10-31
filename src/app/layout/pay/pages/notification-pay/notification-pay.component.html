@@ -1,0 +1,114 @@
+@if (isBrowser) {
+<div class="p-4 flex flex-col items-center justify-center min-h-screen">
+    <div [class]="cardClass()" class="px-6 py-12 max-w-lg w-full space-y-5">
+
+        <div class="flex flex-col items-center space-y-5">
+            <div class="text-6xl">
+                @if (paymentOrderService.paymentOrder()?.status === 'PAID') {
+                <i appIcon iconName="check-circle-regular" [size]="'w-16 h-16'" [color]="'text-green-500'"></i>
+                } @else if (paymentOrderService.paymentOrder()?.status === 'PENDING' && !getLastInstallmentError()) {
+                <i appIcon iconName="info-circle-regular" [size]="'w-16 h-16'" [color]="'text-yellow-500'"></i>
+                } @else if (paymentOrderService.paymentOrder()?.status === 'DECLINE' ||
+                paymentOrderService.paymentOrder()?.status === 'ERROR' || getLastInstallmentError()) {
+                <i appIcon iconName="error-regular" [size]="'w-16 h-16'" [color]="'text-red-500'"></i>
+                }
+            </div>
+
+            <div class="w-full text-zinc-800 dark:text-zinc-200 leading-snug tracking-wide">
+                @if (paymentOrderService.paymentOrder()?.status === 'PAID') {
+                <div class="space-y-3 md:space-y-4 text-center">
+                    <div class="text-2xl md:text-3xl font-extrabold text-green-600 dark:text-green-400 leading-tight">
+                        {{ 'paymentSuccess' | translate }} 🎉
+                    </div>
+                    <div class="text-lg text-zinc-700 dark:text-zinc-300 font-normal">
+                        {{ 'transactionSuccess' | translate }}
+                    </div>
+                </div>
+                }
+                <!-- pending->payment-->
+                @else if (paymentOrderService.paymentOrder()?.status === 'PENDING') {
+                @if(lastAttemptStatus === 'PAID'){
+                <div class="space-y-3 md:space-y-4 text-center">
+                    <div class="text-2xl md:text-3xl font-extrabold text-green-600 dark:text-green-400 leading-tight">
+                        {{ 'partialPaymentSuccess' | translate }} 🎉
+                    </div>
+                </div>
+                } @else {
+                <div class="space-y-3 md:space-y-4 text-center">
+                    <div class="text-2xl md:text-3xl font-extrabold text-yellow-600 dark:text-yellow-400 leading-tight">
+                        {{ 'paymentPending' | translate }} ⏳
+                    </div>
+                </div>
+                }
+
+                <!-- decline-->
+                } @else if (paymentOrderService.paymentOrder()?.status === 'DECLINE' || getLastInstallmentError()) {
+                <div class="text-3xl font-bold text-red-500 leading-tight flex items-center justify-center gap-2">
+                    {{ 'paymentRejected' | translate }}
+                    <i appIcon iconName="close-regular" [size]="'w-8 h-8'" [color]="'text-red-500'"></i>
+                </div>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+                    {{ 'paymentRejectedSubtitle' | translate }} </p>
+                } @else if (paymentOrderService.paymentOrder()?.status === 'ERROR') {
+                <div class="text-3xl font-semibold text-red-500">
+                    {{ 'error' | translate }}
+                </div>
+                }
+            </div>
+        </div>
+
+        @if (getErrorMessage(); as errorMessage) {
+        <div
+            class="mt-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-xl p-4 text-center shadow-inner">
+            <div
+                class="flex items-center justify-center space-x-2 text-red-700 dark:text-red-400 font-bold text-sm mb-1 uppercase tracking-wider">
+                <i appIcon iconName="exclamation-regular" [size]="'w-4 h-4'" [color]="'text-red-500'"></i>
+                <span>{{ 'processorResponse' | translate }}</span>
+            </div>
+            <p class="text-sm font-medium text-zinc-700 dark:text-zinc-300 italic">
+                "{{ errorMessage }}"
+            </p>
+            <p class="text-xs text-zinc-400 dark:text-zinc-500 mt-2">
+                {{ 'pleaseVerifyData' | translate }} </p>
+        </div>
+        }
+
+        <div class="mt-5 sm:mt-0">
+            <div class="space-y-4">
+                <div class="mt-2 font-bold uppercase sm:mt-0 text-xs tracking-wider text-zinc-400">
+                    {{ 'transactionDetails' | translate }}
+                </div>
+                <div class="flex justify-between pt-0 text-base font-semibold">
+                    <span>{{ 'code' | translate }}</span>
+                    <span class="font-mono">{{ paymentOrderService.paymentOrder()?.codeCollection }}</span>
+                </div>
+                <div class="border-b border-zinc-200 dark:border-zinc-700"></div>
+                <div class="flex justify-between pt-0 text-base font-semibold">
+                    <span>{{ 'totalPaid' | translate }}</span>
+                    <span class="text-primary-600 dark:text-primary-400 font-black">
+                        {{ ((paymentOrderService.paymentOrder()?.totalAmountOrder ?? 0) -
+                        (paymentOrderService.paymentOrder()?.remainingAmount ?? 0)) | number:'1.2-2' }}
+                        {{ paymentOrderService.paymentOrder()?.Money?.iso }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-center space-x-2">
+            <button (click)="onCancelTransaction()" type="button" [ngClass]="buttonSecondaryClass()" class="w-full">
+                {{ 'return' | translate }}
+            </button>
+
+            @if (paymentOrderService.paymentOrder()?.status === 'DECLINE' ||
+            paymentOrderService.paymentOrder()?.status === 'PENDING' ||
+            paymentOrderService.paymentOrder()?.status === 'ERROR' ||
+            getLastInstallmentError()) {
+            <button (click)="onPayment()" type="submit" [ngClass]="buttonPrimaryClass()" class="w-full">
+                {{ 'retryPayment' | translate }}
+            </button>
+            }
+        </div>
+
+    </div>
+</div>
+}

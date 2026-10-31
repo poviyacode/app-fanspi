@@ -1,0 +1,17 @@
+<div class="modal-background fixed inset-0 flex items-center md:justify-end" [@fade]="modalState" (click)="closeModal()">
+  <div class="max-w-6xl mx-auto md:float-none mt-auto">
+    <div
+      class="mt-10 md:mt-20  w-64 bg-background-light dark:bg-background-dark rounded-lg shadow-xl border border-zinc-600 dark:border-zinc-800 "
+      (click)="($event.stopPropagation())">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="modal-background fixed inset-0 flex items-center justify-center" [@fade]="modalState" (click)="closeModal()">
+    <div class="max-w-6xl mx-auto md:float-none mt-auto">
+      <div class="mt-10 md:mt-20 w-64 bg-background-light dark:bg-background-dark rounded-lg shadow-xl border border-zinc-600 dark:border-zinc-800" (click)="($event.stopPropagation())">
+        <ng-content></ng-content>
+      </div>
+    </div>
+  </div> -->

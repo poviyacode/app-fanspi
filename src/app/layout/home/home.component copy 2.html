@@ -1,0 +1,409 @@
+@if(isBrowser) {
+<!-- HEADER TIPO AIRBNB -->
+<header
+    class="w-full bg-white dark:bg-secondary-950 text-secondary-900 dark:text-white border-b border-secondary-200 dark:border-secondary-800 sticky top-0 z-50 transition-colors duration-300">
+    <div class="container mx-auto px-4 md:px-8 h-20 flex items-center justify-between gap-4">
+
+        <!-- Logo Brand -->
+        <a routerLink="/" class="flex items-center gap-2.5 shrink-0 group">
+            <div
+                class="w-9 h-9 bg-primary-500 rounded-xl flex items-center justify-center p-1.5 shadow-md shadow-primary-500/20 group-hover:scale-105 transition-transform duration-300">
+                <img src="./public/logo/icon.png" alt="fanspi Academy"
+                    class="w-full h-full object-contain transition-transform duration-500 group-hover:rotate-3">
+            </div>
+            <div class="flex-col hidden sm:flex">
+                <span class="text-xl font-black tracking-tight text-secondary-900 dark:text-white leading-none">
+                    fanspi<span class="text-primary-500">.</span>
+                </span>
+                <span class="text-[9px] font-bold text-secondary-400 tracking-widest uppercase mt-0.5">
+                    Stays & Homes
+                </span>
+            </div>
+        </a>
+
+        <!-- Buscador Central Interactivo (Píldora Airbnb) -->
+        <div
+            class="hidden md:flex items-center bg-white dark:bg-secondary-900 border border-secondary-200 dark:border-secondary-700 rounded-full pl-5 pr-2 py-2 shadow-sm hover:shadow-md transition-all cursor-pointer text-sm gap-3">
+            <button class="font-semibold text-secondary-900 dark:text-white hover:text-primary-500 transition-colors">
+                En cualquier lugar
+            </button>
+            <span class="h-4 w-px bg-secondary-200 dark:bg-secondary-700"></span>
+            <button class="font-semibold text-secondary-900 dark:text-white hover:text-primary-500 transition-colors">
+                Cualquier semana
+            </button>
+            <span class="h-4 w-px bg-secondary-200 dark:bg-secondary-700"></span>
+            <button class="text-secondary-400 font-normal hover:text-primary-500 transition-colors">
+                ¿Cuántos?
+            </button>
+            <div
+                class="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center text-white ml-1 shrink-0 shadow-sm">
+                <i class="fas fa-search text-xs"></i>
+            </div>
+        </div>
+
+        <!-- Acciones Derecha -->
+        <div class="flex items-center gap-2">
+            <a routerLink="/host"
+                class="hidden lg:inline-block text-xs font-semibold px-4 py-2.5 rounded-full hover:bg-secondary-100 dark:hover:bg-secondary-800 transition-colors text-secondary-800 dark:text-secondary-200">
+                Pon tu espacio en fanspi
+            </a>
+
+            <a routerLink="/auth/login"
+                class="hidden sm:inline-block text-sm font-semibold px-4 py-2.5 rounded-full hover:bg-secondary-100 dark:hover:bg-secondary-800 transition-colors text-secondary-800 dark:text-secondary-200">
+                {{ 'logIn' | translate }}
+            </a>
+
+            <a routerLink="/auth/register"
+                class="bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-all shadow-sm hover:shadow-md active:scale-95">
+                {{ 'signUp' | translate }}
+            </a>
+
+            <!-- Menú Mobile Hamburguesa -->
+            <button (click)="toggleMenu()"
+                class="lg:hidden p-2 rounded-full border border-secondary-200 dark:border-secondary-700 hover:shadow-md transition-shadow text-secondary-700 dark:text-secondary-300 ml-1">
+                <i class="fas" [class.fa-bars]="!isMobileMenuOpen" [class.fa-times]="isMobileMenuOpen"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Menú Desplegable Mobile -->
+    @if(isMobileMenuOpen) {
+    <div
+        class="lg:hidden border-t border-secondary-200 dark:border-secondary-800 bg-white dark:bg-secondary-950 px-6 py-6 flex flex-col gap-4 animate-fadeIn">
+        <a href="#alojamientos" (click)="toggleMenu()"
+            class="text-lg font-bold text-secondary-900 dark:text-white">Explorar Alojamientos</a>
+        <a href="#categorias" (click)="toggleMenu()"
+            class="text-lg font-bold text-secondary-900 dark:text-white">Categorías</a>
+        <a routerLink="/host" (click)="toggleMenu()" class="text-lg font-bold text-primary-500">Pon tu espacio en
+            fanspi</a>
+        <hr class="border-secondary-200 dark:border-secondary-800 my-2">
+        <a routerLink="/auth/login" (click)="toggleMenu()"
+            class="text-base font-semibold text-secondary-700 dark:text-secondary-300">
+            {{ 'logIn' | translate }}
+        </a>
+    </div>
+    }
+</header>
+
+<main class="bg-white dark:bg-secondary-950 transition-colors duration-300">
+
+    <!-- BARRA DE CATEGORÍAS (Icon Strip Slider) -->
+    <section id="categorias"
+        class="sticky top-20 z-40 bg-white/95 dark:bg-secondary-950/95 backdrop-blur-md border-b border-secondary-200 dark:border-secondary-800 py-4 transition-colors">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="flex items-center justify-between gap-8 overflow-x-auto no-scrollbar scroll-smooth py-1">
+
+                <!-- Categorías de Espacios -->
+                <button
+                    class="flex flex-col items-center gap-2 shrink-0 group border-b-2 border-secondary-900 dark:border-white pb-2 text-secondary-900 dark:text-white">
+                    <i class="fas fa-fire text-xl group-hover:scale-110 transition-transform"></i>
+                    <span class="text-xs font-semibold whitespace-nowrap">Tendencias</span>
+                </button>
+
+                <button
+                    class="flex flex-col items-center gap-2 shrink-0 group border-b-2 border-transparent hover:border-secondary-300 dark:hover:border-secondary-700 pb-2 text-secondary-500 dark:text-secondary-400 hover:text-secondary-900 dark:hover:text-white transition-all">
+                    <i class="fas fa-umbrella-beach text-xl group-hover:scale-110 transition-transform"></i>
+                    <span class="text-xs font-medium whitespace-nowrap">Frente a la playa</span>
+                </button>
+
+                <button
+                    class="flex flex-col items-center gap-2 shrink-0 group border-b-2 border-transparent hover:border-secondary-300 dark:hover:border-secondary-700 pb-2 text-secondary-500 dark:text-secondary-400 hover:text-secondary-900 dark:hover:text-white transition-all">
+                    <i class="fas fa-tree text-xl group-hover:scale-110 transition-transform"></i>
+                    <span class="text-xs font-medium whitespace-nowrap">Casas de campo</span>
+                </button>
+
+                <button
+                    class="flex flex-col items-center gap-2 shrink-0 group border-b-2 border-transparent hover:border-secondary-300 dark:hover:border-secondary-700 pb-2 text-secondary-500 dark:text-secondary-400 hover:text-secondary-900 dark:hover:text-white transition-all">
+                    <i class="fas fa-swimming-pool text-xl group-hover:scale-110 transition-transform"></i>
+                    <span class="text-xs font-medium whitespace-nowrap">Piscina increíble</span>
+                </button>
+
+                <button
+                    class="flex flex-col items-center gap-2 shrink-0 group border-b-2 border-transparent hover:border-secondary-300 dark:hover:border-secondary-700 pb-2 text-secondary-500 dark:text-secondary-400 hover:text-secondary-900 dark:hover:text-white transition-all">
+                    <i class="fas fa-city text-xl group-hover:scale-110 transition-transform"></i>
+                    <span class="text-xs font-medium whitespace-nowrap">Ciudades icónicas</span>
+                </button>
+
+                <button
+                    class="flex flex-col items-center gap-2 shrink-0 group border-b-2 border-transparent hover:border-secondary-300 dark:hover:border-secondary-700 pb-2 text-secondary-500 dark:text-secondary-400 hover:text-secondary-900 dark:hover:text-white transition-all">
+                    <i class="fas fa-mountain text-xl group-hover:scale-110 transition-transform"></i>
+                    <span class="text-xs font-medium whitespace-nowrap">Cabañas y Montaña</span>
+                </button>
+
+                <button
+                    class="flex flex-col items-center gap-2 shrink-0 group border-b-2 border-transparent hover:border-secondary-300 dark:hover:border-secondary-700 pb-2 text-secondary-500 dark:text-secondary-400 hover:text-secondary-900 dark:hover:text-white transition-all">
+                    <i class="fas fa-crown text-xl group-hover:scale-110 transition-transform"></i>
+                    <span class="text-xs font-medium whitespace-nowrap">Lujo y Mansiones</span>
+                </button>
+
+                <!-- Botón Filtros -->
+                <button
+                    class="hidden lg:flex items-center gap-2 shrink-0 border border-secondary-200 dark:border-secondary-700 rounded-xl px-4 py-2 text-xs font-semibold text-secondary-800 dark:text-secondary-200 hover:border-secondary-900 dark:hover:border-white transition-colors ml-auto">
+                    <i class="fas fa-sliders-h"></i>
+                    Filtros
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- LISTINGS GRID (Estancias / Alojamientos) -->
+    <section id="alojamientos" class="py-8 container mx-auto px-4 md:px-8">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10">
+
+            <!-- Propiedad 1 -->
+            <div class="group cursor-pointer flex flex-col">
+                <div
+                    class="relative aspect-square rounded-2xl overflow-hidden bg-secondary-100 dark:bg-secondary-800 mb-3">
+                    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80"
+                        alt="Villa Moderna con Piscina"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+
+                    <!-- Botón Favorito -->
+                    <button
+                        class="absolute top-3 right-3 text-white/80 hover:text-primary-500 hover:scale-110 transition-all drop-shadow-md">
+                        <i class="far fa-heart text-xl"></i>
+                    </button>
+
+                    <!-- Insignia Superanfitrión -->
+                    <span
+                        class="absolute top-3 left-3 bg-white/90 dark:bg-secondary-900/90 backdrop-blur-md text-secondary-900 dark:text-white text-[11px] font-bold px-2.5 py-1 rounded-lg shadow-sm">
+                        Superanfitrión
+                    </span>
+                </div>
+
+                <div class="flex justify-between items-start">
+                    <h3
+                        class="font-bold text-secondary-900 dark:text-white text-base group-hover:text-primary-500 transition-colors line-clamp-1">
+                        Cancún, México
+                    </h3>
+                    <div class="flex items-center gap-1 text-sm shrink-0 ml-2">
+                        <i class="fas fa-star text-secondary-900 dark:text-white text-xs"></i>
+                        <span class="font-semibold text-secondary-900 dark:text-white">4.98</span>
+                    </div>
+                </div>
+
+                <p class="text-secondary-500 dark:text-secondary-400 text-xs mt-0.5">
+                    Vista panorámica al mar
+                </p>
+                <p class="text-secondary-400 dark:text-secondary-500 text-xs mt-0.5">
+                    15–20 de sep.
+                </p>
+
+                <div class="mt-2 text-sm">
+                    <span class="font-extrabold text-secondary-900 dark:text-white">$120 USD</span>
+                    <span class="text-secondary-600 dark:text-secondary-400 font-normal"> / noche</span>
+                </div>
+            </div>
+
+            <!-- Propiedad 2 -->
+            <div class="group cursor-pointer flex flex-col">
+                <div
+                    class="relative aspect-square rounded-2xl overflow-hidden bg-secondary-100 dark:bg-secondary-800 mb-3">
+                    <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80"
+                        alt="Cabaña Alpina Suiza"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+
+                    <button
+                        class="absolute top-3 right-3 text-white/80 hover:text-primary-500 hover:scale-110 transition-all drop-shadow-md">
+                        <i class="far fa-heart text-xl"></i>
+                    </button>
+                </div>
+
+                <div class="flex justify-between items-start">
+                    <h3
+                        class="font-bold text-secondary-900 dark:text-white text-base group-hover:text-primary-500 transition-colors line-clamp-1">
+                        Zermatt, Suiza
+                    </h3>
+                    <div class="flex items-center gap-1 text-sm shrink-0 ml-2">
+                        <i class="fas fa-star text-secondary-900 dark:text-white text-xs"></i>
+                        <span class="font-semibold text-secondary-900 dark:text-white">4.92</span>
+                    </div>
+                </div>
+
+                <p class="text-secondary-500 dark:text-secondary-400 text-xs mt-0.5">
+                    Frente a las montañas
+                </p>
+                <p class="text-secondary-400 dark:text-secondary-500 text-xs mt-0.5">
+                    1–6 de oct.
+                </p>
+
+                <div class="mt-2 text-sm">
+                    <span class="font-extrabold text-secondary-900 dark:text-white">$210 USD</span>
+                    <span class="text-secondary-600 dark:text-secondary-400 font-normal"> / noche</span>
+                </div>
+            </div>
+
+            <!-- Propiedad 3 -->
+            <div class="group cursor-pointer flex flex-col">
+                <div
+                    class="relative aspect-square rounded-2xl overflow-hidden bg-secondary-100 dark:bg-secondary-800 mb-3">
+                    <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80"
+                        alt="Loft Moderno en París"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+
+                    <button
+                        class="absolute top-3 right-3 text-white/80 hover:text-primary-500 hover:scale-110 transition-all drop-shadow-md">
+                        <i class="far fa-heart text-xl"></i>
+                    </button>
+
+                    <span
+                        class="absolute top-3 left-3 bg-white/90 dark:bg-secondary-900/90 backdrop-blur-md text-secondary-900 dark:text-white text-[11px] font-bold px-2.5 py-1 rounded-lg shadow-sm">
+                        Superanfitrión
+                    </span>
+                </div>
+
+                <div class="flex justify-between items-start">
+                    <h3
+                        class="font-bold text-secondary-900 dark:text-white text-base group-hover:text-primary-500 transition-colors line-clamp-1">
+                        París, Francia
+                    </h3>
+                    <div class="flex items-center gap-1 text-sm shrink-0 ml-2">
+                        <i class="fas fa-star text-secondary-900 dark:text-white text-xs"></i>
+                        <span class="font-semibold text-secondary-900 dark:text-white">4.89</span>
+                    </div>
+                </div>
+
+                <p class="text-secondary-500 dark:text-secondary-400 text-xs mt-0.5">
+                    A pasos de la Torre Eiffel
+                </p>
+                <p class="text-secondary-400 dark:text-secondary-500 text-xs mt-0.5">
+                    10–15 de nov.
+                </p>
+
+                <div class="mt-2 text-sm">
+                    <span class="font-extrabold text-secondary-900 dark:text-white">$165 USD</span>
+                    <span class="text-secondary-600 dark:text-secondary-400 font-normal"> / noche</span>
+                </div>
+            </div>
+
+            <!-- Propiedad 4 -->
+            <div class="group cursor-pointer flex flex-col">
+                <div
+                    class="relative aspect-square rounded-2xl overflow-hidden bg-secondary-100 dark:bg-secondary-800 mb-3">
+                    <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80"
+                        alt="Resort Privado en Bali"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+
+                    <button
+                        class="absolute top-3 right-3 text-white/80 hover:text-primary-500 hover:scale-110 transition-all drop-shadow-md">
+                        <i class="far fa-heart text-xl"></i>
+                    </button>
+                </div>
+
+                <div class="flex justify-between items-start">
+                    <h3
+                        class="font-bold text-secondary-900 dark:text-white text-base group-hover:text-primary-500 transition-colors line-clamp-1">
+                        Bali, Indonesia
+                    </h3>
+                    <div class="flex items-center gap-1 text-sm shrink-0 ml-2">
+                        <i class="fas fa-star text-secondary-900 dark:text-white text-xs"></i>
+                        <span class="font-semibold text-secondary-900 dark:text-white">4.95</span>
+                    </div>
+                </div>
+
+                <p class="text-secondary-500 dark:text-secondary-400 text-xs mt-0.5">
+                    Piscina infinita en la selva
+                </p>
+                <p class="text-secondary-400 dark:text-secondary-500 text-xs mt-0.5">
+                    22–28 de sep.
+                </p>
+
+                <div class="mt-2 text-sm">
+                    <span class="font-extrabold text-secondary-900 dark:text-white">$95 USD</span>
+                    <span class="text-secondary-600 dark:text-secondary-400 font-normal"> / noche</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CALL TO ACTION: Hazte Anfitrión -->
+    <section class="py-16 my-8 container mx-auto px-4 md:px-8">
+        <div
+            class="relative rounded-3xl overflow-hidden bg-secondary-900 text-white p-8 md:p-14 flex flex-col lg:flex-row items-center justify-between gap-8 shadow-xl">
+            <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200&q=80"
+                alt="Conviértete en anfitrión" class="absolute inset-0 w-full h-full object-cover opacity-25">
+
+            <div class="relative z-10 max-w-xl">
+                <h2 class="text-3xl md:text-4xl font-black tracking-tight leading-tight mb-3">
+                    Abre las puertas a nuevos ingresos
+                </h2>
+                <p class="text-secondary-300 text-sm md:text-base mb-6">
+                    Muestra tu espacio a millones de viajeros de todo el mundo de forma fácil y segura.
+                </p>
+                <a routerLink="/host"
+                    class="bg-primary-500 hover:bg-primary-600 text-white font-bold px-7 py-3.5 rounded-xl transition-all shadow-lg hover:shadow-primary-500/30 active:scale-95 inline-block">
+                    Aprende cómo hospedar
+                </a>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- FOOTER LIMPIO AIRBNB -->
+<footer
+    class="bg-secondary-50 dark:bg-secondary-950 text-secondary-600 dark:text-secondary-400 border-t border-secondary-200 dark:border-secondary-800 py-12">
+    <div class="container mx-auto px-4 md:px-8">
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            <div>
+                <h4 class="font-extrabold text-secondary-900 dark:text-white text-sm mb-4">Asistencia</h4>
+                <ul class="space-y-2.5 text-xs">
+                    <li><a href="#" class="hover:underline">Centro de ayuda</a></li>
+                    <li><a href="#" class="hover:underline">fanspiCover (Protección)</a></li>
+                    <li><a href="#" class="hover:underline">Opciones de cancelación</a></li>
+                    <li><a href="#" class="hover:underline">Reportar un problema</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-extrabold text-secondary-900 dark:text-white text-sm mb-4">Modo Anfitrión</h4>
+                <ul class="space-y-2.5 text-xs">
+                    <li><a href="#" class="hover:underline">Pon tu espacio en fanspi</a></li>
+                    <li><a href="#" class="hover:underline">Recursos para anfitriones</a></li>
+                    <li><a href="#" class="hover:underline">Foro de la comunidad</a></li>
+                    <li><a href="#" class="hover:underline">Anfitriones responsables</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-extrabold text-secondary-900 dark:text-white text-sm mb-4">fanspi Stays</h4>
+                <ul class="space-y-2.5 text-xs">
+                    <li><a href="#" class="hover:underline">Sala de prensa</a></li>
+                    <li><a href="#" class="hover:underline">Nuevas funciones</a></li>
+                    <li><a href="#" class="hover:underline">Carreras e inversores</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-extrabold text-secondary-900 dark:text-white text-sm mb-4">Aceptamos</h4>
+                <div class="flex gap-3 text-2xl text-secondary-400 mb-3">
+                    <i class="fab fa-cc-visa hover:text-secondary-900 dark:hover:text-white transition-colors"></i>
+                    <i
+                        class="fab fa-cc-mastercard hover:text-secondary-900 dark:hover:text-white transition-colors"></i>
+                    <i class="fab fa-cc-paypal hover:text-secondary-900 dark:hover:text-white transition-colors"></i>
+                    <i class="fas fa-qrcode hover:text-secondary-900 dark:hover:text-white transition-colors"></i>
+                </div>
+                <p class="text-[11px] text-secondary-400">Pagos cifrados y seguros.</p>
+            </div>
+        </div>
+
+        <div
+            class="pt-8 border-t border-secondary-200 dark:border-secondary-800 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
+            <p>&copy; 2026 fanspi Stays, Inc. · <a href="#" class="hover:underline">Privacidad</a> · <a href="#"
+                    class="hover:underline">Términos</a></p>
+            <div class="flex items-center gap-4">
+                <a href="#" class="hover:text-secondary-900 dark:hover:text-white transition-colors"><i
+                        class="fab fa-instagram text-base"></i></a>
+                <a href="#" class="hover:text-secondary-900 dark:hover:text-white transition-colors"><i
+                        class="fab fa-facebook text-base"></i></a>
+                <a href="#" class="hover:text-secondary-900 dark:hover:text-white transition-colors"><i
+                        class="fab fa-twitter text-base"></i></a>
+            </div>
+        </div>
+
+    </div>
+</footer>
+}

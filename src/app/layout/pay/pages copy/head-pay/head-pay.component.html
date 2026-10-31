@@ -1,0 +1,25 @@
+<header class=" w-full top-0 z-50 bg-zinc-50 dark:bg-background-dark shadow-2xl">
+  <!-- style="background-color: #222020;" -->
+  <div class="max-w-4xl mx-auto flex flex-row justify-between items-center py-2 px-2 ">
+    <div class="shadow-2xl rounded-full w-12 h-12 lg:w-14 lg:h-14 p-2">
+      <img class="rounded-full transition-all duration-500 group-hover:scale-110 group-hover:shadow-2xl bg-white"
+        src="./public/logo/icon.png" alt="fanspi" />
+    </div>
+
+    <div>
+      <form [formGroup]="myformLanguage" novalidate
+        class="w-full mt-3 rounded-full relative flex flex-row items-center h-10 focus:outline-none border-l-0 border-transparent hover:border-zinc-500 dark:hover:border-zinc-800 pr-6">
+        <select formControlName="language" #langSelect (change)="changeLang(langSelect.value)"
+          class="w-full cursor-pointer rounded-xl py-2 px-4 focus:outline-none focus:ring bg-background-light dark:bg-background-dark  focus:ring-zinc-200 active:ring-zinc-200  focus:dark:ring-zinc-700 active:ring  active:dark:ring-zinc-700">
+          @for (lang of langs; track $index) {
+          <option [value]="lang.value" class="notranslate">
+            {{ lang.name }}
+          </option>
+          }
+        </select>
+      </form>
+
+    </div>
+
+  </div>
+</header>

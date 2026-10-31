@@ -1,0 +1,6 @@
+<div class="modal-background" [@fade]="modalState" (click)="closeModal()">
+    <div class=" bg-background-light dark:bg-background-dark border border-zinc-100 dark:border-zinc-800/40"
+        (click)="($event.stopPropagation())">
+        <ng-content></ng-content>
+    </div>
+</div>

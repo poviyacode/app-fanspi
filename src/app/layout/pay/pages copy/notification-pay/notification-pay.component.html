@@ -1,0 +1,111 @@
+@if (isBrowser) {
+<div class="p-4 flex flex-col items-center justify-center min-h-screen">
+    <div
+        class=" bg-white dark:bg-zinc-800 shadow-xl rounded-2xl px-6 py-12 max-w-lg w-full text-center transform transition-all duration-300 hover:scale-105 space-y-5">
+
+        <div class=" flex flex-col items-center space-y-5">
+            <div class="text-6xl">
+                @if (paymentOrderService.paymentOrder()?.status == 'PAID') {
+                <i appIcon iconName="check-circle-regular" [size]="'w-16 h-16'" [color]="'text-green-500'"></i>
+                } @else if (paymentOrderService.paymentOrder()?.status == 'DECLINE' ||
+                paymentOrderService.paymentOrder()?.status == 'ERROR') {
+                <i appIcon iconName="error-regular" [size]="'w-16 h-16'" [color]="'text-red-500'"></i>
+                }
+            </div>
+            <div class=" text-zinc-800 dark:text-zinc-200 leading-snug tracking-wide">
+                @if (paymentOrderService.paymentOrder()?.status == 'PAID') {
+                <div class="space-y-3 md:space-y-4 text-center">
+                    <div class="text-2xl md:text-3xl font-extrabold text-green-600 dark:text-green-400 leading-tight">
+                        {{ 'successfulPayment' | translate }} 🎉
+                    </div>
+
+                    <div class="text-lg md:text-lg text-zinc-700 dark:text-zinc-300 font-normal">
+                        {{'transactionSuccess' | translate}}
+                    </div>
+
+                    <div
+                        class="p-4 md:p-5 bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-500 rounded-lg text-sm md:text-base text-zinc-800 dark:text-zinc-200 shadow-sm mx-auto max-w-lg">
+                        <div class="font-bold mb-1 flex items-center justify-center space-x-2">
+                            <i appIcon iconName="info-circle-regular" [size]="'w-5 h-5'"
+                                [color]="'text-yellow-500'"></i>
+                            <span>{{'finalAcquisitionPolicy' | translate}}</span>
+                        </div>
+                        <p class="text-xs">
+                            {{'noRefunds' | translate}}
+                        </p>
+                        <p class="mt-2 text-xs">
+                            {{'chargebackSuspension' | translate}}
+                        </p>
+                    </div>
+                </div>
+                } @else if (paymentOrderService.paymentOrder()?.status == 'DECLINE') {
+                <div class="text-3xl font-semibold">
+                    {{ 'paymentRejected' | translate }}
+                </div>
+                } @else if (paymentOrderService.paymentOrder()?.status == 'ERROR') {
+                <div class="text-3xl font-semibold">
+                    {{ 'error' | translate }}
+                </div>
+                }
+            </div>
+        </div>
+
+        @if (paymentOrderService.paymentOrder()?.paymentMethod === 'CARD' &&
+        paymentOrderService.paymentOrder()?.receipt.message) {
+        <div
+            class="text-lg font-normal text-zinc-600 dark:text-zinc-300 mt-6 bg-zinc-50 dark:bg-zinc-700 rounded-lg px-5 py-3 shadow-inner">
+            @if (paymentOrderService.paymentOrder()?.receipt.message == 'Suspected fraud'
+            || paymentOrderService.paymentOrder()?.receipt.message == 'Exceeds approval amount limit') {
+            <span class="text-red-600 dark:text-red-400 font-medium">
+                Request parameters are invalid or missing
+            </span>
+            } @else {
+            <span class="text-zinc-700 dark:text-zinc-300">
+                {{ paymentOrderService.paymentOrder()?.receipt.message }}
+            </span>
+            }
+        </div>
+        }
+
+        <div class="mt-5 sm:mt-0">
+            <div class="space-y-4">
+                <div class="mt-2 font-bold  uppercase sm:mt-0">
+                    {{'transactionDetails' | translate}}
+                </div>
+                <div class="flex justify-between pt-0 text-base font-semibold">
+                    <span>{{'code' | translate}}</span>
+                    <span>
+                        {{paymentOrderService.paymentOrder()?.codeCollection}}
+                    </span>
+                </div>
+                <div class="border-b border-zinc-200 dark:border-zinc-700"></div>
+                <div class="flex justify-between pt-0 text-base font-semibold">
+                    <span>{{'totalPayment' | translate}}</span>
+                    <span>
+                        {{ $safeNavigationMigration(paymentOrderService.amountCalculation()?.amountBalance)|
+                        number:'1.2-2' }}
+                        {{ paymentOrderService.amountCalculation()?.MoneyPay?.iso }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-center space-x-2">
+            <button (click)="onCancelTransaction()" type="button"
+                class="py-3  px-4 md:px-10 shadow-sm font-semibold text-primary-500 border border-primary-500 hover:border-primary-600 uppercase rounded-md">
+                {{'return' | translate}}
+            </button>
+
+            @if (paymentOrderService.paymentOrder()?.status == 'DECLINE'
+            || paymentOrderService.paymentOrder()?.status ==
+            'ERROR') {
+            <button (click)="onPayment()" type="submit"
+                class="py-3 px-4 md:px-10 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-md shadow-md hover:shadow-lg transition duration-300 ease-in-out disabled:opacity-50 flex items-center justify-center uppercase">
+                {{'retryPayment' | translate}}
+            </button>
+            }
+        </div>
+
+    </div>
+</div>
+}
