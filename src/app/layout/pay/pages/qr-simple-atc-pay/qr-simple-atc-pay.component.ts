@@ -1,0 +1,142 @@
+import { CommonModule, isPlatformBrowser, isPlatformServer } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, inject, OnInit, Output, PLATFORM_ID, signal, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
+import { ActivatedRoute, Router } from "@angular/router";
+import { SpinnerService } from '@services/spinner.service';
+import { CustomTranslatePipe } from '@pipes/translate.pipe';
+import { PaymentOrderService } from '@services/payment-order.service';
+
+import { Subject, takeUntil } from 'rxjs';
+import { ToastService } from '@services/toast.service';
+import { IconDirective } from '@directive/coin-svg.directive';
+import { QrAtcService } from '@services/qr-atc.service';
+import { DomSanitizer } from '@angular/platform-browser';
+import { UIStyles } from '@core/common/uistyles';
+
+@Component({
+  selector: 'app-qr-simple-atc-pay',
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    CustomTranslatePipe,
+    IconDirective,
+  ],
+  templateUrl: './qr-simple-atc-pay.component.html',
+  styleUrl: './qr-simple-atc-pay.component.scss',
+})
+export default class QrSimpleAtcPayComponent {
+
+  isBrowser: boolean;
+  isServer: boolean;
+  public className = UIStyles;
+
+  codeCollection: string;
+  transaction = signal(false);
+
+  // payment method role
+  isStripeINC = signal(false);
+  isStripeLLC = signal(false);
+  isPayPalBusinessEEUU = signal(false);
+  isPayPalPersonalPanama = signal(false);
+  isCyberSourceATCBO = signal(false);
+
+  @Output() closeModal = new EventEmitter<void>();
+  private destroy$ = new Subject<void>();
+
+  @ViewChild('content', { static: true }) content!: ElementRef;
+  capturedImage: string | null = null;
+
+  private platformId = inject(PLATFORM_ID);
+  private activeRoute = inject(ActivatedRoute);
+  public paymentOrderService = inject(PaymentOrderService);
+  public router = inject(Router);
+  public qrAtcService = inject(QrAtcService);
+  private sanitizer = inject(DomSanitizer);
+
+  constructor() {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+    this.isServer = isPlatformServer(this.platformId);
+    this.codeCollection = this.activeRoute.snapshot.paramMap.get('code_collection')!;
+  }
+
+  ngOnInit(): void {
+    this.createFormControls();
+    if (this.isBrowser) {
+
+      this.qrAtcService.resetQrSimple();
+      this.generateQr();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  ngAfterViewInit() {
+
+  }
+
+  createFormControls() {
+    const currentYear = new Date().getFullYear();
+  }
+
+  // generate qr
+  generateQr() {
+
+    const amountInCents = Number(this.paymentOrderService.payWithOrder()!.partialAmount);
+    const currency = this.paymentOrderService.payWithOrder()?.Money?.iso;
+    const codeCollection = this.paymentOrderService.paymentOrderPay()?.codeCollection;
+
+    const data = {
+      codeCollection: codeCollection,
+      amount: amountInCents,
+      currency: currency,
+      purchaseDetails: ""
+    };
+
+    this.qrAtcService.generateQrSimple(data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            this.qrAtcService.addQrSimple(res);
+            this.transaction.set(true);
+          }
+        },
+      });
+  }
+
+  getSafeQr(base64: string) {
+    return this.sanitizer.bypassSecurityTrustUrl('data:image/png;base64,' + base64);
+  }
+
+  downloadQr() {
+    const source = `data:image/png;base64,${this.qrAtcService.qrSimple()?.data?.qr}`;
+    const link = document.createElement("a");
+    link.href = source;
+    link.download = `QR_Pago_${this.qrAtcService.qrSimple()?.data?.numeroReferencia}.png`;
+    link.click();
+  }
+
+  onCancerTransaction() {
+    this.transaction.set(false);
+  }
+
+  onCancelTransaction(): void {
+    let url = '';
+    url = this.paymentOrderService.paymentOrderPay()?.gatewayDetails.urlReturn;
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_self';
+    document.body.appendChild(link);
+    link.click();
+  }
+
+  onCloseModal() {
+    this.closeModal.emit(); // Notifica al padre que el modal se cerró
+  }
+
+}
+

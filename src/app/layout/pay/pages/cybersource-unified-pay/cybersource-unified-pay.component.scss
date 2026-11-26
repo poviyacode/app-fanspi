@@ -1,0 +1,10 @@
+:host {
+    display: block;
+}
+
+// Ajustes finos para el contenedor donde CyberSource inyecta su iframe/campos
+#payment-methods:empty {
+    min-height: 0;
+    padding: 0;
+    border-color: transparent;
+}

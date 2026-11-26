@@ -13,7 +13,7 @@ import { CybersourceService } from '@services/cybersource.service';
 import { PaymentOrderService } from '@services/payment-order.service';
 
 import { Subject, takeUntil } from 'rxjs';
-import { Tools } from '@core/common/tools';
+import { UIStyles } from '@core/common/uistyles';
 // STRIPE
 import { StripeService } from '@services/stripe.service';
 import { ToastService } from '@services/toast.service';
@@ -34,24 +34,12 @@ import { DialogService } from '@services/dialog.service';
     CustomTranslatePipe,
     IconDirective,
   ],
-  animations: [
-    trigger('flyInOut', [
-      state('in', style({ transform: 'translateX(0) scale(1)', opacity: 1 })),
-      transition('void => *', [
-        style({ transform: 'translateX(0) scale(0.95)', opacity: 0 }),
-        animate('400ms cubic-bezier(0.68, -0.55, 0.27, 1.55)', style({ transform: 'translateX(0) scale(1)', opacity: 1 }))
-      ]),
-      transition('* => void', [
-        animate('300ms cubic-bezier(0.4, 0, 0.2, 1)', style({ transform: 'translateX(0) scale(0.95)', opacity: 0 }))
-      ]),
-    ]),
-  ],
   templateUrl: './personal-pay.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './personal-pay.component.scss'
 })
 export default class PersonalPayComponent {
-
+  public className = UIStyles;
   isBrowser: boolean;
   isServer: boolean;
 
@@ -62,8 +50,8 @@ export default class PersonalPayComponent {
   countries = signal<Country[] | null>(null);
   countryStates = signal<CountryState[] | null>(null);
 
-  // personal
-  myFormPersonal: FormGroup;
+  // personal - Inicializado de forma síncrona para evitar que sea undefined en SSR
+  myFormPersonal: FormGroup = this.buildPersonalForm();
   isVerifiedPersonal = signal(false);
 
   // cybersourse
@@ -131,11 +119,8 @@ export default class PersonalPayComponent {
 
   }
 
-  createFormControls() {
-
-    const currentYear = new Date().getFullYear();
-
-    this.myFormPersonal = new FormGroup({
+  buildPersonalForm(): FormGroup {
+    const form = new FormGroup({
       name: new FormControl('', [Validators.required, textNumberValidator]),
       lastname: new FormControl('', [Validators.required, textNumberValidator]),
       email: new FormControl('', [Validators.required, Validators.email]),
@@ -148,16 +133,23 @@ export default class PersonalPayComponent {
       phone: new FormControl('', [Validators.required, NumericValidator]),
     });
 
-
     if (!environment.production) {
-      this.myFormPersonal.patchValue({
-        postal_code: 94043,
+      form.patchValue({
+        postal_code: '94043',
       });
+    }
+
+    return form;
+  }
+
+  createFormControls() {
+    if (!this.myFormPersonal) {
+      this.myFormPersonal = this.buildPersonalForm();
     }
   }
 
   editPersonal() {
-    const personal = this.userService.personal()!;
+    const personal = this.userService.user()!;
     const paymentOrderPay = this.paymentOrderService.paymentOrderPay()!;
     this.countries.set(paymentOrderPay.Countries!);
     this.countryStates.set(paymentOrderPay.CountryStates!);
@@ -255,11 +247,11 @@ export default class PersonalPayComponent {
 
   onSubmit() {
 
-    this.onCancelPersonalPay();
+    this.onCloseModal();
 
     const formValues = this.myFormPersonal.getRawValue();
 
-    const data = {
+    const data: any = {
       name: formValues.name,
       lastname: formValues.lastname,
       email: formValues.email,
@@ -272,7 +264,7 @@ export default class PersonalPayComponent {
       postalCode: `${formValues.postal_code}`,
     };
 
-    this.userService.addPersonal(data);
+    this.userService.addUser(data);
     const userId = this.paymentOrderService.paymentOrderPay()?.User?._id;
 
     this.spinnerService.start();
@@ -282,7 +274,7 @@ export default class PersonalPayComponent {
       .subscribe({
         next: (res) => {
           if (res) {
-            this.userService.addPersonal(res);
+            this.userService.addUser(res);
             this.isVerifiedPersonal.set(true);
             this.editPersonal();
           }
@@ -298,7 +290,7 @@ export default class PersonalPayComponent {
       });
   }
 
-  onCancelPersonalPay(): void {
+  onCloseModal(): void {
     this.closeModal.emit();
   }
 
@@ -324,39 +316,6 @@ export default class PersonalPayComponent {
   // Extrae de manera segura el mensaje de error sin importar de dónde venga
   get currentOrder() {
     return this.paymentOrderService.paymentOrderPay();
-  }
-  getErrorMessage(): string | null {
-    return this.paymentOrderService.getErrorMessage(this.currentOrder);
-  }
-
-
-  // INPUT CLASS
-  cardClass() {
-    return Tools.cardClass();
-  }
-
-  modalClass() {
-    return Tools.modalClass();
-  }
-
-  buttonSecondaryClass() {
-    return Tools.buttonSecondaryClass();
-  }
-
-  buttonPrimaryClass() {
-    return Tools.buttonPrimaryClass();
-  }
-
-  selectClass(formGroup: FormGroup, controlName: string) {
-    return Tools.inputClass(formGroup, controlName);
-  }
-
-  inputClass(formGroup: FormGroup, controlName: string) {
-    return Tools.inputClass(formGroup, controlName);
-  }
-
-  textareaClass(formGroup: FormGroup, controlName: string, height: string) {
-    return Tools.textareaClass(formGroup, controlName, height);
   }
 
 }

@@ -50,8 +50,6 @@ export class SocketService {
     this.socket.on('connect', () => {
       console.log('¡Socket conectado exitosamente!');
       this.socketStatus.set(true);
-
-      this.socket.emit('request_initial_online_users');
     });
 
     this.socket.on('disconnect', (reason) => {
@@ -114,6 +112,336 @@ export class SocketService {
     }
   }
 
+  onIncomingCall(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('incoming_call', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('incoming_call');
+      };
+    });
+  }
+
+  onCallRejectedByAudience(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('call_rejected_by_audience', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('call_rejected_by_audience');
+      };
+    });
+  }
+
+  onCallCanceledByTransmiter(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('call_canceled_by_transmiter', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('call_canceled_by_transmiter');
+      };
+    });
+  }
+
+  onUserJoinedCall(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('user_joined_call', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('user_joined_call');
+      };
+    });
+  }
+
+  onTipReceived(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('tip_received', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('tip_received');
+      };
+    });
+  }
+
+  onInitialOnlineUsers(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('initial_online_users', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('initial_online_users');
+      };
+    });
+  }
+
+  onUserOnlineStatus(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('user_online_status', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('user_online_status');
+      };
+    });
+  }
+
+  onLiveStreamStatus(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('live_stream_status', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('live_stream_status');
+      };
+    });
+  }
+
+  // message services
+  onNewMessage(): Observable<any> {
+    return new Observable((subscriber) => {
+
+      // 1. Creamos la función de callback de manera explícita
+      const callback = (data: any) => {
+        subscriber.next(data);
+      };
+
+      // 2. Registramos esta función específica en el socket
+      this.socket.on('new_message', callback);
+
+      // 3. Al destruir el componente, eliminamos ÚNICAMENTE esta función
+      // El Sidebar, al tener su propia función callback registrada, seguirá vivo e intacto.
+      return () => {
+        this.socket.off('new_message', callback);
+      };
+    });
+  }
+  onMessageRead(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('message_read', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('message_read');
+      };
+    });
+  }
+
+  onMessageRead2(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('message_read2', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('message_read2');
+      };
+    });
+  }
+
+  onMessageSent(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('message_sent', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('message_sent');
+      };
+    });
+  }
+
+  onMessageDeleted(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('message_deleted', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('message_deleted');
+      };
+    });
+  }
+
+  onSocketTest(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('socket_test', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('socket_test');
+      };
+    });
+  }
+
+  onTypingStatusReceived(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('message:typing_status_received', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('message:typing_status_received');
+      };
+    });
+  }
+
+  // taximeter services
+  onTaximeterRunOut(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('message:taximeterRunOut', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('message:taximeterRunOut');
+      };
+    });
+  }
+
+  onTaximeterBilled(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('message:taximeterBilled', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('message:taximeterBilled');
+      };
+    });
+  }
+
+  onTaximeterPaused(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('message:taximeterPaused', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('message:taximeterPaused');
+      };
+    });
+  }
+
+  onTaximeterGracePeriod(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('message:taximeterGracePeriod', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('message:taximeterGracePeriod');
+      };
+    });
+  }
+
+  // transaction credit services
+  onCreditUpdate(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('transaction_credit:creditUpdated', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('transaction_credit:creditUpdated');
+      };
+    });
+  }
+
+  onNotifyReceiveNotification(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('notify:receiveNotification', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('notify:receiveNotification');
+      };
+    });
+  }
+
+  onLovenseDeviceConnectedStatus(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('lovense:deviceConnectedStatus', (data: any) => {
+        subscriber.next(data);
+      });
+
+      // Buena práctica: Limpiar el event listener si el componente se destruye
+      return () => {
+        this.socket.off('lovense:deviceConnectedStatus');
+      };
+    });
+  }
+
+  onUserSync(): Observable<{ entity: string; action: string; payload: any }> {
+    return new Observable((subscriber) => {
+      this.socket.on('user:sync', (data) => {
+        subscriber.next(data);
+      });
+
+      return () => {
+        this.socket.off('user:sync');
+      };
+    });
+  }
+
+  onRoomSync(roomId: string): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on(roomId, (data: any) => {
+        subscriber.next(data);
+      });
+
+      return () => {
+        this.socket.off(roomId);
+      };
+    });
+  }
+
+  onSystemSync(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('system:sync', (data: any) => {
+        subscriber.next(data);
+      });
+
+      return () => {
+        this.socket.off('system:sync');
+      };
+    });
+  }
+
   /**
    * Permite escuchar eventos controlando de manera segura si el socket está inicializado
    */
@@ -131,6 +459,35 @@ export class SocketService {
       // Limpieza automática cuando el componente de Angular se destruya / desuscriba
       return () => {
         this.socket.off(eventName);
+      };
+    });
+  }
+
+  // --- Nuevos métodos para la gestión de creadoras en el admin ---
+  emitSetManagedCreators(creatorIds: string[]): void {
+    if (this.socket) {
+      this.socket.emit('admin_set_managed_creators', { creatorIds });
+    }
+  }
+
+  onInitialOnlineCreators(): Observable<any[]> {
+    return new Observable((subscriber) => {
+      this.socket.on('initial_online_creators', (data: any[]) => {
+        subscriber.next(data);
+      });
+      return () => {
+        this.socket.off('initial_online_creators');
+      };
+    });
+  }
+
+  onManagedCreatorsConfirmed(): Observable<any> {
+    return new Observable((subscriber) => {
+      this.socket.on('managed_creators_confirmed', (data: any) => {
+        subscriber.next(data);
+      });
+      return () => {
+        this.socket.off('managed_creators_confirmed');
       };
     });
   }

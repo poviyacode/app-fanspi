@@ -1,7 +1,7 @@
 import { CommonModule, isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { Component, inject, PLATFORM_ID, ChangeDetectionStrategy } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Tools } from '@core/common/tools';
+import { UIStyles } from '@core/common/uistyles';
 import { CustomTranslatePipe } from '@pipes/translate.pipe';
 
 @Component({
@@ -17,7 +17,7 @@ import { CustomTranslatePipe } from '@pipes/translate.pipe';
 })
 export default class HomeComponent {
 
-  // ssr
+  public className = UIStyles;
   isBrowser: boolean;
   isServer: boolean;
 
@@ -62,18 +62,18 @@ export default class HomeComponent {
 
   // button class
   buttonPrimaryClass() {
-    return Tools.buttonPrimaryClass();
+    return this.className.buttonPrimaryClass();
   }
 
   buttonSecondaryClass() {
-    return Tools.buttonSecondaryClass();
+    return this.className.buttonSecondaryClass();
   }
 
   buttonClass() {
-    return Tools.buttonClass();
+    return this.className.buttonClass();
   }
 
   buttonClassForm(formGroup: boolean) {
-    return Tools.buttonClassForm(formGroup);
+    return this.className.buttonClassForm(formGroup);
   }
 }

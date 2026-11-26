@@ -18,8 +18,11 @@ export interface PostMedia {
     typeSnapshot?: string;
     extensionSnapshot?: string;
 
+    file?: any;
+    metadata?: any;
     url?: string;
     key?: string;
+    typeFile?: string[];
     type?: string;
     extension?: string;
     cover?: boolean;
@@ -30,4 +33,13 @@ export interface PostMedia {
 
     cloudflare?: any;
     urlVideo?: string;
+}
+
+export interface PostMediaDetails {
+    title?: string;
+    type?: string;
+    url?: string;
+    gifUrl?: string;
+    alt?: string;
+    thumbnail?: string;
 }

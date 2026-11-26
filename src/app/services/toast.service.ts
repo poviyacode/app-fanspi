@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { WritableSignal, signal } from '@angular/core';
 
 export interface Message {
-  type: 'success' | 'error' | 'info';
+  type: 'success' | 'error' | 'info' | 'warning';
   message: string;
 }
 

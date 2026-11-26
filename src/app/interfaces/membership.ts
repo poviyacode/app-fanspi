@@ -5,12 +5,14 @@ import { User } from "./user";
 export interface Membership {
 
     _id?: string;
-    credit? : number;
-    creditReal? : number;
+    credit?: number;
+    creditReal?: number;
     discount?: number;
     quantyTime?: number;
     typeTime?: string;
     type?: string;
+    category?: string;
+    lovenseConfig?: any;
     User?: User;
     updateAt?: string;
     createdAt?: string;

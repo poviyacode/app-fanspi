@@ -1,5 +1,11 @@
 import { Message } from "./message";
+import { TransactionCredit } from "./transactionCredit";
 import { User } from "./user";
+
+export enum TypeChat {
+  PERSONAL = 'PERSONAL',
+  P2P = 'P2P',
+}
 
 export interface Chat {
   _id?: string;
@@ -7,6 +13,8 @@ export interface Chat {
   Sender?: any;
   Receiver?: any;
   User?: User;
+  TransactionCredit?: TransactionCredit;
+  type?: TypeChat;
   LastMessageSender?: User,
   lastMessage?: string;
   lastMessageAt?: string;

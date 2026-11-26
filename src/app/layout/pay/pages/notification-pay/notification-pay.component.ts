@@ -7,7 +7,7 @@ import { SpinnerService } from '@services/spinner.service';
 import { CommonModule, isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IconDirective } from '@directive/coin-svg.directive';
-import { Tools } from '@core/common/tools';
+import { UIStyles } from '@core/common/uistyles';
 
 @Component({
   selector: 'app-notification-pay',
@@ -22,8 +22,8 @@ import { Tools } from '@core/common/tools';
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './notification-pay.component.scss'
 })
-export default class NotificationPayComponent {
-
+export default class NotificationPayComponen {
+  public className = UIStyles;
   isBrowser: boolean;
   isServer: boolean;
   loading = signal(false);
@@ -171,26 +171,5 @@ export default class NotificationPayComponent {
   }
   getErrorMessage(): string | null {
     return this.paymentOrderService.getErrorMessage(this.currentOrder);
-  }
-
-  // COMMON CLASS
-  cardClass() {
-    return Tools.cardClass();
-  }
-
-  modalClass() {
-    return Tools.modalClass();
-  }
-
-  buttonClass() {
-    return Tools.buttonClass();
-  }
-
-  buttonSecondaryClass() {
-    return Tools.buttonSecondaryClass();
-  }
-
-  buttonPrimaryClass() {
-    return Tools.buttonPrimaryClass();
   }
 }

@@ -14,7 +14,7 @@ import { CybersourceService } from '@services/cybersource.service';
 import { PaymentOrderService } from '@services/payment-order.service';
 
 import { Subject, takeUntil } from 'rxjs';
-import { Tools } from '@core/common/tools';
+import { UIStyles } from '@core/common/uistyles';
 
 // STRIPE
 import { StripeService } from '@services/stripe.service';
@@ -54,7 +54,7 @@ interface PurchaseItems {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class CheckoutPayComponent {
-
+  public className = UIStyles;
   isBrowser: boolean;
   isServer: boolean;
 
@@ -297,7 +297,7 @@ export default class CheckoutPayComponent {
         error: (err) => {
           this.spinnerService.close();
           let url = '';
-          url = 'https://fanspi.com';
+          url = 'https://poviya.com';
           const link = document.createElement('a');
           link.href = url;
           link.target = '_self';
@@ -803,15 +803,15 @@ export default class CheckoutPayComponent {
 
   // INPUT CLASS
   selectClass(formGroup: FormGroup, controlName: string) {
-    return Tools.inputClass(formGroup, controlName);
+    return this.className.inputClass(formGroup, controlName);
   }
 
   inputClass(formGroup: FormGroup, controlName: string) {
-    return Tools.inputClass(formGroup, controlName);
+    return this.className.inputClass(formGroup, controlName);
   }
 
   textareaClass(formGroup: FormGroup, controlName: string, height: string) {
-    return Tools.textareaClass(formGroup, controlName, height);
+    return this.className.textareaClass(formGroup, controlName, height);
   }
 
 }

@@ -7,7 +7,7 @@ import { ToastService } from '@services/toast.service';
 import { environment } from '@environments/environment';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, Subject, Subscription, takeUntil } from 'rxjs';
-import { Tools } from '@core/common/tools';
+import { UIStyles } from '@core/common/uistyles';
 import { Title } from '@angular/platform-browser';
 import { IconDirective } from '@directive/coin-svg.directive';
 import { EmailService } from '@services/email.service';
@@ -30,7 +30,7 @@ import { CustomTranslatePipe } from '@pipes/translate.pipe';
   styleUrl: './login-auth.component.scss'
 })
 export default class LoginAuthComponent {
-
+  public className = UIStyles;
   isBrowser: boolean;
   isServer: boolean;
 
@@ -241,15 +241,15 @@ export default class LoginAuthComponent {
 
   // input class
   inputClass(formGroup: FormGroup, controlName: string) {
-    return Tools.inputClass(formGroup, controlName);
+    return this.className.inputClass(formGroup, controlName);
   }
 
   textareaClass(formGroup: FormGroup, controlName: string, height: string) {
-    return Tools.textareaClass(formGroup, controlName, height);
+    return this.className.textareaClass(formGroup, controlName, height);
   }
 
   buttonClass() {
-    return Tools.buttonClass();
+    return this.className.buttonClass();
   }
 
 }

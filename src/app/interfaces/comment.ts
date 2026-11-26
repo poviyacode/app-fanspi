@@ -1,21 +1,21 @@
 import { Post } from "./post";
 import { User } from "./user";
 
-export interface Comment {
+export interface Comments {
     _id?: string;
     User?: User;
     Post?: Post;
-    text? : string;
+    text?: string;
     active?: boolean;
     edit?: boolean;
     updateAt?: string;
     createdAt?: string;
 }
 
-export interface CommentLive { 
-    ID: string,
-    name: string,
-    avatar: string,
+export interface CommentLive {
+    ID?: string,
+    name?: string,
+    avatar?: string,
     time?: string,
     content: string,
 }

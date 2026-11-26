@@ -8,7 +8,7 @@ import { CustomTranslatePipe } from '@pipes/translate.pipe';;
 import { PaymentOrderService } from '@services/payment-order.service';
 
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
-import { Tools } from '@core/common/tools';
+import { UIStyles } from '@core/common/uistyles';
 import HeadPayComponent from '../head-pay/head-pay.component';
 
 import { ToastService } from '@services/toast.service';
@@ -23,6 +23,8 @@ import { DialogService } from '@services/dialog.service';
 import { SocketService } from '@services/socket.service';
 import PersonalPayComponent from '../personal-pay/personal-pay.component';
 import PixAtcPayComponent from '../pix-atc-pay/pix-atc-pay.component';
+import QrSimpleAtcPayComponent from '../qr-simple-atc-pay/qr-simple-atc-pay.component';
+import CybersourceUnifiedPayComponent from '../cybersource-unified-pay/cybersource-unified-pay.component';
 
 @Component({
   selector: 'app-main-pay',
@@ -34,24 +36,12 @@ import PixAtcPayComponent from '../pix-atc-pay/pix-atc-pay.component';
     HeadPayComponent,
     IconDirective
   ],
-  animations: [
-    trigger('flyInOut', [
-      state('in', style({ transform: 'translateX(0) scale(1)', opacity: 1 })),
-      transition('void => *', [
-        style({ transform: 'translateX(0) scale(0.95)', opacity: 0 }),
-        animate('400ms cubic-bezier(0.68, -0.55, 0.27, 1.55)', style({ transform: 'translateX(0) scale(1)', opacity: 1 }))
-      ]),
-      transition('* => void', [
-        animate('300ms cubic-bezier(0.4, 0, 0.2, 1)', style({ transform: 'translateX(0) scale(0.95)', opacity: 0 }))
-      ]),
-    ]),
-  ],
   templateUrl: './main-pay.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './main-pay.component.scss'
 })
 export default class MainPayComponent {
-
+  public className = UIStyles;
   isBrowser: boolean;
   isServer: boolean;
 
@@ -65,10 +55,6 @@ export default class MainPayComponent {
 
   myFormStripe: FormGroup = new FormGroup({})
 
-  cardNumber: any;
-  cardCvv: any;
-  cardExp: any;
-
   method: string;
   paymentOrderPay: ResPaymentOrderPay;
 
@@ -79,7 +65,8 @@ export default class MainPayComponent {
   isPayPalPersonalPanama = signal(false);
   isCyberSourceATCBO = signal(false);
   isQrAtc = signal(false);
-
+  isQrSimpleAtc = signal(false);
+  isCyberSourceUnifiedATCBO = signal(false);
   // form
   paymentForm: FormGroup;
 
@@ -98,6 +85,8 @@ export default class MainPayComponent {
   private qrAtcPayComponentRef: ComponentRef<QrAtcPayComponent> | null = null;
   private personalPayComponentRef: ComponentRef<PersonalPayComponent> | null = null;
   private pixAtcPayComponentRef: ComponentRef<PixAtcPayComponent> | null = null;
+  private qrSimpleAtcPayComponentRef: ComponentRef<QrSimpleAtcPayComponent> | null = null;
+  private cybersourceUnifiedPayComponentRef: ComponentRef<CybersourceUnifiedPayComponent> | null = null;
 
   private platformId = inject(PLATFORM_ID);
   private activeRoute = inject(ActivatedRoute);
@@ -185,16 +174,20 @@ export default class MainPayComponent {
       .subscribe({
         next: (res) => {
 
-          if (res && (res.status === 'PETITION' || res.status === 'PENDING')) {
+          if (res && (
+            res.status === 'PETITION' ||
+            res.status === 'PENDING'
+          )) {
 
             this.paymentOrderService.addPaymentOrderPay(res);
             this.verifiedPersonal();
-
             this.isStripeINC.set(res.paymentMethodRole.includes('STRIPE_INC'));
             this.isStripeLLC.set(res.paymentMethodRole.includes('STRIPE_LLC'));
             this.isPayPalBusinessEEUU.set(res.paymentMethodRole.includes('PAYPAL_BUSSINES_EEUU'));
             this.isCyberSourceATCBO.set(res.paymentMethodRole.includes('CYBERSOURSE_ATC_BO'));
             this.isQrAtc.set(res.paymentMethodRole.includes('QR_ATC_BO'));
+            this.isQrSimpleAtc.set(res.paymentMethodRole.includes('QR_SIMPLE_ATC_BO'));
+            this.isCyberSourceUnifiedATCBO.set(res.paymentMethodRole.includes('CYBERSOURSE_UNIFIED_ATC_BO'));
 
             this.selectedPaymentMethod.set(res.paymentMethodRole[0]);
             this.onPaymentMethodChange(this.selectedPaymentMethod());
@@ -202,7 +195,7 @@ export default class MainPayComponent {
 
           } else {
             let url = '';
-            url = `${res!.gatewayDetails.urlReturn}/${res!.codeCollection}`;
+            url = `${res!.gatewayDetails.urlReturn}`;
             const link = document.createElement('a');
             link.href = url;
             link.target = '_self';
@@ -255,7 +248,7 @@ export default class MainPayComponent {
   verifiedPersonal() {
     const { name, lastname, email, phonePrefix, phone, address, city, Country, CountryState, postalCode } =
       this.paymentOrderService.paymentOrderPay()?.User || {};
-    this.userService.addPersonal({ name, lastname, email, phonePrefix, phone, address, city, Country, CountryState, postalCode });
+    this.userService.addUser({ name, lastname, email, phonePrefix, phone, address, city, Country, CountryState, postalCode });
 
     if (
       name &&
@@ -296,9 +289,15 @@ export default class MainPayComponent {
     } else if (method === 'QR_ATC_BO') {
       this.paymentOrderService.addAmountCalculation(amountCalculation.CyberSource!);
       this.onQrAtc();
+    } else if (method === 'QR_SIMPLE_ATC_BO') {
+      this.paymentOrderService.addAmountCalculation(amountCalculation.CyberSource!);
+      this.onQrSimpleAtc();
     } else if (method === 'PIX_ATC_BO') {
       this.paymentOrderService.addAmountCalculation(amountCalculation.CyberSource!);
       this.onPixAtc();
+    } else if (method === 'CYBERSOURSE_UNIFIED_ATC_BO') {
+      this.paymentOrderService.addAmountCalculation(amountCalculation.CyberSource!);
+      this.onCyberSourceUnified();
     }
   }
 
@@ -362,19 +361,6 @@ export default class MainPayComponent {
     }
   }
 
-  onRedirectPayment(method: string) {
-    if (method === 'STRIPE_INC') {
-      const route = `pay/stripe_inc`;
-      this.router.navigate([`${route}`, this.codeCollection]);
-    } else if (method === 'STRIPE_LLC') {
-      const route = `pay/stripe_llc`;
-      this.router.navigate([`${route}`, this.codeCollection]);
-    } else if (method === 'CYBERSOURSE_ATC_BO') {
-      const route = `pay/cybersource`;
-      this.router.navigate([`${route}`, this.codeCollection]);
-    }
-  }
-
   // socket
   userOnlineSocket() {
 
@@ -386,6 +372,7 @@ export default class MainPayComponent {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
+          console.log('socket', response);
           if (response.status === 'PAID') {
             // ¡Pago exitoso! Redirigir a confirmación
           } else if (response.status === 'DECLINE') {
@@ -413,6 +400,7 @@ export default class MainPayComponent {
   get currentOrder() {
     return this.paymentOrderService.paymentOrderPay();
   }
+
   getErrorMessage(): string | null {
     return this.paymentOrderService.getErrorMessage(this.currentOrder);
   }
@@ -472,6 +460,24 @@ export default class MainPayComponent {
     }
   }
 
+  onCyberSourceUnified() {
+    this.clearCybersourceUnifiedPayComponent();
+    const componentRef = this.viewContainerRef.createComponent(CybersourceUnifiedPayComponent);
+    this.cybersourceUnifiedPayComponentRef = componentRef;
+    componentRef.instance.closeModal.subscribe(() => {
+      this.clearCybersourcePayComponent(); // Destruye el componente hijo
+      //this.dialogService.closeModal(); // Cierra el modal visualmente
+    });
+    //this.dialogService.toggleModal('infoPersonalPay');
+  }
+
+  private clearCybersourceUnifiedPayComponent() {
+    if (this.cybersourceUnifiedPayComponentRef) {
+      this.cybersourceUnifiedPayComponentRef.destroy();
+      this.cybersourceUnifiedPayComponentRef = null;
+    }
+  }
+
   onQrAtc() {
     this.clearQrAtcPayComponent();
     const componentRef = this.viewContainerRef.createComponent(QrAtcPayComponent);
@@ -487,6 +493,24 @@ export default class MainPayComponent {
     if (this.qrAtcPayComponentRef) {
       this.qrAtcPayComponentRef.destroy();
       this.qrAtcPayComponentRef = null;
+    }
+  }
+
+  onQrSimpleAtc() {
+    this.clearQrSimpleAtcPayComponent();
+    const componentRef = this.viewContainerRef.createComponent(QrSimpleAtcPayComponent);
+    this.qrSimpleAtcPayComponentRef = componentRef;
+    componentRef.instance.closeModal.subscribe(() => {
+      this.clearQrSimpleAtcPayComponent(); // Destruye el componente hijo
+      //this.dialogService.closeModal(); // Cierra el modal visualmente
+    });
+    //this.dialogService.toggleModal('creditPurchase');
+  }
+
+  private clearQrSimpleAtcPayComponent() {
+    if (this.qrSimpleAtcPayComponentRef) {
+      this.qrSimpleAtcPayComponentRef.destroy();
+      this.qrSimpleAtcPayComponentRef = null;
     }
   }
 
@@ -548,25 +572,11 @@ export default class MainPayComponent {
     this.clearStripeINCComponent();
     this.clearStripeLLCComponent();
     this.clearCybersourcePayComponent();
+    this.clearCybersourceUnifiedPayComponent();
     this.clearQrAtcPayComponent();
+    this.clearQrSimpleAtcPayComponent();
     this.clearPixAtcPayComponent();
     this.clearPersonalPayComponent();
   }
 
-  // COMMON CLASS
-  cardClass() {
-    return Tools.cardClass();
-  }
-
-  modalClass() {
-    return Tools.modalClass();
-  }
-
-  buttonSecondaryClass() {
-    return Tools.buttonSecondaryClass();
-  }
-
-  buttonPrimaryClass() {
-    return Tools.buttonPrimaryClass();
-  }
 }

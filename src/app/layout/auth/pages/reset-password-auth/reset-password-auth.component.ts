@@ -4,7 +4,7 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ConfirmPasswordValidator } from '@core/common/custom-validators.ts';
-import { Tools } from '@core/common/tools';
+import { UIStyles } from '@core/common/uistyles';
 import { IconDirective } from '@directive/coin-svg.directive';
 import { CustomTranslatePipe } from '@pipes/translate.pipe';
 import { AuthService } from '@services/auth.service';
@@ -31,7 +31,7 @@ import { Subject, takeUntil } from 'rxjs';
   styleUrl: './reset-password-auth.component.scss'
 })
 export default class ResetPasswordAuthComponent {
-
+  public className = UIStyles;
   isBrowser: boolean;
   isServer: boolean;
 
@@ -153,18 +153,18 @@ export default class ResetPasswordAuthComponent {
 
   // input class
   inputClass(formGroup: FormGroup, controlName: string) {
-    return Tools.inputClass(formGroup, controlName);
+    return this.className.inputClass(formGroup, controlName);
   }
 
   textareaClass(formGroup: FormGroup, controlName: string, height: string) {
-    return Tools.textareaClass(formGroup, controlName, height);
+    return this.className.textareaClass(formGroup, controlName, height);
   }
 
   buttonClass() {
-    return Tools.buttonClass();
+    return this.className.buttonClass();
   }
 
   buttonClassForm(value: boolean) {
-    return Tools.buttonClassForm(value);
+    return this.className.buttonClassForm(value);
   }
 }

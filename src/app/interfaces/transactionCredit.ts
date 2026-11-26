@@ -4,7 +4,7 @@ import { PaymentOrder } from "./paymentOrder";
 import { ProductAdCredit } from "./productAdCredit";
 import { ProductCredit } from "./productCredit";
 import { User } from "./user";
-import { UserTransfer } from "./userTransfer";
+import { PaymentMethod } from "./paymentMethod";
 import { WithdrawalMoney } from "./withdrawalMoney";
 
 
@@ -27,7 +27,7 @@ export interface TransactionCredit {
     PaymentOrder?: PaymentOrder;
     WithdrawalMoney?: WithdrawalMoney;
     Membership?: Membership;
-    UserTransfer?: UserTransfer;
+    PaymentMethod?: PaymentMethod;
     details?: object;
     settlementStatus?: string;
     status?: string;
@@ -36,9 +36,9 @@ export interface TransactionCredit {
     edit?: boolean;
     delete?: boolean;
 
-    registerAt?: Date,
-    updatedAt?: Date;
-    createdAt?: Date;
+    registerAt?: string,
+    updatedAt?: string;
+    createdAt?: string;
 }
 
 export interface BalanceTransactionCredit {
@@ -56,6 +56,26 @@ export interface CreditCalculator {
     quantityCoin: number
     priceCoinUnityCreator: number,
     priceCoinUnitBuyOfficial: number,
-    utility: number,
     priceCoinUnitBuyParallel: number
+
+    priceCoin?: number;
+    utility: {
+        creatorUtilityAmount: number,
+        houseUtilityAmount: number
+    },
+    percentage: {
+        creatorPercentage: number,
+        housePercentage: number
+    },
+    exchange: {
+        exchangeRateOfficial: number,
+        exchangeRateParallel: number
+    }
+}
+
+export interface UserCredit {
+    buy?: number;
+    input?: number;
+    output?: number;
+    current?: number;
 }

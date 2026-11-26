@@ -56,6 +56,13 @@ export const routes: Routes = [
                 loadComponent: () => import('./layout/pay/pages/v4/checkout-pay/checkout-pay.component')
             },
             {
+                path: 'unified/:code_collection',
+                loadComponent: () =>
+                    import(
+                        './layout/pay/pages/cybersource-unified-pay/cybersource-unified-pay.component'
+                    ),
+            },
+            {
                 path: 'notification/:code_collection',
                 loadComponent: () => import('./layout/pay/pages/notification-pay/notification-pay.component'),
             },

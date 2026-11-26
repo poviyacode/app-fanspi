@@ -1,4 +1,5 @@
-<section @flyInOut [class]="cardClass()" class="p-4">
+<section animate.enter="modal-animation-enter" animate.leave="modal-animation-leave" [class]="className.cardClass()"
+    class="p-4">
 
     @if (qrData()) {
     <div class="mb-6 flex items-center justify-between">
@@ -9,7 +10,7 @@
             <div class="h-1 w-8 rounded-full bg-emerald-500/20 mt-1"></div>
         </div>
 
-        <button (click)="downloadQr()" [ngClass]="buttonSecondaryClass()">
+        <button (click)="downloadQr()" [ngClass]="className.buttonSecondaryClass()">
             <i appIcon iconName="download-regular" [size]="'w-4 h-4'" [color]="'text-white'"></i>
             <span>{{ 'download' | translate }}</span>
         </button>

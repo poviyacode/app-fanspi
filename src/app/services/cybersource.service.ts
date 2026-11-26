@@ -14,4 +14,12 @@ export class CybersourceService {
   generate(data: any): Observable<object> {
     return this.http.post<any>(this.apiUrl + '/signeddatafields', data);
   }
+
+  getCaptureContext(): Observable<{ jwt: string }> {
+    return this.http.post<{ jwt: string }>(this.apiUrl + '/payments/generateCaptureContext', {});
+  }
+
+  processPayment(transientToken: string, amount: number, orderId: string): Observable<any> {
+    return this.http.post(this.apiUrl + '/payments/process', { transientToken, amount, orderId, currency: 'USD' });
+  }
 }

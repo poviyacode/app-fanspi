@@ -10,7 +10,7 @@ import { AgeValidator, ConfirmPasswordValidator } from '@core/common/custom-vali
 import { Country } from '@interfaces/country';
 import { StateCity } from '@interfaces/stateCity';
 import { EmailService } from '@services/email.service';
-import { Tools } from '@core/common/tools';
+import { UIStyles } from '@core/common/uistyles';
 import { identity, Subject, takeUntil } from 'rxjs';
 import { CountryService } from '@services/country.service';
 import { Meta, Title } from '@angular/platform-browser';
@@ -37,8 +37,8 @@ import { CustomTranslatePipe } from '@pipes/translate.pipe';
   styleUrl: './register-auth.component.scss'
 })
 export default class RegisterAuthComponent {
+  public className = UIStyles;
   isBrowser: boolean;
-
   isLoading = false;
 
   exist = false;
@@ -101,9 +101,9 @@ export default class RegisterAuthComponent {
       this.router.navigateByUrl('/');
     }
 
-    this.meta.updateTag({ name: 'title', content: 'Crear Cuenta | fanspi Academy' });
+    this.meta.updateTag({ name: 'title', content: 'Crear Cuenta | Poviya Academy' });
     this.meta.updateTag({ name: 'description', content: 'Regístrate gratis y accede a cursos premium...' });
-    this.meta.updateTag({ property: 'og:title', content: 'Únete a fanspi Academy' });
+    this.meta.updateTag({ property: 'og:title', content: 'Únete a Poviya Academy' });
 
     this.findAllCountries();
   }
@@ -284,20 +284,20 @@ export default class RegisterAuthComponent {
 
   // input class
   inputClass(formGroup: FormGroup, controlName: string) {
-    return Tools.inputClass(formGroup, controlName);
+    return this.className.inputClass(formGroup, controlName);
   }
 
   textareaClass(formGroup: FormGroup, controlName: string, height: string) {
-    return Tools.textareaClass(formGroup, controlName, height);
+    return this.className.textareaClass(formGroup, controlName, height);
   }
 
   // button class
   buttonClass() {
-    return Tools.buttonClass();
+    return this.className.buttonClass();
   }
 
   buttonClassForm(formGroup: boolean) {
-    return Tools.buttonClassForm(formGroup);
+    return this.className.buttonClassForm(formGroup);
   }
 
   playSound() {

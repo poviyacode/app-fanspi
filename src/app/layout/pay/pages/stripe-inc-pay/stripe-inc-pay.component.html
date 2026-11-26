@@ -1,7 +1,8 @@
 @if (capturedImage) {
-  <img [src]="capturedImage" alt="Captura">
+<img [src]="capturedImage" alt="Captura">
 }
-<section @flyInOut [class]="cardClass()" class="p-4">
+<section animate.enter="modal-animation-enter" animate.leave="modal-animation-leave" [class]="className.cardClass()"
+  class="p-4">
 
   <!-- STRIPE -->
   <form [formGroup]="myFormStripe" (submit)="submitStripe()"
@@ -17,7 +18,7 @@
         </div>
         <span class="absolute inset-y-0 right-3 flex items-center ">
           <i appIcon iconName="credit-card-regular" [size]="'w-5 h-5'"
-          [color]="'text-primary-600 dark:text-primary-400'"></i>
+            [color]="'text-primary-600 dark:text-primary-400'"></i>
         </span>
       </div>
     </fieldset>
@@ -33,7 +34,7 @@
           </div>
           <span class="absolute inset-y-0 right-3 flex items-center ">
             <i appIcon iconName="calendar-alt-solid" [size]="'w-5 h-5'"
-            [color]="'text-primary-600 dark:text-primary-400'"></i>
+              [color]="'text-primary-600 dark:text-primary-400'"></i>
           </span>
         </div>
       </div>
@@ -45,8 +46,7 @@
             class="w-full py-3 px-2 focus:outline-none focus:ring bg-zinc-100/40 dark:bg-zinc-800/90 rounded-md border border-gray-400/50 focus:ring-zinc-200 active:ring-zinc-200 focus:dark:ring-zinc-700 active:dark:ring-zinc-700 focus:border-blue-500 dark:focus:border-blue-500">
           </div>
           <span class="absolute inset-y-0 right-3 flex items-center text-primary-600 dark:text-primary-400">
-            <i appIcon iconName="lock-solid" [size]="'w-5 h-5'"
-            [color]="'text-primary-600 dark:text-primary-400'"></i>
+            <i appIcon iconName="lock-solid" [size]="'w-5 h-5'" [color]="'text-primary-600 dark:text-primary-400'"></i>
           </span>
         </div>
       </div>

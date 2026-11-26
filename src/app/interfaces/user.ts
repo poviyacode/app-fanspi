@@ -6,11 +6,26 @@ import { PostMedia } from "./postMedia";
 import { SocialMedia } from "./socialMedia";
 import { StateCity } from "./stateCity";
 import { Tag } from "./tag";
-import { UserCredit } from "./userCredit";
-import { CreditCalculator } from "./transactionCredit";
+import { CreditCalculator, UserCredit } from "./transactionCredit";
 import { Site } from "./site";
 import { CountryState } from "./countryState";
+import { PushNotification } from "./pushNotification";
 
+export enum UserRole {
+    CREATOR = 'CREATOR',
+    CLIENT = 'CLIENT',
+    HOME = 'HOME',
+    ADMIN = 'ADMIN',
+    CASHIER = 'CASHIER',
+    FINANCE = 'FINANCE', // <--- NUEVO: Ideal para gestión de pagos y ganancias
+    SUPPORT = 'SUPPORT', // <--- NUEVO: Ideal si también da asistencia/soporte a usuarios
+}
+
+export enum StatusUser {
+    ACTIVE = 'ACTIVE',
+    SUSPENDED = 'SUSPENDED',
+    DELETED = 'DELETED',
+}
 
 export interface AuthResponse {
     ok: boolean;
@@ -45,9 +60,8 @@ export interface User {
     webPage?: string;
     Cover?: PostMedia[];
     Profile?: PostMedia[];
-    Membership?: Membership[];
+    Membership?: any;
     SocialMedia?: SocialMedia[];
-    UserCredit?: UserCredit[];
     Tag?: Tag[];
     Cam?: Cam;
     camStatus?: boolean;
@@ -71,6 +85,7 @@ export interface User {
     status?: string;
     statusPersonal?: string;
 
+    //event user
     online?: boolean;
     onlineAt?: string;
     live?: boolean,
@@ -78,16 +93,23 @@ export interface User {
     videoCallAt?: string;
     streamingAt?: string;
     videoConferenceAt?: string;
+    LiveStreamId?: string;
     liveCapture?: any;
     liveStatus?: string,
     liveRoomId?: string;
+    liveDescription?: string;
+    liveRole?: string;
 
     Subscription?: Subscription;
     Site?: Site;
 
+    type?: string;
+    roles?: UserRole[];
+
     verified?: boolean;
     contentType?: string;
     createdAt?: string;
+    rentalGirlfriend?: boolean;
 
     countPosts?: {
         postsActiveCount?: number,
@@ -102,22 +124,14 @@ export interface User {
     countUnreadMessages?: number;
     countCredit?: {
         buy: number,
-        ouput: number,
+        output: number,
         input: number,
         current: number
     };
 
-    stripeCustomer?: object;
-}
+    creditAmountDownload?: number;
 
-export interface UserCurrent {
-    Receiver?: string;
-    User: User,
-    UserCredit?: UserCredit,
-    Subscription?: Subscription[],
-    CreditCalculator?: CreditCalculator;
-    countUnreadMessagesReceiver?: number;
-    status?: string;
+    _loaded?: boolean;
 }
 
 export interface UserVideoCallRequest {
@@ -134,4 +148,45 @@ export interface UserVisit {
     User?: User;
     active: boolean;
     SiteMain?: Site;
+}
+
+export interface UserCurrent {
+    Receiver?: string;
+    User?: User;
+    UserCredit?: UserCredit;
+    Subscription?: Subscription[];
+    CreditCalculator?: CreditCalculator;
+    countUnreadMessagesReceiver?: number;
+    pushNotification?: ResPushNotification;
+    accountBalance?: AccountBalance;
+    status?: string;
+    permissions?: UserPermissions;
+}
+
+export interface ResPushNotification {
+    status: boolean;
+    web: PushNotification;
+    telegram: PushNotification;
+}
+
+export interface AccountBalance {
+    income: number;
+    withdrawalMoneyAccept: number;
+    withdrawalMoneyPending: number;
+    withdrawalMoneyProcessing: number;
+    withdrawnMoney: number;
+    sendMoneyAccept: number;
+    sendMoneyPending: number;
+    sendMoney: number;
+    availableMoney: number;
+    withdrawal: number;
+    balance: number;
+}
+
+export interface UserPermissions {
+    canSendMessages?: boolean;
+    canMakeVideoCalls?: boolean;
+    canGoLive?: boolean;
+    canCreatePosts?: boolean;
+    canBuyCredit?: boolean;
 }

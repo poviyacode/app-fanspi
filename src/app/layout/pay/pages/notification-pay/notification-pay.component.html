@@ -1,6 +1,6 @@
 @if (isBrowser) {
 <div class="p-4 flex flex-col items-center justify-center min-h-screen">
-    <div [class]="cardClass()" class="px-6 py-12 max-w-lg w-full space-y-5">
+    <div [class]="className.cardClass()" class="px-6 py-12 max-w-lg w-full space-y-5">
 
         <div class="flex flex-col items-center space-y-5">
             <div class="text-6xl">
@@ -95,7 +95,8 @@
         </div>
 
         <div class="flex justify-center space-x-2">
-            <button (click)="onCancelTransaction()" type="button" [ngClass]="buttonSecondaryClass()" class="w-full">
+            <button (click)="onCancelTransaction()" type="button" [ngClass]="className.buttonSecondaryClass()"
+                class="w-full">
                 {{ 'return' | translate }}
             </button>
 
@@ -103,7 +104,7 @@
             paymentOrderService.paymentOrder()?.status === 'PENDING' ||
             paymentOrderService.paymentOrder()?.status === 'ERROR' ||
             getLastInstallmentError()) {
-            <button (click)="onPayment()" type="submit" [ngClass]="buttonPrimaryClass()" class="w-full">
+            <button (click)="onPayment()" type="submit" [ngClass]="className.buttonPrimaryClass()" class="w-full">
                 {{ 'retryPayment' | translate }}
             </button>
             }

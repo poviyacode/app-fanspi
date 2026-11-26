@@ -3,7 +3,7 @@ import { Component, EventEmitter, inject, Output, PLATFORM_ID, signal, ChangeDet
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router, RouterModule } from '@angular/router';
-import { Tools } from '@core/common/tools';
+import { UIStyles } from '@core/common/uistyles';
 import { IconDirective } from '@directive/coin-svg.directive';
 import { CustomTranslatePipe } from '@pipes/translate.pipe';
 import { AuthService } from '@services/auth.service';
@@ -17,6 +17,7 @@ import { UserService } from '@services/user.service';
 import { Subject, takeUntil } from 'rxjs';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DialogService } from '@services/dialog.service';
+import { StatusUser } from '@interfaces/user';
 
 @Component({
   selector: 'app-code-verification',
@@ -27,18 +28,6 @@ import { DialogService } from '@services/dialog.service';
     CommonModule,
     RouterModule,
     IconDirective
-  ],
-  animations: [
-    trigger('flyInOut', [
-      state('in', style({ transform: 'translateX(0) scale(1)', opacity: 1 })),
-      transition('void => *', [
-        style({ transform: 'translateX(0) scale(0.95)', opacity: 0 }),
-        animate('400ms cubic-bezier(0.68, -0.55, 0.27, 1.55)', style({ transform: 'translateX(0) scale(1)', opacity: 1 }))
-      ]),
-      transition('* => void', [
-        animate('300ms cubic-bezier(0.4, 0, 0.2, 1)', style({ transform: 'translateX(0) scale(0.95)', opacity: 0 }))
-      ]),
-    ]),
   ],
   templateUrl: './code-verification.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -168,9 +157,9 @@ export default class CodeVerificationComponent {
         next: (res) => {
           this.authService.updateUser({ emailVerified: res.emailVerified })
           if (this.tokenService.token()?.category === 'REGISTER_ACCOUNT') {
-            //this.router.navigateByUrl('/');
+            this.router.navigateByUrl('/');
           } else if (this.tokenService.token()?.category === 'VERIFY_EMAIL') {
-            //this.router.navigateByUrl('/admin/setting/account');
+            this.router.navigateByUrl('/admin/setting/account');
           }
           this.tokenService.resetToken();
 
@@ -219,11 +208,10 @@ export default class CodeVerificationComponent {
       });
   }
 
-
   onDeleteAccount(): void {
 
     const data = {
-      status: 'DELETE'
+      status: StatusUser.DELETED
     }
     const userId = this.authService.user()?._id;
 
@@ -232,7 +220,7 @@ export default class CodeVerificationComponent {
       .subscribe({
         next: (res) => {
           if (res) {
-            if (res.status === 'DELETE') {
+            if (res.status === StatusUser.DELETED) {
               this.authService.logout();
               this.toastService.start({ type: 'error', message: 'accountDeleted' });
             }
@@ -270,24 +258,27 @@ export default class CodeVerificationComponent {
 
   // input class
   inputClass(formGroup: FormGroup, controlName: string) {
-    return Tools.inputClass(formGroup, controlName);
+    return UIStyles.inputClass(formGroup, controlName);
   }
 
   textareaClass(formGroup: FormGroup, controlName: string, height: string) {
-    return Tools.textareaClass(formGroup, controlName, height);
+    return UIStyles.textareaClass(formGroup, controlName, height);
   }
 
   buttonClass() {
-    return Tools.buttonClass();
+    return UIStyles.buttonClass();
   }
 
   modalClass() {
-    return Tools.modalClass();
+    return UIStyles.modalClass();
   }
 
   buttonClassForm(value: boolean) {
-    return Tools.buttonClassForm(value);
+    return UIStyles.buttonClassForm(value);
   }
 
+  cardModalClass() {
+    return UIStyles.cardModalClass();
+  }
 }
 

@@ -1,6 +1,8 @@
+import { Chat } from "./chat";
 import { Country } from "./country";
 import { CountryState } from "./countryState";
 import { Money } from "./money";
+import { TransactionCredit } from "./transactionCredit";
 import { User } from "./user";
 
 export enum StatusPaymentOrder {
@@ -12,6 +14,13 @@ export enum StatusPaymentOrder {
     ERROR = 'ERROR',
     WITHHELD = 'WITHHELD',
     PAID = 'PAID'
+}
+
+export enum MovementTypePaymentOrder {
+    INCOME = 'INCOME',
+    EXPENSE = 'EXPENSE',
+    TRANSFER = 'TRANSFER',
+    P2P = 'P2P',
 }
 
 export interface PaymentOrder {
@@ -72,7 +81,8 @@ export interface ResPaymentOrderPay extends PaymentOrder {
         message?: string,
         reasonCode?: string,
         decision?: string
-    }
+    },
+    access?: string;
 }
 
 export interface Calculation {
@@ -97,4 +107,55 @@ export interface PayWithOrder {
     partialAmount?: number,
     paymentMethod?: string,
     Money?: Money;
+}
+
+
+export interface PaymentOrder {
+    _id?: string;
+    numberOrder?: number;
+    codeCollection?: string;
+    User?: User;
+    Sender?: User;
+    Receiver?: User;
+    production?: boolean;
+    amountTransaction?: number;
+    MoneyTransaction?: Money;
+    amountPay?: number;
+    MoneyPay?: Money;
+    Money?: Money;
+    amount?: number;
+    amountBalance?: number;
+
+    totalAmountOrder?: number;
+    remainingAmount?: number;
+    installments?: any;
+
+    name?: string;
+    lastname?: string;
+    email?: string;
+    city?: string;
+    address?: string;
+    postalCode?: string;
+    phone?: number;
+    country?: string;
+
+    status?: string;
+    paymentType?: string;
+    createdAt?: string;
+    paymentMethod?: string;
+    receipt?: any;
+
+    gatewayDetails?: any;
+    amountCalculation?: any;
+
+    partialAmount?: number;
+    attempts?: any[];
+
+    movementType: MovementTypePaymentOrder
+}
+
+export interface ResponsePaymentP2P {
+    PaymentOrder: PaymentOrder;
+    Chat: Chat;
+    TransactionCredit: TransactionCredit;
 }

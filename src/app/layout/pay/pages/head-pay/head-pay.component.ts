@@ -1,5 +1,6 @@
 
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy, PLATFORM_ID, OnInit } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { ToolsService } from '@services/tools.service';
@@ -14,7 +15,7 @@ import { ToolsService } from '@services/tools.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './head-pay.component.scss'
 })
-export default class HeadPayComponent {
+export default class HeadPayComponent implements OnInit {
 
   langs: any[] = [
     { value: 'en', name: 'English' },
@@ -30,15 +31,19 @@ export default class HeadPayComponent {
     { value: 'zh', name: '中文' },
   ];
 
-  myformLanguage: FormGroup;
-
   private fb = inject(FormBuilder);
   private toolsService = inject(ToolsService);
   private translate = inject(TranslateService);
+  private platformId = inject(PLATFORM_ID);
+
+  // Inicializado de forma síncrona para evitar que sea undefined en SSR
+  myformLanguage: FormGroup = this.fb.group({ language: ['en', Validators.required] });
 
   ngOnInit(): void {
-    let lang = this.toolsService.language() || window.navigator.language.split('-')[0];
-    this.myformLanguage = this.fb.group({ language: [lang, Validators.required] });
+    if (isPlatformBrowser(this.platformId)) {
+      let lang = this.toolsService.language() || window.navigator?.language?.split('-')[0] || 'en';
+      this.myformLanguage.patchValue({ language: lang });
+    }
   }
 
   changeLang(lang: string) {

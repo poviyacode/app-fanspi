@@ -3,7 +3,7 @@ import { Component, ComponentRef, inject, PLATFORM_ID, signal, ViewChild, ViewCo
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router, RouterModule } from '@angular/router';
-import { Tools } from '@core/common/tools';
+import { UIStyles } from '@core/common/uistyles';
 import { IconDirective } from '@directive/coin-svg.directive';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthService } from '@services/auth.service';
@@ -38,7 +38,7 @@ import { CustomTranslatePipe } from '@pipes/translate.pipe';
   styleUrl: './forgot-password-auth.component.scss'
 })
 export default class ForgotPasswordAuthComponent {
-
+  public className = UIStyles;
   isBrowser: boolean;
   isServer: boolean;
 
@@ -204,18 +204,18 @@ export default class ForgotPasswordAuthComponent {
 
   // input class
   inputClass(formGroup: FormGroup, controlName: string) {
-    return Tools.inputClass(formGroup, controlName);
+    return this.className.inputClass(formGroup, controlName);
   }
 
   textareaClass(formGroup: FormGroup, controlName: string, height: string) {
-    return Tools.textareaClass(formGroup, controlName, height);
+    return this.className.textareaClass(formGroup, controlName, height);
   }
 
   buttonClass() {
-    return Tools.buttonClass();
+    return this.className.buttonClass();
   }
 
   buttonClassForm(value: boolean) {
-    return Tools.buttonClassForm(value);
+    return this.className.buttonClassForm(value);
   }
 }

@@ -13,7 +13,7 @@ import { CybersourceService } from '@services/cybersource.service';
 import { PaymentOrderService } from '@services/payment-order.service';
 
 import { Subject, takeUntil } from 'rxjs';
-import { Tools } from '@core/common/tools';
+import { UIStyles } from '@core/common/uistyles';
 // STRIPE
 import { StripeService } from '@services/stripe.service';
 import { ToastService } from '@services/toast.service';
@@ -35,24 +35,12 @@ interface PurchaseItems {
     CustomTranslatePipe,
     IconDirective
   ],
-  animations: [
-    trigger('flyInOut', [
-      state('in', style({ transform: 'translateX(0) scale(1)', opacity: 1 })),
-      transition('void => *', [
-        style({ transform: 'translateX(0) scale(0.95)', opacity: 0 }),
-        animate('400ms cubic-bezier(0.68, -0.55, 0.27, 1.55)', style({ transform: 'translateX(0) scale(1)', opacity: 1 }))
-      ]),
-      transition('* => void', [
-        animate('300ms cubic-bezier(0.4, 0, 0.2, 1)', style({ transform: 'translateX(0) scale(0.95)', opacity: 0 }))
-      ]),
-    ]),
-  ],
   templateUrl: './stripe-inc-pay.component.html',
   styleUrl: './stripe-inc-pay.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class StripeIncPayComponent {
-
+  public className = UIStyles;
   isBrowser: boolean;
   isServer: boolean;
 
@@ -71,7 +59,13 @@ export default class StripeIncPayComponent {
   private STRIPE!: any; //TODO: window.Stripe
   private elementStripe!: any;
 
-  myFormStripe: FormGroup = new FormGroup({})
+  myFormStripe: FormGroup = new FormGroup({
+    cardNumber: new FormControl(false, [Validators.required, Validators.requiredTrue]),
+    cardCvv: new FormControl(false, [Validators.required, Validators.requiredTrue]),
+    cardExp: new FormControl(false, [Validators.required, Validators.requiredTrue]),
+    termsOne: new FormControl(true, Validators.requiredTrue),
+    termsTwo: new FormControl(true, Validators.requiredTrue),
+  });
 
   cardNumber: any;
   cardCvv: any;
@@ -227,13 +221,13 @@ export default class StripeIncPayComponent {
       //TODO: Enviamos el token a nuesta api donde generamos (stripe) un metodo de pago basado en el token
       //TODO: tok_23213
 
-      const { name, lastname, email } = this.userService.personal()!;
+      const { name, lastname, email } = this.userService.user()!;
 
       const dataGenerate = {
         codeCollection: this.codeCollection,
         amount: Number(this.paymentOrderService.amountCalculation()!.amountTransaction),
         token: token.id,
-        ...this.userService.personal(),
+        ...this.userService.user(),
         User: this.paymentOrderService.paymentOrderPay()?.Sender
       };
 
@@ -253,7 +247,7 @@ export default class StripeIncPayComponent {
           const decision = await this.stripeService.getPaymentDetailInc(resStripe.id)
 
           const dataCustomer = {
-            ...this.userService.personal(),
+            ...this.userService.user(),
             ...this.paymentOrderService.amountCalculation(),
             codeCollection: this.paymentOrderService.paymentOrderPay()?.codeCollection,
             receipt: resStripe,
@@ -325,23 +319,6 @@ export default class StripeIncPayComponent {
 
   onCloseModal() {
     this.closeModal.emit(); // Notifica al padre que el modal se cerró
-  }
-
-  // INPUT CLASS
-  cardClass() {
-    return Tools.cardClass();
-  }
-
-  selectClass(formGroup: FormGroup, controlName: string) {
-    return Tools.inputClass(formGroup, controlName);
-  }
-
-  inputClass(formGroup: FormGroup, controlName: string) {
-    return Tools.inputClass(formGroup, controlName);
-  }
-
-  textareaClass(formGroup: FormGroup, controlName: string, height: string) {
-    return Tools.textareaClass(formGroup, controlName, height);
   }
 
 }

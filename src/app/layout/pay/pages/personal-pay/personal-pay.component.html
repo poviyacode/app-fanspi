@@ -1,6 +1,7 @@
-@if (dialogService.activeModal() === 'infoPersonalPay') {
-<div [ngClass]="modalClass()" (click)="$event.stopPropagation()" @flyInOut>
-  <section class="p-4 sm:p-6 overflow-y-auto max-h-[100vh]">
+<div [ngClass]="className.modalClass()" class="modal-center" (click)="onCloseModal()">
+
+  <section [ngClass]="className.cardModalClass()" (click)="($event.stopPropagation())"
+    animate.enter="modal-animation-enter" animate.leave="modal-animation-leave">
     <!-- PERSONAL -->
     <form [formGroup]="myFormPersonal" (ngSubmit)="onSubmit()" id="form" novalidate autocomplete="off"
       class="space-y-4">
@@ -12,7 +13,7 @@
         <div class="w-3/6 flex flex-col">
           <label for="name" class="mb-2 font-semibold">{{'name' | translate}} </label>
           <div class="relative">
-            <input formControlName="name" type="text" id="text" [ngClass]="inputClass(myFormPersonal,'name') "
+            <input formControlName="name" type="text" id="text" [ngClass]="className.inputClass(myFormPersonal,'name') "
               class="pl-7" />
             <div class="flex absolute inset-y-0 let-0 items-center pl-1 pointer-events-none">
               <i appIcon iconName="user-regular" [size]="'w-5 h-5'"
@@ -24,8 +25,8 @@
           <label for="lastname" class="mb-2 font-semibold">{{'lastname' | translate}}
           </label>
           <div class="relative">
-            <input formControlName="lastname" type="text" id="text" [ngClass]="inputClass(myFormPersonal,'lastname')"
-              class="pl-7" />
+            <input formControlName="lastname" type="text" id="text"
+              [ngClass]="className.inputClass(myFormPersonal,'lastname')" class="pl-7" />
             <div class="flex absolute inset-y-0 let-0 items-center pl-1 pointer-events-none">
               <i appIcon iconName="user-regular" [size]="'w-5 h-5'"
                 [color]="'text-primary-600 dark:text-primary-400'"></i>
@@ -39,8 +40,8 @@
             {{'email' | translate}}
           </label>
           <div class="relative">
-            <input formControlName="email" type="text" id="text" [ngClass]="inputClass(myFormPersonal,'email')"
-              class="pl-7" />
+            <input formControlName="email" type="text" id="text"
+              [ngClass]="className.inputClass(myFormPersonal,'email')" class="pl-7" />
             <div class="flex absolute inset-y-0 let-0 items-center pl-1 pointer-events-none">
               <i appIcon iconName="user-regular" [size]="'w-5 h-5'"
                 [color]="'text-primary-600 dark:text-primary-400'"></i>
@@ -55,7 +56,7 @@
           </label>
           <div class="relative">
             <select formControlName="country" (change)="onCountryState($event)"
-              [ngClass]="selectClass(myFormPersonal,'country')">
+              [ngClass]="className.inputClass(myFormPersonal,'country')">
               @for (item of countries(); track item) {
               <option value="{{item._id}}">
                 {{item.name!}}</option>
@@ -68,7 +69,7 @@
             {{'state' | translate}}
           </label>
           <div class="relative">
-            <select formControlName="countryState" [ngClass]="selectClass(myFormPersonal,'countryState')">
+            <select formControlName="countryState" [ngClass]="className.inputClass(myFormPersonal,'countryState')">
               @for (item of countryStates(); track item) {
               <option value="{{item._id}}">
                 {{item.name}}</option>
@@ -83,7 +84,7 @@
             {{'city' | translate}}
           </label>
           <div class="relative">
-            <input formControlName="city" type="text" id="city" [ngClass]="inputClass(myFormPersonal,'city')"
+            <input formControlName="city" type="text" id="city" [ngClass]="className.inputClass(myFormPersonal,'city')"
               class="w-full pl-7" />
             <div class="flex absolute inset-y-0 left-0 items-center pl-1 pointer-events-none">
               <i appIcon iconName="map-regular" [size]="'w-5 h-5'"
@@ -98,7 +99,7 @@
           </label>
           <div class="relative">
             <input formControlName="address_line1" type="text" id="address_line1"
-              [ngClass]="inputClass(myFormPersonal,'address_line1')" class="w-full pl-7" />
+              [ngClass]="className.inputClass(myFormPersonal,'address_line1')" class="w-full pl-7" />
             <div class="flex absolute inset-y-0 left-0 items-center pl-1 pointer-events-none">
               <i appIcon iconName="map-regular" [size]="'w-5 h-5'"
                 [color]="'text-primary-600 dark:text-primary-400'"></i>
@@ -113,7 +114,7 @@
           </label>
           <div class="relative">
             <input formControlName="postal_code" type="text" id="postal_code"
-              [ngClass]="inputClass(myFormPersonal,'postal_code')" class="w-full pl-7" />
+              [ngClass]="className.inputClass(myFormPersonal,'postal_code')" class="w-full pl-7" />
             <div class="flex absolute inset-y-0 left-0 items-center pl-1 pointer-events-none">
               <i appIcon iconName="map-pin-solid" [size]="'w-5 h-5'"
                 [color]="'text-primary-600 dark:text-primary-400'"></i>
@@ -128,7 +129,7 @@
           <div
             class="flex justify-start items-center w-full bg-zinc-50 dark:bg-zinc-700 rounded-xl border border-zinc-100 dark:border-zinc-700">
             <div class="w-24 flex-shrink-0">
-              <select formControlName="phonePrefix" [ngClass]="selectClass(myFormPersonal,'phonePrefix')"
+              <select formControlName="phonePrefix" [ngClass]="className.inputClass(myFormPersonal,'phonePrefix')"
                 class="w-full pr-6 truncate  bg-no-repeat bg-right">
                 @for (item of countries(); track item) {
                 <option value="{{item.phonePrefix}}">
@@ -140,18 +141,18 @@
             <input id="prefix_preview" placeholder="+1" readonly
               [value]="$safeNavigationMigration(myFormPersonal.get('phonePrefix')?.value)"
               [ngClass]="{'w-12 flex-shrink-0 rounded-lg py-2 px-1 focus:outline-none focus:ring bg-zinc-50 dark:bg-zinc-700 focus:ring-zinc-200 active:ring-zinc-200 focus:dark:ring-zinc-700 active:ring active:dark:ring-zinc-700 pointer-events-none': true }">
-            <input formControlName="phone" id="phone" [ngClass]="inputClass(myFormPersonal, 'phone')" autocomplete="off"
-              class="w-full" />
+            <input formControlName="phone" id="phone" [ngClass]="className.inputClass(myFormPersonal, 'phone')"
+              autocomplete="off" class="w-full" />
           </div>
         </div>
       </fieldset>
       <fieldset class="flex justify-between space-x-5 mt-10">
-        <button type="button" (click)="onCancelPersonalPay()" [ngClass]="buttonSecondaryClass()" class="w-full">
-          <i appIcon iconName="close-regular" [size]="'w-6 h-6'" [color]="'text-white'"></i>
+        <button type="button" (click)="onCloseModal()" [ngClass]="className.buttonSecondaryClass()" class="w-full">
+          <i appIcon iconName="close-regular" [size]="'w-6 h-6'" [color]="''"></i>
           {{'cancel' | translate}}
         </button>
         @if (!transaction()) {
-        <button type="submit" [ngClass]="buttonPrimaryClass()"
+        <button type="submit" [ngClass]="className.buttonPrimaryClass()"
           [disabled]="myFormPersonal.invalid || myFormPersonal.disabled" class="w-full">
           {{'continue' | translate}}
           <i appIcon iconName="arrow-forward-regular" [size]="'w-6 h-6'" [color]="'text-white'"></i>
@@ -160,5 +161,5 @@
       </fieldset>
     </form>
   </section>
+
 </div>
-}

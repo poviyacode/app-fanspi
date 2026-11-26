@@ -14,7 +14,7 @@ import { CybersourceService } from '@services/cybersource.service';
 import { PaymentOrderService } from '@services/payment-order.service';
 
 import { Subject, takeUntil } from 'rxjs';
-import { Tools } from '@core/common/tools';
+import { UIStyles } from '@core/common/uistyles';
 import HeadPayComponent from '../../head-pay/head-pay.component';
 // STRIPE
 import { StripeService } from '@services/stripe.service';
@@ -280,7 +280,7 @@ export default class CheckoutPayComponent {
         error: (err) => {
           this.spinnerService.close();
           let url = '';
-          url = 'https://fanspi.com';
+          url = 'https://poviya.com';
           const link = document.createElement('a');
           link.href = url;
           link.target = '_self';

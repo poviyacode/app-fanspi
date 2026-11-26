@@ -13,7 +13,7 @@ import { CybersourceService } from '@services/cybersource.service';
 import { PaymentOrderService } from '@services/payment-order.service';
 
 import { Subject, takeUntil } from 'rxjs';
-import { Tools } from '@core/common/tools';
+import { UIStyles } from '@core/common/uistyles';
 // STRIPE
 import { StripeService } from '@services/stripe.service';
 import { ToastService } from '@services/toast.service';
@@ -33,28 +33,16 @@ import { DomSanitizer } from '@angular/platform-browser';
     CustomTranslatePipe,
     IconDirective,
   ],
-  animations: [
-    trigger('flyInOut', [
-      state('in', style({ transform: 'translateX(0) scale(1)', opacity: 1 })),
-      transition('void => *', [
-        style({ transform: 'translateX(0) scale(0.95)', opacity: 0 }),
-        animate('400ms cubic-bezier(0.68, -0.55, 0.27, 1.55)', style({ transform: 'translateX(0) scale(1)', opacity: 1 }))
-      ]),
-      transition('* => void', [
-        animate('300ms cubic-bezier(0.4, 0, 0.2, 1)', style({ transform: 'translateX(0) scale(0.95)', opacity: 0 }))
-      ]),
-    ]),
-  ],
   templateUrl: './qr-atc-pay.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './qr-atc-pay.component.scss'
 })
 export default class QrAtcPayComponent {
 
+  public className = UIStyles;
   isBrowser: boolean;
   isServer: boolean;
 
-  selectedPaymentMethod = signal<string>('STRIPE');
   codeCollection: string;
   transaction = signal(false);
 
@@ -76,14 +64,9 @@ export default class QrAtcPayComponent {
   private platformId = inject(PLATFORM_ID);
   private activeRoute = inject(ActivatedRoute);
   public paymentOrderService = inject(PaymentOrderService);
-  private countryService = inject(CountryService);
-  private countryStateService = inject(CountryStateService);
-  private cybersourceService = inject(CybersourceService);
   private spinnerService = inject(SpinnerService);
-  private stripeService = inject(StripeService);
   private toastService = inject(ToastService);
   public router = inject(Router);
-  private userService = inject(UserService);
   private qrAtcService = inject(QrAtcService);
   private sanitizer = inject(DomSanitizer);
 
@@ -132,6 +115,7 @@ export default class QrAtcPayComponent {
       .subscribe({
         next: (res) => {
           if (res) {
+            console.log(res);
             this.qrData.set(res);
             this.transaction.set(true);
           }
@@ -169,31 +153,4 @@ export default class QrAtcPayComponent {
     this.closeModal.emit(); // Notifica al padre que el modal se cerró
   }
 
-  // INPUT CLASS
-
-  cardClass() {
-    return Tools.cardClass();
-  }
-
-  buttonPrimaryClass() {
-    return Tools.buttonPrimaryClass();
-  }
-
-  buttonSecondaryClass() {
-    return Tools.buttonSecondaryClass();
-  }
-
-  selectClass(formGroup: FormGroup, controlName: string) {
-    return Tools.inputClass(formGroup, controlName);
-  }
-
-  inputClass(formGroup: FormGroup, controlName: string) {
-    return Tools.inputClass(formGroup, controlName);
-  }
-
-  textareaClass(formGroup: FormGroup, controlName: string, height: string) {
-    return Tools.textareaClass(formGroup, controlName, height);
-  }
-
 }
-

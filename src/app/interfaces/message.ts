@@ -1,5 +1,6 @@
 import { Chat } from "./chat";
 import { PostMedia } from "./postMedia";
+import { TransactionCredit } from "./transactionCredit";
 import { User } from "./user";
 
 export interface Message {
@@ -19,6 +20,11 @@ export interface Message {
     received?: boolean;
     updateAt?: string;
     createdAt?: string;
+    isSystemMessage?: boolean;
+    isDownload?: boolean;
+    Download?: any;
+
+    systemType?: string;
 
     Reply?: Message;
     read?: boolean;
@@ -33,3 +39,12 @@ export interface ReplyMessage {
     createdAt?: string;
     type?: string;
 }
+
+export interface ResMessageServiceFindByChat {
+    Chat?: Chat;
+    Receiver?: User;
+    Sender?: User;
+    currentDate?: Date;
+    Messages?: Message[];
+};
+

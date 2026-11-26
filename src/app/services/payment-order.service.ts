@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { environment } from '@environments/environment';
-import { PaymentOrder, Calculation, ResPaymentOrderPay, PayWithOrder } from '../interfaces/paymentOrder';
+import { PaymentOrder, Calculation, ResPaymentOrderPay, PayWithOrder, ResponsePaymentP2P } from '../interfaces/paymentOrder';
 import { Headers } from '@core/common/http-headers';
 import { ResponseApi } from '@interfaces/responseApi';
 import { Money } from '@interfaces/money';
@@ -115,12 +115,6 @@ export class PaymentOrderService {
       );
   }
 
-  paymentOrder = signal<PaymentOrder | null>(null);
-
-  addPaymentOrder(value: PaymentOrder) {
-    this.paymentOrder.set(value);
-  }
-
   personal = signal<Personal | null>(null);
 
   addPersonal(value: Personal) {
@@ -201,11 +195,124 @@ export class PaymentOrderService {
     return null;
   }
 
+  ///
+  create(data: any): Observable<PaymentOrder> {
+    data.siteId = environment.site;
+    return this.http.post<PaymentOrder>(this.apiUrl + '/create', data, Headers.HttpOptions());
+  }
+
+  findOneCode(id: string): Observable<ResponseApi> {
+    return this.http.get<ResponseApi>(this.apiUrl + '/code/' + id,);
+  }
+
+  findAll(data: any, limit: number, offset: number): Observable<any> {
+    data.siteId = environment.site;
+    return this.http.post<any>(this.apiUrl + `/findAll?limit=${limit}&offset=${offset}`, data)
+      .pipe();
+  }
+
+  //---- P2P 
+  // Crear solicitud de pago p2p
+  createP2pRequest(data: any): Observable<PaymentOrder> {
+    data.siteId = environment.site;
+    return this.http.post<PaymentOrder>(this.apiUrl + '/createP2pRequest', data, Headers.HttpOptions());
+  }
+
+  //Aceptar solicitud de pago p2p
+  acceptP2Request(id: string, data: any): Observable<ResponsePaymentP2P> {
+    data.siteId = environment.site;
+    return this.http.post<ResponsePaymentP2P>(this.apiUrl + '/acceptP2Request/' + id, data, Headers.HttpOptions());
+  }
+
+  //Confirmar pago del usuario
+  confirmP2pUserPayment(ID: string, paymentProofDto: any): Observable<ResponsePaymentP2P> {
+    return this.http.post<ResponsePaymentP2P>(this.apiUrl + '/confirmP2pUserPayment/' + ID, paymentProofDto, Headers.HttpOptions());
+  }
+
+  // Confirmar liberación del pago por parte del remitente
+  confirmP2pSenderReleasePayment(ID: string): Observable<ResponsePaymentP2P> {
+    return this.http.post<ResponsePaymentP2P>(this.apiUrl + '/confirmP2pSenderReleasePayment/' + ID, {}, Headers.HttpOptions());
+  }
+
+  // Cancelar la solicitud de pago p2p por parte del usuario
+  cancelP2pUserOrder(ID: string): Observable<ResponsePaymentP2P> {
+    return this.http.post<ResponsePaymentP2P>(this.apiUrl + '/cancelP2pUserOrder/' + ID, {}, Headers.HttpOptions());
+  }
+
+  // Apelar o disputar una orden de pago
+  appealOrDisputeP2pOrder(ID: string, data: any): Observable<ResponsePaymentP2P> {
+    return this.http.post<ResponsePaymentP2P>(this.apiUrl + '/appealOrDisputeP2pOrder/' + ID, data, Headers.HttpOptions());
+  }
+
+  //-- save payment orders
+  readonly p2pPaymentOrders = signal<PaymentOrder[]>(this.storageService.loadFromStorage<PaymentOrder[]>('p2pPaymentOrders', []));
+
+  addP2pPaymentOrders(updatedPosts: PaymentOrder[]) {
+    //const limitedPosts = this.removeOldestPosts(updatedPosts);
+    this.storageService.saveToStorage('p2pPaymentOrders', updatedPosts);
+    this.p2pPaymentOrders.set(updatedPosts);
+    //this.posts.set(limitedPosts);
+  }
+
+  updateP2pPaymentOrders(id: string, updates: Partial<PaymentOrder>) {
+    const current = this.storageService.loadFromStorage<PaymentOrder[]>('p2pPaymentOrders', []);
+    const updated = current.map(item =>
+      item._id === id ? { ...item, ...updates } : item
+    );
+
+    this.p2pPaymentOrders.set(updated);
+    this.storageService.saveToStorage('p2pPaymentOrders', updated);
+  }
+
+  removeP2pPaymentOrders(postId: string) {
+    const currentPosts = this.storageService.loadFromStorage<PaymentOrder[]>('p2pPaymentOrders', [])
+    const updatedPosts = currentPosts.filter(post => post._id !== postId);
+    this.storageService.saveToStorage('p2pPaymentOrders', updatedPosts);
+    this.p2pPaymentOrders.set(updatedPosts);
+  }
+
+  resetP2pPaymentOrders() {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      localStorage.removeItem('p2pPaymentOrders');
+    }
+    this.p2pPaymentOrders.set([]);
+  }
+
+  //--- signals
+  public readonly paymentOrder = signal<PaymentOrder | null>(this.storageService.loadFromStorage<PaymentOrder | null>('paymentOrder', null));
+
+  addPaymentOrder(value: PaymentOrder) {
+    this.storageService.saveToStorage('paymentOrder', value);
+    this.paymentOrder.set(value);
+  }
+
+  updatePaymentOrder(updates: Partial<PaymentOrder>) {
+    const currentUser = this.paymentOrder();
+    if (!currentUser) return; // Si no hay usuario, salir
+
+    // Combinar los cambios con el usuario actual
+    const updatedUser = {
+      ...currentUser,
+      ...updates
+    };
+
+    // Actualizar la signal y el almacenamiento
+    this.paymentOrder.set(updatedUser);
+    this.storageService.saveToStorage('paymentOrder', updatedUser);
+  }
+
+  resetPaymentOrder() {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      localStorage.removeItem('paymentOrder');
+    }
+    this.paymentOrder.set(null);
+  }
+
   /**
-   * Extrae de manera segura el mensaje de error de una orden de pago,
-   * buscando primero en los intentos de installments y luego en la raíz.
-   * @param paymentOrder Objeto de la orden de pago actual
-   */
+  * Extrae de manera segura el mensaje de error de una orden de pago,
+  * buscando primero en los intentos de installments y luego en la raíz.
+  * @param paymentOrder Objeto de la orden de pago actual
+  */
   getErrorMessage(paymentOrder: any): string | null {
     if (!paymentOrder) return null;
 

@@ -26,7 +26,7 @@ export class MessageService {
   private storageService = inject(StorageService);
 
   private messagesSignal = signal<Message[]>([]);
-  // private db = new Dexie('fanspiDB') as Dexie & {
+  // private db = new Dexie('PoviyaDB') as Dexie & {
   //   messages: Dexie.Table<Message, number>;
   // };
 

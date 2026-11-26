@@ -1,4 +1,5 @@
-<section @flyInOut [class]="cardClass()" class="p-4">
+<section animate.enter="modal-animation-enter" animate.leave="modal-animation-leave" [class]="className.cardClass()"
+    class="p-4">
 
     <!-- STRIPE -->
     <form [formGroup]="myFormStripe" (submit)="submitStripe()"
@@ -86,12 +87,13 @@
         </fieldset>
 
         <fieldset class="flex justify-between space-x-5 mt-10 ">
-            <button type="button" (click)="onCancelTransaction()" [ngClass]="buttonSecondaryClass()" class="w-full">
+            <button type="button" (click)="onCancelTransaction()" [ngClass]="className.buttonSecondaryClass()"
+                class="w-full">
                 <i appIcon iconName="arrow-back-regular" [size]="'w-6 h-6'" [color]="'text-white'"></i>
                 {{'return' | translate}}
             </button>
             <button [disabled]="myFormStripe.invalid || myFormStripe.disabled" type="submit"
-                [ngClass]="buttonPrimaryClass()" class="w-full">
+                [ngClass]="className.buttonPrimaryClass()" class="w-full">
                 <i appIcon iconName="lock-solid" [size]="'w-6 h-6'" [color]="'text-white'"></i>
                 {{'payNow' | translate}}
             </button>
