@@ -13,7 +13,7 @@ export class NotificacionService {
     if (isPlatformBrowser(this.platformId)) {
       const usuarioId = localStorage.getItem('usuarioId') || 'anonimo';
       //this.socket = io('http://localhost:5000', {
-      this.socket = io('https://api.poviya.com', {
+      this.socket = io('https://api.fanspi.com', {
         query: { usuarioId },
         transports: ['websocket'], // recomendado
       });

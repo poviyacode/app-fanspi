@@ -8,7 +8,7 @@ export const ssrApiUrlInterceptor: HttpInterceptorFn = (req, next) => {
     // Resolver URL absoluta solo cuando se ejecuta en el servidor SSR
     if (isPlatformServer(platformId) && req.url.startsWith('/api')) {
         const serverReq = req.clone({
-            url: `https://api.poviya.com${req.url}`,
+            url: `https://api.fanspi.com${req.url}`,
         });
         return next(serverReq);
     }

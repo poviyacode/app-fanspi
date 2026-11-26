@@ -12,11 +12,11 @@ export function app(): express.Express {
   const serverDistFolder = dirname(fileURLToPath(import.meta.url));
   const browserDistFolder = resolve(serverDistFolder, '../browser');
   const indexHtml = join(serverDistFolder, 'index.server.html');
-  const apiBaseUrl = 'https://api.poviya.com';
+  const apiBaseUrl = 'https://api.fanspi.com';
 
   // CONFIGURACIÓN AQUÍ: Se pasan los dominios permitidos al instanciar el motor
   const commonEngine = new CommonEngine({
-    allowedHosts: ['poviya.com', 'www.poviya.com', 'localhost']
+    allowedHosts: ['fanspi.com', 'www.fanspi.com', 'localhost']
   });
 
   server.set('view engine', 'html');

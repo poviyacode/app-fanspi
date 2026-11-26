@@ -2,22 +2,22 @@ export const environment = {
   production: true,
   site: "63b1a7f49a2ebe3801fdb3f9",
   //prod
-  api: 'https://api.poviya.com/api',
-  apiSocket: 'https://api.poviya.com/socket.io/socket.io.js',
-  api2: 'https://api2.poviya.com/api',
+  api: 'https://api.fanspi.com/api',
+  apiSocket: 'https://api.fanspi.com/socket.io/socket.io.js',
+  api2: 'https://api2.fanspi.com/api',
   //test
-  //api: 'https://apitest.poviya.com/api/',
-  //apiSocket: 'https://apitest.poviya.com/socket.io/socket.io.js/',
+  //api: 'https://apitest.fanspi.com/api/',
+  //apiSocket: 'https://apitest.fanspi.com/socket.io/socket.io.js/',
 
-  apiPoviyaPhp: 'https://pay.poviya.com/api/',
+  apiPoviyaPhp: 'https://pay.fanspi.com/api/',
 
   cloudflareApiToken: "ExUkZFirfBjaYsyZLsflKbvMADYU8nrFUY5dEjrv",
   cloudflareAccountId: "497142102c8f0c3ae8d259dfe4cede75",
 
-  domain: 'poviya.com',
+  domain: 'fanspi.com',
 
   maxSizeInMB: 195,
-  urlCurrent: 'https://poviya.com',
+  urlCurrent: 'https://fanspi.com',
 
   // stripe INC 
   stripe_pk_inc: 'pk_live_51QAMMvBLsnGAeKC39xA2aTh9EAO7xFbWz3OwSs82apqzIYNo7RKDSEQSv7nNs7tVoGAFzpCvW3YETP5dvzRw1Xw300sdOkVZAQ',

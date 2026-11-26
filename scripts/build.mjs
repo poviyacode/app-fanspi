@@ -10,8 +10,8 @@ if (existsSync('dist')) {
 execSync('ng build', { stdio: 'inherit' });
 
 // 3. Asegurar que index.html exista en browser copiando index.csr.html si es necesario
-const csrIndex = 'dist/app_poviya/browser/index.csr.html';
-const targetIndex = 'dist/app_poviya/browser/index.html';
+const csrIndex = 'dist/app_fanspi/browser/index.csr.html';
+const targetIndex = 'dist/app_fanspi/browser/index.html';
 if (existsSync(csrIndex) && !existsSync(targetIndex)) {
   copyFileSync(csrIndex, targetIndex);
 }

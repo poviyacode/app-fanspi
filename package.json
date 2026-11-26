@@ -1,13 +1,13 @@
 {
-  "name": "poviya",
+  "name": "fanspi",
   "version": "2.0.0",
   "scripts": {
     "ng": "ng serve --proxy-config proxy.conf.json",
-    "start": "node dist/app_poviya/server/server.mjs",
+    "start": "node dist/app_fanspi/server/server.mjs",
     "build": "node scripts/build.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:app_poviya": "node dist/app_poviya/server/server.mjs"
+    "serve:ssr:app_fanspi": "node dist/app_fanspi/server/server.mjs"
   },
   "private": true,
   "dependencies": {

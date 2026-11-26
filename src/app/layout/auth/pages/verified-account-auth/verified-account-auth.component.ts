@@ -96,7 +96,7 @@ export default class VerifiedAccountAuthComponent {
     this.verificationCode = Math.floor(100000 + Math.random() * 900000);
 
     const correo = {
-      from: `"Yuvinka" <support@poviya.com>`,
+      from: `"Yuvinka" <support@fanspi.com>`,
       to: this.authService.user()?.email, // Correo del usuario
       subject: `${this.verificationCode} - Yuvinka Sign-in Verification`, // Asunto del correo
       html: `

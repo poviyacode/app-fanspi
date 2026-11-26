@@ -116,4 +116,4 @@ fail :: 4000 0000 0000 0341
 
 
 git pull origin main
-npm run build && pm2 restart app-poviya
+npm run build && pm2 restart app-fanspi

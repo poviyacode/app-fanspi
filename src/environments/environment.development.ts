@@ -7,15 +7,15 @@ export const environment = {
     apiSocket: 'http://192.168.1.4:5000/socket.io/socket.io.js',
 
     //prod
-    //api: 'https://api.poviya.com/api',
-    //apiSocket: 'https://api.poviya.com/socket.io/socket.io.js',
+    //api: 'https://api.fanspi.com/api',
+    //apiSocket: 'https://api.fanspi.com/socket.io/socket.io.js',
 
-    apiPoviyaPhp: 'https://pay.poviya.com/api/',
+    apiPoviyaPhp: 'https://pay.fanspi.com/api/',
 
     cloudflareApiToken: "ExUkZFirfBjaYsyZLsflKbvMADYU8nrFUY5dEjrv",
     cloudflareAccountId: "497142102c8f0c3ae8d259dfe4cede75",
 
-    domain: 'poviya.com',
+    domain: 'fanspi.com',
 
     maxSizeInMB: 195,
     urlCurrent: 'http://localhost:4202',

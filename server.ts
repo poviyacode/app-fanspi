@@ -17,7 +17,7 @@ export function app(): express.Express {
     ? join(browserDistFolder, 'index.csr.html')
     : join(browserDistFolder, 'index.html');
 
-  const apiBaseUrl = process.env['API_BASE_URL'] || 'https://api.poviya.com';
+  const apiBaseUrl = process.env['API_BASE_URL'] || 'https://api.fanspi.com';
 
   const commonEngine = new CommonEngine({
     allowedHosts: ['*'],
@@ -29,7 +29,7 @@ export function app(): express.Express {
   // Proxy hacia el backend API
   server.use('/api', async (req, res) => {
     try {
-      // Si tu API en api.poviya.com espera /api/..., mantén req.originalUrl; si no, usa req.url
+      // Si tu API en api.fanspi.com espera /api/..., mantén req.originalUrl; si no, usa req.url
       const targetUrl = `${apiBaseUrl}${req.originalUrl}`;
 
       const headers: Record<string, string> = {};

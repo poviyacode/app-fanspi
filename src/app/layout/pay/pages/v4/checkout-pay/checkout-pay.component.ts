@@ -298,7 +298,7 @@ export default class CheckoutPayComponent {
         error: (err) => {
           this.spinnerService.close();
           let url = '';
-          url = 'https://poviya.com';
+          url = 'https://fanspi.com';
           const link = document.createElement('a');
           link.href = url;
           link.target = '_self';
