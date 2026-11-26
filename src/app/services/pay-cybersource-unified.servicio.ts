@@ -26,8 +26,8 @@ export interface Sesion {
 
 @Service()
 export class PayCybersourceUnifiedService {
-  apiUrl = `${environment.api}/pay-cybersourse-unified`;
-  //apiUrl = `/api/pay-cybersourse-unified`;
+  //apiUrl = `${environment.api}/pay-cybersourse-unified`;
+  apiUrl = `/api/pay-cybersourse-unified`;
 
   private readonly http = inject(HttpClient);
 

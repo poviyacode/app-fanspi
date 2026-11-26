@@ -11,6 +11,7 @@ export function app(): express.Express {
   const serverDistFolder = dirname(fileURLToPath(import.meta.url));
   const browserDistFolder = resolve(serverDistFolder, '../browser');
   const indexHtml = join(serverDistFolder, 'index.server.html');
+  const apiBaseUrl = process.env['API_BASE_URL'] || 'https://api.poviya.com';
 
   // CONFIGURACIÓN AQUÍ: Se pasan los dominios permitidos al instanciar el motor
   const commonEngine = new CommonEngine({
@@ -22,6 +23,48 @@ export function app(): express.Express {
 
   // Example Express Rest API endpoints
   // server.get('/api/**', (req, res) => { });
+  // Proxy hacia el backend API
+  server.use('/api', async (req, res) => {
+    try {
+      // Si tu API en api.poviya.com espera /api/..., mantén req.originalUrl; si no, usa req.url
+      const targetUrl = `${apiBaseUrl}${req.originalUrl}`;
+
+      const headers: Record<string, string> = {};
+      for (const [key, value] of Object.entries(req.headers)) {
+        const lowerKey = key.toLowerCase();
+        if (value && !['host', 'content-length', 'connection', 'transfer-encoding'].includes(lowerKey)) {
+          headers[key] = Array.isArray(value) ? value.join(', ') : value;
+        }
+      }
+
+      const method = req.method.toUpperCase();
+      const hasBody = !['GET', 'HEAD'].includes(method);
+
+      const fetchOptions: RequestInit & { duplex?: 'half' } = {
+        method,
+        headers,
+        body: hasBody ? (req as unknown as BodyInit) : undefined,
+        ...(hasBody ? { duplex: 'half' } : {}),
+      };
+
+      const upstreamResponse = await fetch(targetUrl, fetchOptions);
+      res.status(upstreamResponse.status);
+
+      upstreamResponse.headers.forEach((val, key) => {
+        const lowerKey = key.toLowerCase();
+        if (!['content-encoding', 'transfer-encoding', 'connection', 'content-length'].includes(lowerKey)) {
+          res.setHeader(key, val);
+        }
+      });
+
+      const arrayBuffer = await upstreamResponse.arrayBuffer();
+      res.send(Buffer.from(arrayBuffer));
+    } catch (error) {
+      console.error('SSR API proxy error:', error);
+      res.status(502).json({ message: 'Bad Gateway' });
+    }
+  });
+
   // Serve static files from /browser
   server.get('**', express.static(browserDistFolder, {
     maxAge: '1y',

@@ -79,6 +79,10 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json",
+            "ssl": true
+          },
           "configurations": {
             "production": {
               "buildTarget": "app_fanspi:build:production"
