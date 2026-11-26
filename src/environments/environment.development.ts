@@ -10,7 +10,7 @@ export const environment = {
     //api: 'https://api.fanspi.com/api',
     //apiSocket: 'https://api.fanspi.com/socket.io/socket.io.js',
 
-    apiPoviyaPhp: 'https://pay.fanspi.com/api/',
+    apiPoviyaPhp: 'https://pay.poviya.com/api/',
 
     cloudflareApiToken: "ExUkZFirfBjaYsyZLsflKbvMADYU8nrFUY5dEjrv",
     cloudflareAccountId: "497142102c8f0c3ae8d259dfe4cede75",

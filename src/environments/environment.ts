@@ -2,14 +2,14 @@ export const environment = {
   production: true,
   site: "63b1a7f49a2ebe3801fdb3f9",
   //prod
-  api: 'https://api.fanspi.com/api',
-  apiSocket: 'https://api.fanspi.com/socket.io/socket.io.js',
-  api2: 'https://api2.fanspi.com/api',
+  api: 'https://api.poviya.com/api',
+  apiSocket: 'https://api.poviya.com/socket.io/socket.io.js',
+  api2: 'https://api2.poviya.com/api',
   //test
   //api: 'https://apitest.fanspi.com/api/',
   //apiSocket: 'https://apitest.fanspi.com/socket.io/socket.io.js/',
 
-  apiPoviyaPhp: 'https://pay.fanspi.com/api/',
+  apiPoviyaPhp: 'https://pay.poviya.com/api/',
 
   cloudflareApiToken: "ExUkZFirfBjaYsyZLsflKbvMADYU8nrFUY5dEjrv",
   cloudflareAccountId: "497142102c8f0c3ae8d259dfe4cede75",
