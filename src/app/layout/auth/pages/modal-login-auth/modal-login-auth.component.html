@@ -1,7 +1,7 @@
 @if (dialogService.activeModal() === 'login') {
 <div class="modal-center fixed inset-0 flex items-center justify-center p-4 z-50" (click)="onCloseModal()">
     <div [ngClass]="cardModalClass()" class="w-full max-w-xl overflow-hidden" (click)="($event.stopPropagation())"
-        @flyInOut>
+        animate.enter="modal-animation-enter" animate.leave="modal-animation-leave">
         <section div class="p-6 sm:p-8 overflow-y-auto max-h-[80vh]">
 
             <!-- Logo con efecto sofisticado -->

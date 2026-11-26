@@ -1,0 +1,178 @@
+@if (isBrowser) {
+<div class="mx-auto max-w-7xl min-h-screen bg-background-light dark:bg-background-dark transition-colors duration-300">
+
+    <ng-container #container></ng-container>
+
+    <!-- Filtros Superiores (Píldoras / Badges) -->
+    <section class="my-3 mx-4 flex flex-wrap justify-start items-center gap-2 text-sm font-semibold pt-2">
+
+        <!-- All Link -->
+        <a routerLink="/admin/community/subscriptions" [routerLinkActiveOptions]="{exact: true}"
+            routerLinkActive="bg-primary-500 dark:bg-primary-500 text-white shadow-lg shadow-primary-500/25"
+            [class]="router.isActive('/admin/community/subscriptions', false) ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/25' : 'bg-white dark:bg-secondary-900/80 text-zinc-700 dark:text-zinc-300 border border-zinc-200/80 dark:border-secondary-900'"
+            class="hover:bg-primary-500 dark:hover:bg-primary-500 hover:text-white transition-all duration-300 ease-in-out rounded-full px-5 py-2 space-x-2 flex items-center">
+            <span>{{'all' | translate}}</span>
+            <span
+                class="bg-zinc-100 dark:bg-secondary-950 text-zinc-700 dark:text-zinc-200 rounded-full px-2 py-0.5 text-xs">
+                {{ count()?.active! + count()?.expired! }}
+            </span>
+        </a>
+
+        <!-- Active Link -->
+        <a routerLink="/admin/community/subscriptions/active" [routerLinkActiveOptions]="{exact: false}"
+            routerLinkActive="bg-primary-500 dark:bg-primary-500 text-white shadow-lg shadow-primary-500/25"
+            [class]="router.isActive('/admin/community/subscriptions/active', false) ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/25' : 'bg-white dark:bg-secondary-900/80 text-zinc-700 dark:text-zinc-300 border border-zinc-200/80 dark:border-secondary-900'"
+            class="hover:bg-primary-500 dark:hover:bg-primary-500 hover:text-white transition-all duration-300 ease-in-out rounded-full px-5 py-2 space-x-2 flex items-center">
+            <span>{{'active' | translate}}</span>
+            <span
+                class="bg-zinc-100 dark:bg-secondary-950 text-zinc-700 dark:text-zinc-200 rounded-full px-2 py-0.5 text-xs">
+                {{ count()?.active ? count()?.active : 0 }}
+            </span>
+        </a>
+
+        <!-- Expired Link -->
+        <a routerLink="/admin/community/subscriptions/expired" [routerLinkActiveOptions]="{exact: false}"
+            routerLinkActive="bg-primary-500 dark:bg-primary-500 text-white shadow-lg shadow-primary-500/25"
+            [class]="router.isActive('/admin/community/subscriptions/expired', false) ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/25' : 'bg-white dark:bg-secondary-900/80 text-zinc-700 dark:text-zinc-300 border border-zinc-200/80 dark:border-secondary-900'"
+            class="hover:bg-primary-500 dark:hover:bg-primary-500 hover:text-white transition-all duration-300 ease-in-out rounded-full px-5 py-2 space-x-2 flex items-center">
+            <span>{{'expired' | translate}}</span>
+            <span
+                class="bg-zinc-100 dark:bg-secondary-950 text-zinc-700 dark:text-zinc-200 rounded-full px-2 py-0.5 text-xs">
+                {{ count()?.expired ? count()?.expired : 0 }}
+            </span>
+        </a>
+    </section>
+
+    <!-- Barra de Búsqueda -->
+    <section class="flex flex-col items-center uppercase text-lg w-full mb-6 px-4">
+        <form novalidate (ngSubmit)="onSubmit()" [formGroup]="myFormSearch"
+            class="flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0 sm:space-x-4 w-full">
+            <div class="flex flex-col sm:flex-row sm:space-x-2 w-full items-center">
+                <div class="relative w-full">
+                    <div
+                        class="absolute left-3.5 top-3 text-zinc-400 dark:text-secondary-400 font-bold pointer-events-none">
+                        <i appIcon iconName="search-regular" [size]="'w-5 h-5'" [color]="''"></i>
+                    </div>
+                    <input formControlName="search" id="search"
+                        class="pl-11 pr-4 w-full py-2.5 bg-white dark:bg-secondary-950/80 border border-zinc-200 dark:border-secondary-900 rounded-2xl text-zinc-800 dark:text-zinc-100 placeholder-zinc-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all shadow-sm"
+                        [ngClass]="inputClass(myFormSearch, 'search')">
+                </div>
+            </div>
+            <div class="flex justify-start sm:justify-center w-full sm:w-auto">
+                <button type="submit" [ngClass]="buttonClass()"
+                    class="w-full sm:w-auto px-6 py-2.5 bg-primary-500 hover:bg-primary-600 text-white font-semibold text-sm rounded-2xl shadow-lg shadow-primary-500/25 transition-all duration-300 active:scale-95">
+                    {{ 'search' | translate }}
+                </button>
+            </div>
+        </form>
+    </section>
+
+    <!-- Listado de Suscripciones -->
+    <section class="mx-auto px-4 py-2">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+
+            @for (item of subscriptionService.subscribersUser(); track $index) {
+            <div
+                class="group relative w-full bg-white dark:bg-secondary-950/60 backdrop-blur-md rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-primary-950/20 hover:-translate-y-1 border {{item.status === 'ACCEPT' ? 'border-tertiary-500/40 dark:border-tertiary-500/30' : 'border-zinc-200/80 dark:border-secondary-900'}}">
+
+                <a routerLink="/{{item.Join!.username}}" (click)="onUser(item.Join!)" class="block">
+                    <!-- Imagen de portada -->
+                    <div class="relative h-32 w-full overflow-hidden bg-zinc-200 dark:bg-secondary-900">
+                        <div [style.background-image]="item.Join!.Cover!.length > 0 && item.Join!.Cover![0].cloudflare && item.Join!.Cover![0].cloudflare.result.variants[0] ? 'url(' + item.Join!.Cover![0].cloudflare.result.variants[0] + ')' : (item.Join!.Cover!.length > 0 && item.Join!.Cover![0].url ? 'url(' + item.Join!.Cover![0].url + ')' : '')"
+                            class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent">
+                        </div>
+                    </div>
+
+                    <!-- Datos del usuario y Avatar flotante -->
+                    <div class="relative px-4 pb-2">
+                        <div class="flex items-end -mt-10 mb-2">
+                            <div [style.background-image]="item.Join!.Profile!.length > 0 && item.Join!.Profile![0].cloudflare && item.Join!.Profile![0].cloudflare.result.variants[0] ? 'url(' + item.Join!.Profile![0].cloudflare.result.variants[0] + ')' : (item.Join!.Profile!.length > 0 && item.Join!.Profile![0].url ? 'url(' + item.Join!.Profile![0].url + ')' : '')"
+                                class="relative w-20 h-20 rounded-2xl border-4 border-white dark:border-secondary-950 bg-zinc-300 dark:bg-secondary-900 bg-cover shadow-md z-10">
+                            </div>
+                            <div class="flex-1 pl-3 pt-1 pb-0 truncate">
+                                @if(item.Join!.alias) {
+                                <h3 class="font-bold text-base text-zinc-900 dark:text-zinc-100 leading-tight truncate">
+                                    {{item.Join!.alias}}
+                                </h3>
+                                }
+                                <p class="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
+                                    {{'@' + item.Join!.username}}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Acciones e Indicadores -->
+                <div class="px-4 pb-4">
+                    <div class="mt-2 flex  items-center gap-2">
+                        <button (click)="onChat(item)" [ngClass]="buttonClass()" class="flex-[2]">
+                            <i appIcon iconName="messages-regular" [color]="''" [size]="'w-4 h-4'"></i>
+                            <span>{{ 'message' | translate }}</span>
+                        </button>
+
+                        <button (click)="onTip(item)" [ngClass]="buttonSecondaryClass()" class="">
+                            <i appIcon iconName="gift-regular" [color]="''" [size]="'w-4 h-4'"></i>
+                        </button>
+                    </div>
+
+                    <!-- Estado de la suscripción -->
+                    <div class="mt-3">
+                        <div
+                            class="flex items-center justify-between p-2.5 rounded-xl bg-tertiary-500/10 dark:bg-tertiary-500/5 border border-tertiary-500/20">
+                            <span
+                                class="text-[10px] font-bold text-tertiary-600 dark:text-tertiary-400 uppercase tracking-widest">Estado</span>
+                            <span class="text-xs font-medium text-tertiary-700 dark:text-tertiary-300">
+                                {{ 'subscriptionRemaining' | translate: { days: item.expirationDate! | dateDifference }
+                                }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            }
+
+            @if (loading()) {
+            <!-- Esqueletos de carga adaptados -->
+            @for (item of [1,2,3,4,5,6]; track $index) {
+            <div
+                class="relative bg-white/95 dark:bg-secondary-950/80 rounded-3xl shadow-xl overflow-hidden border border-zinc-200/50 dark:border-secondary-900 p-4 space-y-4">
+                <div class="relative h-32 bg-zinc-200 dark:bg-secondary-900 rounded-2xl animate-pulse"></div>
+                <div class="flex items-center space-x-3 -mt-10 relative z-10">
+                    <div
+                        class="w-16 h-16 rounded-2xl bg-zinc-300 dark:bg-secondary-800 animate-pulse border-4 border-white dark:border-secondary-950">
+                    </div>
+                    <div class="space-y-2 flex-1 pt-4">
+                        <div class="h-4 bg-zinc-200 dark:bg-secondary-900 rounded-full w-3/4 animate-pulse"></div>
+                        <div class="h-3 bg-zinc-200 dark:bg-secondary-900 rounded-full w-1/2 animate-pulse"></div>
+                    </div>
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <div class="h-9 bg-zinc-200 dark:bg-secondary-900 rounded-xl flex-[2] animate-pulse"></div>
+                    <div class="h-9 bg-zinc-200 dark:bg-secondary-900 rounded-xl flex-1 animate-pulse"></div>
+                </div>
+            </div>
+            }
+            }
+        </div>
+
+        <!-- Estado vacío -->
+        @if (!loading() && this.subscriptionService.subscribersUser().length === 0) {
+        <div
+            class="flex flex-col items-center justify-center min-h-[40vh] text-center space-y-4 text-zinc-500 dark:text-zinc-400">
+            <div
+                class="flex items-center justify-center w-20 h-20 bg-white dark:bg-secondary-900 rounded-full shadow-lg border border-zinc-200 dark:border-secondary-800">
+                <i appIcon iconName="subscription-regular" [size]="'w-10 h-10'" [color]="'text-primary-500'"></i>
+            </div>
+            <h2 class="text-xl font-bold text-zinc-700 dark:text-zinc-200">
+                {{'noSubscriptionsYet' | translate}}
+            </h2>
+        </div>
+        }
+    </section>
+
+</div>
+}

@@ -5,13 +5,20 @@ export const environment = {
     //test 
     api: 'http://192.168.1.4:5000/api',
     apiSocket: 'http://192.168.1.4:5000/socket.io/socket.io.js',
-    api2: 'http://192.168.1.4:5000/api',
+
     //prod
-    //api: 'https://api.fanspi.com/api/',
-    //apiSocket: 'https://api.fanspi.com',
+    //api: 'https://api.poviya.com/api',
+    //apiSocket: 'https://api.poviya.com/socket.io/socket.io.js',
 
     apiPoviyaPhp: 'https://pay.poviya.com/api/',
-    //tapiPoviyaPhp: 'http://127.0.0.1:8000/api/',
+
+    cloudflareApiToken: "ExUkZFirfBjaYsyZLsflKbvMADYU8nrFUY5dEjrv",
+    cloudflareAccountId: "497142102c8f0c3ae8d259dfe4cede75",
+
+    domain: 'poviya.com',
+
+    maxSizeInMB: 195,
+    urlCurrent: 'http://localhost:4202',
 
     // stripe INC
     stripe_pk_inc: 'pk_test_51QAMMvBLsnGAeKC30bOseIzyznWiYZmrVPEyCUbUqh3UvaLXXqsccDfnAvu0L0WrKQM4uSwrEDPjo2QkjD7XYMdy004mrbFLWS',

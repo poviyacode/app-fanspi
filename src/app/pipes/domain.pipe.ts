@@ -1,8 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-    name: 'domain',
-    standalone: false
+  name: 'domain'
 })
 export class DomainPipe implements PipeTransform {
   transform(value: string): string {

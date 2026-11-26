@@ -3,26 +3,29 @@ import { CommonEngine } from '@angular/ssr/node';
 import express from 'express';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
+import { existsSync } from 'node:fs';
 import bootstrap from './src/main.server';
 
-// The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
   const server = express();
+  server.set('trust proxy', true);
+
   const serverDistFolder = dirname(fileURLToPath(import.meta.url));
   const browserDistFolder = resolve(serverDistFolder, '../browser');
   const indexHtml = join(serverDistFolder, 'index.server.html');
+  const clientIndex = existsSync(join(browserDistFolder, 'index.csr.html'))
+    ? join(browserDistFolder, 'index.csr.html')
+    : join(browserDistFolder, 'index.html');
+
   const apiBaseUrl = process.env['API_BASE_URL'] || 'https://api.poviya.com';
 
-  // CONFIGURACIÓN AQUÍ: Se pasan los dominios permitidos al instanciar el motor
   const commonEngine = new CommonEngine({
-    allowedHosts: ['fanspi.com', 'www.fanspi.com', 'localhost']
+    allowedHosts: ['*'],
   });
 
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);
 
-  // Example Express Rest API endpoints
-  // server.get('/api/**', (req, res) => { });
   // Proxy hacia el backend API
   server.use('/api', async (req, res) => {
     try {
@@ -65,35 +68,62 @@ export function app(): express.Express {
     }
   });
 
-  // Serve static files from /browser
-  server.get('**', express.static(browserDistFolder, {
-    maxAge: '1y',
-    index: 'index.html',
-  }));
+  // 1. Servir archivos estáticos desde /browser
+  server.use(
+    express.static(browserDistFolder, {
+      maxAge: '1y',
+      index: false,
+      redirect: false,
+      setHeaders: (res, filePath) => {
+        if (
+          filePath.endsWith('.html') ||
+          filePath.endsWith('ngsw.json') ||
+          filePath.endsWith('manifest.webmanifest')
+        ) {
+          res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+          res.setHeader('Pragma', 'no-cache');
+          res.setHeader('Expires', '0');
+        }
+      },
+    }),
+  );
 
-  // All regular routes use the Angular engine
+  // 2. Evitar que peticiones a archivos con extensión no encontrados caigan en SSR
+  server.get('*.*', (_req, res) => {
+    res.status(404).type('text/plain').send('Resource not found');
+  });
+
+  // 3. Renderizado SSR para rutas de la aplicación
   server.get('**', (req, res, next) => {
     const { protocol, originalUrl, baseUrl, headers } = req;
+    const rawHost = (headers['x-forwarded-host'] as string) || headers.host || 'localhost';
+    const host = rawHost.split(',')[0].trim();
+    const rawProto = (headers['x-forwarded-proto'] as string)?.split(',')[0].trim();
+    const proto = rawProto || protocol || 'https';
+    const fullUrl = `${proto}://${host}${originalUrl}`;
 
     commonEngine
       .render({
         bootstrap,
         documentFilePath: indexHtml,
-        url: `${protocol}://${headers.host}${originalUrl}`,
+        url: fullUrl,
         publicPath: browserDistFolder,
-        providers: [{ provide: APP_BASE_HREF, useValue: baseUrl }],
+        providers: [{ provide: APP_BASE_HREF, useValue: baseUrl || '/' }],
       })
       .then((html) => res.send(html))
-      .catch((err) => next(err));
+      .catch((err) => {
+        console.error('SSR render error for:', originalUrl, err);
+        res.sendFile(clientIndex, (sendErr) => {
+          if (sendErr) next(err);
+        });
+      });
   });
 
   return server;
 }
 
 function run(): void {
-  const port = process.env['PORT'] || 4000;
-
-  // Start up the Node server
+  const port = Number(process.env['PORT']) || 4000;
   const server = app();
   server.listen(port, () => {
     console.log(`Node Express server listening on http://localhost:${port}`);

@@ -1,0 +1,47 @@
+@if(isBrowser) {
+<div
+    class="sticky top-0 left-0  w-full py-2 px-3 text-xs bg-background-light dark:bg-background-dark dark:text-zinc-200 z-50 ">
+    <!-- border-b border-r border-zinc-200 dark:border-zinc-800 -->
+    <div class="flex justify-between items-center h-10">
+        <div class="flex justify-between items-center space-x-5">
+            <button (click)="goBack()" class="flex justify-center items-center">
+                <i class="fa-solid fa-chevron-left text-lg"></i>
+            </button>
+            <button (click)="onScrollTop()"
+                class="flex flex-col items-center cursor-pointer uppercase text-base font-semibold">
+                <span>{{'income' | translate}}</span>
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<div class="my-3 mx-2 flex justify-start items-center space-x-5 text-sm font-semibold">
+    <!-- Accepted Link -->
+    <a routerLink="/admin/incomes/active" [routerLinkActiveOptions]="{exact: false}"
+        routerLinkActive="bg-primary-600 dark:bg-primary-600 text-white"
+        [class]="router.isActive('/admin/incomes/active', false) ? 'bg-primary-600 text-white' : 'bg-white dark:bg-zinc-800/80 text-zinc-800 dark:text-zinc-300'"
+        class="hover:bg-primary-600 dark:hover:bg-primary-600 hover:text-white transition-colors duration-300 ease-in-out rounded-full px-5 py-2 shadow-lg space-x-2 flex items-center">
+        <span>{{'accepted' | translate}}</span>
+        <span class="bg-white dark:bg-zinc-700 text-zinc-800 dark:text-zinc-300 rounded-full px-2 py-0.5 shadow-inner">
+            {{ count?.accept ? count?.accept : 0 }}
+        </span>
+    </a>
+
+    <!-- Suspended Link -->
+    <a routerLink="/admin/incomes/suspended" [routerLinkActiveOptions]="{exact: false}"
+        routerLinkActive="bg-primary-600 dark:bg-primary-600 text-white"
+        [class]="router.isActive('/admin/incomes/suspended', false) ? 'bg-primary-600 text-white' : 'bg-white dark:bg-zinc-800/80 text-zinc-800 dark:text-zinc-300'"
+        class="hover:bg-primary-600 dark:hover:bg-primary-600 hover:text-white transition-colors duration-300 ease-in-out rounded-full px-5 py-2 shadow-lg space-x-2 flex items-center">
+        <span>{{'suspended' | translate}}</span>
+        <span
+            class="bg-zinc-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-300 rounded-full px-2 py-0.5 shadow-inner">
+            {{ count?.decline ? count?.decline : 0 }}
+        </span>
+    </a>
+</div>
+
+<main class="mx-2 pb-16 sm:pb-4">
+    <router-outlet></router-outlet>
+</main>
+}

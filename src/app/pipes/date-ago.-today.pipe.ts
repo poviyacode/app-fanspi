@@ -2,9 +2,8 @@ import { ChangeDetectorRef, Pipe, PipeTransform } from '@angular/core';
 import { ToolsService } from '../services/tools.service';
 
 @Pipe({
-    name: 'dateAgoToday',
-    pure: true,
-    standalone: false
+  name: 'dateAgoToday',
+  pure: true
 })
 export class DateAgoTodayPipe implements PipeTransform {
 

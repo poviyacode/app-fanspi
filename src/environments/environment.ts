@@ -6,10 +6,18 @@ export const environment = {
   apiSocket: 'https://api.poviya.com/socket.io/socket.io.js',
   api2: 'https://api2.poviya.com/api',
   //test
-  //api: 'https://apitest.fanspi.com/api/',
-  //apiSocket: 'https://apitest.fanspi.com/socket.io/socket.io.js/',
+  //api: 'https://apitest.poviya.com/api/',
+  //apiSocket: 'https://apitest.poviya.com/socket.io/socket.io.js/',
 
   apiPoviyaPhp: 'https://pay.poviya.com/api/',
+
+  cloudflareApiToken: "ExUkZFirfBjaYsyZLsflKbvMADYU8nrFUY5dEjrv",
+  cloudflareAccountId: "497142102c8f0c3ae8d259dfe4cede75",
+
+  domain: 'poviya.com',
+
+  maxSizeInMB: 195,
+  urlCurrent: 'https://poviya.com',
 
   // stripe INC 
   stripe_pk_inc: 'pk_live_51QAMMvBLsnGAeKC39xA2aTh9EAO7xFbWz3OwSs82apqzIYNo7RKDSEQSv7nNs7tVoGAFzpCvW3YETP5dvzRw1Xw300sdOkVZAQ',

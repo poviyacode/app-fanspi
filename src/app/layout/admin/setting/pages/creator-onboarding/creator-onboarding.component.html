@@ -1,0 +1,52 @@
+<div class="flex flex-col lg:flex-row lg:space-x-8 max-w-7xl mx-auto mt-10 mb-20">
+    <div class="mx-auto flex flex-col w-full max-w-md">
+        <div #scrollContainer (scroll)="onScroll($event)"
+            class="flex-1 flex overflow-x-auto snap-x snap-mandatory no-scrollbar scroll-smooth">
+
+            @for (step of onboardingSteps; track $index) {
+            <div class="min-w-full snap-center flex flex-col items-center justify-start px-2">
+
+                <div
+                    class="relative w-full h-40 sm:w-full sm:h-72 mx-auto rounded-[2rem] overflow-hidden mb-6  flex items-center justify-center">
+                    <img [ngSrc]="(step.image) || ''" class="w-auto h-36 sm:w-auto sm:h-48 object-cover" [alt]="step.title" width="500" height="500">
+                </div>
+
+                <div class="text-center space-y-4">
+                    <h2 class="text-xl font-black text-zinc-900 dark:text-white leading-tight">
+                        {{ step.title | translate }}
+                    </h2>
+                </div>
+            </div>
+            }
+        </div>
+
+        <div class="p-8 space-y-6">
+            <div class="flex justify-center gap-2">
+                @for (step of onboardingSteps; track $index) {
+                <button (click)="scrollTo($index)" class="h-2 rounded-full transition-all duration-300"
+                    [ngClass]="currentIndex() === $index ? 'w-8 bg-primary-500' : 'w-2 bg-zinc-300 dark:bg-zinc-700'">
+                </button>
+                }
+            </div>
+
+
+            @if(currentIndex() === onboardingSteps.length - 1) {
+            <button (click)="start()"
+                class="w-full py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-bold text-lg active:scale-95 transition-transform">
+                {{ 'btnStart' | translate }}
+            </button>
+            } @else {
+            <button (click)="next()"
+                class="w-full py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-bold text-lg active:scale-95 transition-transform">
+                {{ 'next' | translate }}
+            </button>
+            }
+        </div>
+
+        <div class="px-8 pb-8">
+            <p class="text-center font-medium text-md text-zinc-700 dark:text-zinc-200">
+                {{ 'creatorTerms' | translate }}
+            </p>
+        </div>
+    </div>
+</div>

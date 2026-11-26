@@ -1,0 +1,29 @@
+<div [ngClass]="className.modalClass()"
+    class="modal-center fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-black/70 backdrop-blur-md transition-all"
+    (click)="onCloseModal()">
+
+    <!-- Contenedor Principal (Tarjeta Flotante) -->
+    <div [ngClass]="className.cardModalClass()"
+        class="w-full max-w-lg overflow-hidden bg-white dark:bg-[var(--color-secondary-900)] backdrop-blur-xl border border-slate-200 dark:border-[var(--color-secondary-800)] rounded-[2.5rem] shadow-2xl transition-colors duration-300"
+        (click)="($event.stopPropagation())" animate.enter="modal-animation-enter"
+        animate.leave="modal-animation-leave">
+
+        <section class="p-5 sm:p-6 overflow-y-auto max-h-[85vh] custom-scrollbar">
+            <div class="flex flex-col gap-5">
+                <div class="flex flex-col">
+                    <h2 class="text-lg font-semibold text-gray-800 dark:text-white">Seleccionar sonido</h2>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Selecciona un sonido para el chat</p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    @for (item of sounds(); track item) {
+
+                    <button (click)="sendSound(item)"
+                        class="flex items-center justify-center p-3 bg-blue-100 dark:bg-blue-900 rounded hover:bg-blue-200 transition">
+                        <span>🔊 {{ item.name }}</span>
+                    </button>
+                    }
+                </div>
+            </div>
+        </section>
+    </div>
+</div>

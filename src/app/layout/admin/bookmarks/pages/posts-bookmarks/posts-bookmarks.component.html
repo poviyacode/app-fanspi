@@ -1,0 +1,143 @@
+@if (isBrowser) {
+<div class="mx-auto max-w-7xl">
+    <router-outlet></router-outlet>
+    <ng-container #container></ng-container>
+
+    <section
+        class="sticky top-0 w-full py-3 px-4 text-xs bg-background-light dark:bg-background-dark dark:text-zinc-200 z-10">
+
+        <div class="flex justify-between items-center space-x-5 h-12">
+
+            <button (click)="goBack()"
+                class="cursor-pointer flex items-center justify-center w-10 h-10 rounded-full transition duration-300 ease-in-out hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                <i appIcon iconName="arrow-back-regular" [size]="'w-6 h-6'" [color]="''" class="flex-shrink-0 pl-1"></i>
+            </button>
+
+            <button (click)="onScrollTop()"
+                class="cursor-pointer flex items-center justify-center px-4 py-2 text-sm font-semibold text-center text-zinc-700 dark:text-zinc-200 uppercase rounded-full transition duration-300 ease-in-out hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                <span>{{'bookmarks' | translate}}</span>
+            </button>
+        </div>
+    </section>
+
+    <main class="mx-2 mb-20">
+
+        <div class="space-y-6 pt-0 mt-2">
+            <!-- -->
+            <div class="grid grid-cols-3 gap-1 sm:gap-2">
+                @for (item of this.bookmarkService.bookmarks(); track $index) {
+
+                <article (click)="onPost(item)" [id]="'post-' + item._id"
+                    class="relative hover:cursor-pointer group bg-white dark:bg-zinc-800 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:-translate-y-2 overflow-hidden transform">
+                    <div class="relative h-52 md:h-112 bg-zinc-100 dark:bg-zinc-700 overflow-hidden">
+                        @if (item.Post?.PostMedia?.[0]; as media) {
+
+                        <!-- Image Preview -->
+                        @if (media.type === 'image') {
+                        <img ngOptimizedImage [ngSrc]="(media.cloudflare?.result?.variants?.[0] || media.url) || ''"
+                            [alt]="item.Post?.title || 'Default alt text'"
+                            class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" width="500" height="500" />
+                        }
+
+                        <!-- Video Preview -->
+                        @if (media.type === 'video') {
+                        <img ngOptimizedImage [ngSrc]="(media.cloudflare?.result?.thumbnail || media.urlSnapshot) || ''"
+                            [alt]="item.Post?.title || 'Video thumbnail'"
+                            class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" width="500" height="500" />
+
+                        <!-- Play Button -->
+                        <div class="absolute inset-0 flex items-center justify-center bg-black/20">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-full bg-white/30 transition-all group-hover:bg-primary-500/80">
+                                <i appIcon iconName="play-solid" [size]="'w-8 h-8'" [color]="'text-white'"></i>
+                            </div>
+                        </div>
+                        }
+
+                        }
+
+                        <!-- user profile -->
+                        <div class="absolute left-2 top-2 flex flex-col gap-1 z-20">
+
+                            <div [ngClass]="{
+                            'border-[#ff0050] animate-pulse-border': $safeNavigationMigration(item.Post?.User!.live),
+                            'border-green-500': item.Post?.User!.online && !item.Post?.User!.live,
+                            'border-zinc-700/10': !item.Post?.User!.online && !item.Post?.User!.live
+                            }"
+                                class="w-12 h-12 flex justify-center items-center font-normal rounded-full overflow-hidden border-2 bg-purple-100 dark:bg-purple-800/10 text-purple-500 text-xl">
+                                @if (item.Post?.User!.Profile!.length > 0) {
+                                <img class="w-12 h-12 object-cover rounded-full"
+                                    [ngSrc]="(getProfileImageUrl($safeNavigationMigration(item.Post?.User)!)) || ''" width="500" height="500" />
+                                } @else {
+                                {{ getFirstLetter(item.Post?.User?.alias!! || item.Post?.User?.username!!)}}
+                                }
+                            </div>
+
+                        </div>
+
+                        <!-- Media Badges -->
+                        <div class="absolute left-1/2 bottom-2 flex flex-col gap-1">
+                            @if (item.Post?.PostMedia!.length > 1) {
+                            <div class="rounded-full bg-black/40  px-2.5 py-1 text-xs  text-white backdrop-blur-sm">
+                                1 / {{ item.Post?.PostMedia!.length }}
+                            </div>
+                            }
+                        </div>
+
+                        <div class="absolute left-2 bottom-2 flex flex-col gap-1">
+                            <div class="rounded-full px-1.5 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                                {{item.Post?.viewCounter}}
+                            </div>
+                        </div>
+
+                        @if(verifiedPrivate(item)) {
+                        <div
+                            class="absolute inset-0 text-white dark:text-zinc-300 bg-zinc-100/50 dark:bg-zinc-800/50 m-0 space-y-2 backdrop-blur-3xl">
+                            <div class="flex justify-center items-center h-full">
+                                <span
+                                    class="bg-purple-800 flex items-center justify-center text-zinc-50 rounded-full uppercase px-2 py-2 font-normal text-xs">
+                                    <i appIcon iconName="lock-solid" [size]="'w-8 h-8'" [color]="''" class=""></i>
+                                </span>
+                            </div>
+                        </div>
+                        }
+
+                    </div>
+                </article>
+                }
+
+                @if (loading()) {
+                @for (item of [1,2,3,4,5,6,7,8,9]; track $index) {
+                <article
+                    class="border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-background-dark p-0 w-full mx-auto space-y-2 shadow-md rounded-3xl">
+                    <div class="animate-pulse w-full  h-44 sm:h-72 lg:h-96 bg-zinc-100 dark:bg-zinc-800 rounded-3xl">
+                    </div>
+                </article>
+                }
+                }
+
+            </div>
+        </div>
+
+        @if (!loading() && this.bookmarkService.bookmarks().length === 0) {
+        <div
+            class="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-6 text-zinc-500 dark:text-zinc-400">
+            <!-- Ícono principal -->
+            <div class="flex items-center justify-center w-24 h-24 bg-white dark:bg-zinc-800 rounded-full shadow-md">
+                <i appIcon iconName="bookmark-regular" [size]="'w-12 h-12'"
+                    [color]="'text-zinc-500 dark:text-zinc-400'"></i>
+            </div>
+
+            <!-- Título principal -->
+            <h2 class="text-2xl font-medium text-zinc-700 dark:text-zinc-200">{{'noBookmarksYet' | translate}}</h2>
+
+            <!-- Mensaje secundario -->
+            <p class="text-base font-light max-w-md hidden">
+                {{'startSavingYourFavoriteContent' | translate}}
+            </p>
+
+        </div>
+        }
+    </main>
+</div>
+}

@@ -1,0 +1,170 @@
+<section class="flex justify-between space-x-5 items-center my-5">
+  <div class="font-semibold border-b-2 border-green-500">
+    <span>{{'profit' | translate}}:</span> USD {{this.profit | number:'1.2-2'}}
+  </div>
+</section>
+
+<section class="container">
+  @if (this.transactionCreditService.transactionCredits().length > 0) {
+  <div class="flex flex-col">
+    <div class="overflow-x-auto">
+      <div class="inline-block min-w-full py-2 align-middle">
+        <div class="overflow-hidden border border-zinc-200 dark:border-zinc-800 md:rounded-lg shadow-lg">
+          <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-800">
+            <tbody class="bg-white divide-y divide-zinc-200 dark:divide-zinc-800 dark:bg-zinc-900">
+              @for (item of this.transactionCreditService.transactionCredits(); track $index) {
+              <tr #theLastList [class.bg-green-100]="selectedRowIndex === $index"
+                [class.dark:bg-green-800]="selectedRowIndex === $index" (click)="onRowClick($index)"
+                class="cursor-pointer hover:bg-green-50 dark:hover:bg-green-800 transition-all duration-150 ease-in-out">
+
+                <!-- Column for type (Credit or User) -->
+                <td class="px-4 py-4">
+                  @if (item.type === 'CREDIT') {
+                  <div class="font-semibold flex justify-start items-center space-x-2">
+                    <i class="fa-solid fa-dollar-sign text-lg text-yellow-500"></i>
+                    <span class="text-sm text-zinc-700 dark:text-zinc-300">{{'credit' | translate}}</span>
+                  </div>
+                  } @else {
+                  <div class="flex items-center gap-x-2">
+                    <a [routerLink]="['/', item.Sender!.username]" class="w-10 h-10">
+                      @if (item.Sender!.Profile!.length > 0) {
+                      <img class="object-cover w-10 h-10 rounded-full shadow"
+                        [src]="item.Sender!.Profile![0].cloudflare ? item.Sender!.Profile![0].cloudflare.result.variants[0] ? item.Sender!.Profile![0].cloudflare.result.variants[0] : item.Sender!.Profile![0].url : ''"
+                        alt="{{item.Sender!.name ? item.Sender!.name : item.Sender!.username}}" />
+                      } @else {
+                      <div class="rounded-full w-10 h-10 bg-zinc-100 dark:bg-zinc-800 shadow"></div>
+                      }
+                    </a>
+                    <div>
+                      @if (item.Sender!.name) {
+                      <h2 class="text-sm font-medium text-zinc-800 dark:text-white">{{ item.Sender!.name | truncate: 9
+                        }}</h2>
+                      }
+                      @if (item.Sender!.username) {
+                      <p class="text-xs font-normal text-zinc-500 dark:text-zinc-400">
+                        &#64;{{ item.Sender!.username | truncate: 9 }}</p>
+                      }
+                    </div>
+                  </div>
+                  }
+                </td>
+
+                <!-- Column for transaction type and time -->
+                <td class="px-4 py-4 text-sm text-zinc-700 dark:text-zinc-300 whitespace-nowrap">
+                  @if (item.type === 'CREATOR_SUBSCRIBE') {
+                  <h3 class="text-sm font-semibold">{{'subscription' | translate}}</h3>
+                  }
+                  @if (item.type === 'CREDIT') {
+                  <h3 class="text-sm font-semibold">{{'purchase' | translate}}</h3>
+                  }
+                  @if (item.type === 'MESSAGE') {
+                  <h3 class="text-sm font-semibold">{{'message' | translate}}</h3>
+                  }
+                  @if (item.type === 'TIP') {
+                  <h3 class="text-sm font-semibold">{{'tip' | translate}}</h3>
+                  }
+                  @if (item.type === 'AD') {
+                  <h3 class="text-sm font-semibold">{{'ad' | translate}}</h3>
+                  }
+                  <span class="text-xs text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
+                    {{item.registerAt! | dateAgo}}</span>
+                  <span class="block mt-1 text-xs text-zinc-500 dark:text-zinc-400">{{ 'ID: ' }}{{ item.code }}</span>
+                </td>
+
+                <!-- Column for Amount and Status -->
+                <td class="px-4 py-4 text-sm text-zinc-700 dark:text-zinc-300 whitespace-nowrap font-semibold">
+                  <div class="text-right">
+                    USD {{item.amount | number:'1.2-2'}}
+                  </div>
+                  <div class="flex justify-end mt-2">
+                    @if (item.settlementStatus == 'YES') {
+                    <div class="inline-flex items-center rounded-full gap-x-2 text-emerald-500">
+                      <i class="fa-solid fa-circle-up"></i>
+                    </div>
+                    }
+                    @if (item.settlementStatus == 'NO' || !item.settlementStatus) {
+                    <div class="inline-flex items-center text-red-500 rounded-full gap-x-2">
+                      <i class="fa-solid fa-circle-down"></i>
+                    </div>
+                    }
+                  </div>
+                </td>
+
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  } @else if(loading) {
+  <div class="my-10">
+    <div class="flex justify-center items-center space-x-2 h-full">
+      <span class="relative flex h-3 w-3">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-3 w-3 bg-primary-500"></span>
+      </span>
+
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"
+          style="animation-delay: 150ms;"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-800"></span>
+      </span>
+
+      <span class="relative flex h-2.5 w-2.5">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"
+          style="animation-delay: 300ms;"></span>
+        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary-700"></span>
+      </span>
+    </div>
+  </div>
+  } @else {
+  <div class=" text-center font-light text-3xl">
+    {{'there_is_no_data' | translate}}
+  </div>
+  }
+  <div class="hidden items-center justify-between mt-6">
+    <a href="#"
+      class="flex items-center px-5 py-2 text-sm text-zinc-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-200 dark:border-zinc-800 dark:hover:bg-zinc-800">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+        class="w-5 h-5 rtl:-scale-x-100">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
+      </svg>
+
+      <span>
+        previous
+      </span>
+    </a>
+
+    <div class="items-center hidden md:flex gap-x-3">
+      <a href="#" class="px-2 py-1 text-sm text-blue-500 rounded-md dark:bg-zinc-800 bg-blue-100/60">1</a>
+      <a href="#"
+        class="px-2 py-1 text-sm text-zinc-500 rounded-md dark:hover:bg-zinc-800 dark:text-zinc-300 hover:bg-zinc-100">2</a>
+      <a href="#"
+        class="px-2 py-1 text-sm text-zinc-500 rounded-md dark:hover:bg-zinc-800 dark:text-zinc-300 hover:bg-zinc-100">3</a>
+      <a href="#"
+        class="px-2 py-1 text-sm text-zinc-500 rounded-md dark:hover:bg-zinc-800 dark:text-zinc-300 hover:bg-zinc-100">...</a>
+      <a href="#"
+        class="px-2 py-1 text-sm text-zinc-500 rounded-md dark:hover:bg-zinc-800 dark:text-zinc-300 hover:bg-zinc-100">12</a>
+      <a href="#"
+        class="px-2 py-1 text-sm text-zinc-500 rounded-md dark:hover:bg-zinc-800 dark:text-zinc-300 hover:bg-zinc-100">13</a>
+      <a href="#"
+        class="px-2 py-1 text-sm text-zinc-500 rounded-md dark:hover:bg-zinc-800 dark:text-zinc-300 hover:bg-zinc-100">14</a>
+    </div>
+
+    <a href="#"
+      class="flex items-center px-5 py-2 text-sm text-zinc-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-200 dark:border-zinc-800 dark:hover:bg-zinc-800">
+      <span>
+        Next
+      </span>
+
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+        class="w-5 h-5 rtl:-scale-x-100">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+      </svg>
+    </a>
+  </div>
+</section>

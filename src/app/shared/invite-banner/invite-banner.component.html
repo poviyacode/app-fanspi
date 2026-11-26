@@ -1,0 +1,36 @@
+<div class="fixed top-28 right-2 z-50 pointer-events-none">
+    @for (item of interactionUsers(); track $index) {
+    <div class="animate-enter mb-2 pointer-events-auto">
+
+        <div class=" bg-blue-100/90 dark:bg-blue-950/90 p-2 sm:p-3 rounded-lg shadow-md mx-auto w-64 sm:w-80">
+
+            <div class="flex items-center space-x-4">
+                <img [src]="(getProfileImageUrl(item)) || ''" [alt]="item.username"
+                    class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover mr-3 sm:mr-4" width="500" height="500" />
+
+                <div class="flex-grow w-ful">
+                    <h4 class="text-base sm:text-lg font-semibold text-zinc-700 dark:text-zinc-100 line-clamp-1">
+                        {{ item.alias || item.username }}
+                    </h4>
+                    <p class="text-xs sm:text-sm text-zinc-700 dark:text-zinc-100 line-clamp-2">
+                        💕🥰{{'wantsToBeYourGirlfriend' | translate}}💖
+                    </p>
+                </div>
+                <div class="w-auto">
+                    <button type="button" (click)="removeUserSuggestion(item!)"
+                        class="rounded-full w-8 h-8 flex justify-center items-center cursor-pointer transition-colors duration-300 hover:bg-zinc-200 hover:dark:bg-black/40 pointer-events-auto border-0">
+                        <i appIcon iconName="close-regular" [size]="'w-6 h-6'"
+                            [color]="'text-blue-400 hover:text-blue-500'"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="mt-4 flex space-x-3">
+                <button (click)="startInteraction(item, 'chat')" [ngClass]="className.buttonPrimaryClass()"
+                    class="flex-1 px-3 py-2 rounded-full">
+                    {{'chat' | translate}}
+                </button>
+            </div>
+        </div>
+    </div>
+    }
+</div>

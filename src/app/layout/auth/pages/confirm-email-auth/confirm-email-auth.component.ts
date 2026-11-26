@@ -2,7 +2,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, inject, PLATFORM_ID, signal, ChangeDetectionStrategy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Tools } from '@core/common/tools';
+import { UIStyles } from '@core/common/uistyles';
 import { IconDirective } from '@directive/coin-svg.directive';
 import { CustomTranslatePipe } from '@pipes/translate.pipe';
 import { AuthService } from '@services/auth.service';

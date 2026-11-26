@@ -1,0 +1,21 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import UsersChatComponent from './users-chat.component';
+
+describe('UsersChatComponent', () => {
+  let component: UsersChatComponent;
+  let fixture: ComponentFixture<UsersChatComponent>;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [UsersChatComponent]
+    });
+    fixture = TestBed.createComponent(UsersChatComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

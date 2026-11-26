@@ -1,0 +1,92 @@
+<header class="cabecera">
+  <a href="/" aria-label="Pasarela, inicio"
+    ><span class="marca" aria-hidden="true">p</span>Pasarela</a
+  ><span class="entorno">Entorno de pruebas</span>
+</header>
+<main>
+  <section class="introduccion">
+    <h1>Tu compra,<br />un paso más cerca.</h1>
+    <p>Revisa el resumen y elige tu método de pago.</p>
+  </section>
+  <div class="contenido">
+    <aside class="resumen" aria-labelledby="titulo-resumen">
+      <h2 id="titulo-resumen">Resumen del pedido</h2>
+      @if (producto(); as producto) {
+        <div class="producto">
+          <span class="icono" aria-hidden="true">▤</span>
+          <div>
+            <strong>{{ pedido()?.nombre ?? producto.nombre }}</strong>
+            <p>Cantidad: 1</p>
+          </div>
+        </div>
+        <dl>
+          <div>
+            <dt>Subtotal</dt>
+            <dd>
+              {{ pedido()?.importe ?? producto.importe }} {{ pedido()?.moneda ?? producto.moneda }}
+            </dd>
+          </div>
+          <div class="total">
+            <dt>Total a pagar</dt>
+            <dd>
+              {{ pedido()?.importe ?? producto.importe }}
+              <small>{{ pedido()?.moneda ?? producto.moneda }}</small>
+            </dd>
+          </div>
+        </dl>
+      } @else {
+        <p>Cargando resumen…</p>
+      }
+      <p class="nota">
+        Esta compra se realiza en un entorno de prueba. Utiliza únicamente tarjetas de prueba.
+      </p>
+    </aside>
+    <section class="pago" aria-labelledby="titulo-pago" [attr.aria-busy]="ocupado()">
+      <h2 id="titulo-pago">Elige cómo pagar</h2>
+      <p>Paga con tarjeta o Google Pay, según las opciones disponibles en el formulario seguro.</p>
+      <div class="redes" aria-label="Tarjetas aceptadas">
+        <span>VISA</span><span>Mastercard</span>
+      </div>
+      @if (producto() && !producto()?.disponible) {
+        <div class="aviso">Los pagos aún no están habilitados por el comercio.</div>
+      }
+      @if (!pedido()) {
+        <button class="principal" (click)="iniciarPago()" [disabled]="!puedeCrear()">
+          {{ ocupado() ? 'Preparando pago…' : 'Continuar al pago' }}
+        </button>
+      }
+      <div id="metodos-pago"></div>
+      <div aria-live="polite" aria-atomic="true">
+        @if (mensaje()) {
+          <p class="aviso">{{ mensaje() }}</p>
+        }
+        @if (resumenEstado()) {
+          <p class="aviso">{{ resumenEstado() }}</p>
+        }
+      </div>
+      @if (error()) {
+        <p class="error" role="alert">{{ error() }}</p>
+      }
+      @if (pedido(); as pedido) {
+        <div class="referencia">
+          <span>Referencia del pedido</span><code>{{ pedido.identificador }}</code>
+          @if (pedido.transaccion) {
+            <span>Transacción: {{ pedido.transaccion }}</span>
+          }
+        </div>
+        <button class="secundario" (click)="consultar()" [disabled]="ocupado()">
+          Consultar estado
+        </button>
+        @if (['creado', 'listo', 'error', 'rechazado'].includes(pedido.estado)) {
+          <button class="secundario" (click)="reiniciar()" [disabled]="ocupado()">
+            Comenzar nuevo pedido
+          </button>
+        }
+      } @else if (error()) {
+        <button class="secundario" (click)="cargar()">Volver a consultar</button>
+      }
+      <p class="privacidad">Los datos de tu tarjeta se envían directamente a CyberSource.</p>
+    </section>
+  </div>
+</main>
+<footer>Pasarela <span>Pagos procesados con CyberSource</span></footer>

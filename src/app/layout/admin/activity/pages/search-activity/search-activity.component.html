@@ -1,0 +1,107 @@
+<!-- Fondo oscuro difuminado (Backdrop) -->
+<div animate.enter="slideInRight-animation-enter" animate.leave="slideFadeIn-animation-leave"
+    class="fixed inset-0 z-50 bg-white/5 dark:bg-secondary-900/5 backdrop-blur-xs transition-all" (click)="onClose()">
+</div>
+
+<!-- Panel lateral deslizante -->
+<div animate.enter="slideInRight-animation-enter" animate.leave="slideFadeIn-animation-leave"
+    class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white dark:bg-[var(--color-secondary-900)] shadow-2xl border-l border-slate-200 dark:border-[var(--color-secondary-800)] flex flex-col">
+
+    <!-- Cabecera del Panel -->
+    <div
+        class="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-[var(--color-secondary-800)]">
+        <div class="flex items-center gap-3">
+            <div
+                class="flex items-center justify-center w-10 h-10 rounded-2xl bg-slate-100 dark:bg-[var(--color-secondary-950)] text-slate-600 dark:text-[var(--color-secondary-300)] border border-slate-200 dark:border-[var(--color-secondary-800)] shadow-sm">
+                <i appIcon iconName="search-regular" [size]="'w-5 h-5'" [color]="'text-slate-400'"></i>
+            </div>
+            <div>
+                <h3 class="text-base font-extrabold text-slate-900 dark:text-white uppercase tracking-tight">
+                    {{ 'search' | translate }}
+                </h3>
+                <p class="text-xs text-slate-400 dark:text-[var(--color-secondary-400)] font-medium">
+                    {{'findWhatYouNeed' | translate}}
+                </p>
+            </div>
+        </div>
+        <button (click)="onClose()"
+            class="cursor-pointer w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[var(--color-secondary-950)] dark:hover:bg-[var(--color-secondary-800)] text-slate-500 dark:text-[var(--color-secondary-400)] transition-colors shadow-sm">
+            <i appIcon iconName="close-regular" [size]="'w-5 h-5'" [color]="''"></i>
+        </button>
+    </div>
+
+    <!-- Formulario dentro del Panel -->
+    <form novalidate (ngSubmit)="onSubmit()" [formGroup]="myFormSearch"
+        class="flex-1 overflow-y-auto p-6 space-y-6 flex flex-col justify-between">
+
+        <div class="space-y-4">
+            <!-- Búsqueda por texto (q) -->
+            <div class="flex flex-col">
+                <label
+                    class="text-xs font-semibold text-slate-400 dark:text-[var(--color-secondary-500)] uppercase tracking-wider mb-2">
+                    {{ 'search' | translate }}
+                </label>
+                <div class="relative w-full">
+                    <div class="absolute left-3.5 top-3.5 font-bold">
+                        <i appIcon iconName="search-regular" [size]="'w-5 h-5'" [color]="'text-slate-400'"></i>
+                    </div>
+                    <input formControlName="q" id="q" [placeholder]="'search' | translate" class="pl-11 w-full "
+                        [ngClass]="inputClass(myFormSearch, 'q')">
+                </div>
+            </div>
+
+            <!-- Filtro por Estado (status) -->
+            <div class="flex flex-col">
+                <label
+                    class="text-xs font-semibold text-slate-400 dark:text-[var(--color-secondary-500)] uppercase tracking-wider mb-2">
+                    {{ 'status' | translate }}
+                </label>
+                <select formControlName="status" [ngClass]="selectClass(myFormSearch, 'status')" class="w-full ">
+                    <option value="" class="text-sm">{{'all' | translate}}</option>
+                    <option value="ACCEPT" class="text-sm">{{"completed" | translate}}</option>
+                    <option value="DECLINE" class="text-sm">{{'decline' | translate}}</option>
+                    <option value="CANCELED" class="text-sm">{{'canceled' | translate}}</option>
+                    <option value="PENDING" class="text-sm">{{'pending' | translate}}</option>
+                    <option value="PROCESSING" class="text-sm">{{'processing' | translate}}</option>
+                </select>
+            </div>
+
+            <!-- Filtro por Tipo (type) -->
+            <div class="flex flex-col">
+                <label
+                    class="text-xs font-semibold text-slate-400 dark:text-[var(--color-secondary-500)] uppercase tracking-wider mb-2">
+                    {{ 'type' | translate }}
+                </label>
+                <select formControlName="type" [ngClass]="selectClass(myFormSearch, 'type')" class="w-full ">
+                    <option value="" class="text-sm">{{'all' | translate}}</option>
+                    <option value="CREATOR_SUBSCRIBE" class="text-sm">{{"subscription" | translate}}</option>
+                    <option value="TIP" class="text-sm">{{'tip' | translate}}</option>
+                    <option value="WITHDRAWAL_MONEY" class="text-sm">{{'withdrawalMoney' | translate}}</option>
+                </select>
+            </div>
+            <!-- Order -->
+            <div class="flex flex-col">
+                <label
+                    class="text-xs font-semibold text-slate-400 dark:text-[var(--color-secondary-500)] uppercase tracking-wider mb-2">
+                    {{ 'order' | translate }}
+                </label>
+                <select formControlName="order" [ngClass]="selectClass(myFormSearch, 'order')" class="w-full ">
+                    <option value="" class="text-sm">{{'all' | translate}}</option>
+                    <option value="desc" class="text-sm">{{"descending" | translate}}</option>
+                    <option value="asc" class="text-sm">{{"ascending" | translate}}</option>
+                </select>
+            </div>
+
+        </div>
+
+        <!-- Botón de aplicar filtros -->
+        <div class="pt-4 border-t border-slate-100 dark:border-[var(--color-secondary-800)]">
+            <button type="submit" [ngClass]="className.buttonPrimaryClass()"
+                class="cursor-pointer py-3 px-6 rounded-2xl text-sm font-bold shadow-md transition duration-200 ease-in-out flex items-center gap-2 w-full justify-center">
+                <i appIcon iconName="search-regular" [size]="'w-4 h-4'" [color]="'text-white'"></i>
+                <span>{{ 'search' | translate }}</span>
+            </button>
+        </div>
+    </form>
+
+</div>

@@ -1,0 +1,256 @@
+<ng-container #container></ng-container>
+@if (dialogService.activeModal() === 'modalPost') {
+<div class="modal-center" (click)="closeModal()">
+  <div
+    class=" bg-background-light dark:bg-background-dark rounded-md shadow-lg border border-zinc-100 dark:border-zinc-800/40 "
+    (click)="($event.stopPropagation())">
+    @if (this.postService.post()! && this.postService.post()!.PostMedia!.length > 0) {
+    <div class="w-screen h-screen">
+
+      <!-- carousel media-->
+      @if (currentLinghtbox()) {
+      <div class="h-screen md:h-screen w-full">
+        <div #main class="flex justify-center items-center w-full">
+          <div class="h-screen md:h-screen w-full flex justify-center md:block md:justify-normal">
+            <div class="backdrop-blur-xl bg-black/80 relative flex justify-center items-center w-full">
+              <div class="flex justify-center items-center w-full relative" (touchstart)="onTouchStart($event)"
+                (touchmove)="onTouchMove($event)">
+
+                @if (loading) {
+                <div class="absolute inset-0 flex justify-center items-center">
+                  <div
+                    class="spinner-border text-white animate-spin w-8 h-8 border-4 border-t-transparent border-solid rounded-full">
+                  </div>
+                </div>
+                }
+
+                @if (currentLinghtbox()?.type == 'image') {
+                <img ngOptimizedImage priority="high" [src]="
+                      currentLinghtbox()?.cloudflare
+                        ? currentLinghtbox()?.cloudflare.result.variants[0]
+                        : $safeNavigationMigration(currentLinghtbox()?.url)
+                    " alt="" class="h-fit md:h-screen w-fit object-cover" />
+                }
+
+                @else if (currentPrivate && currentLinghtbox()?.type == 'video') {
+                <img ngOptimizedImage priority="high" [src]="
+                      currentLinghtbox()?.cloudflare
+                        ? 'https://customer-6kruyx7h361tmu11.cloudflarestream.com/' +
+                          currentLinghtbox()?.cloudflare.result.uid +
+                          '/thumbnails/thumbnail.gif?time=1s&height=200&duration=6s'
+                        : $safeNavigationMigration(currentLinghtbox()?.urlSnapshot)
+                    " class="h-screen w-fit object-cover" />
+                }
+
+                @if (!currentPrivate && currentLinghtbox()?.type == 'video') {
+                @if (currentLinghtbox()?.type == 'video' && currentLinghtbox()?.cloudflare) {
+                <iframe [src]="videoUrl" class="bg-black h-screen md:h-screen w-full flex justify-center"
+                  title="Example Stream video" frameBorder="0"
+                  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen="true">
+                </iframe>
+                }
+                }
+
+                @if (currentPrivate) {
+                @if (currentLinghtbox()?.Post) {
+                <div
+                  class="absolute inset-0 text-white dark:text-zinc-300 bg-zinc-100/50 dark:bg-zinc-800/50 m-0 backdrop-blur-3xl flex justify-center items-center">
+                  <span
+                    class="bg-purple-800 flex items-center justify-center text-zinc-50 rounded-full uppercase px-2 py-2 font-normal text-xs">
+                    <i class="fa-solid fa-lock"></i>
+                  </span>
+                </div>
+                }
+
+                @if (currentLinghtbox()?.Message) {
+                <div
+                  class="absolute inset-0 text-white dark:text-zinc-300 bg-zinc-100/50 dark:bg-zinc-800/50 m-0  backdrop-blur-3xl flex justify-center items-center">
+                  <span
+                    class="bg-purple-800 flex items-center justify-center text-zinc-50 rounded-full uppercase px-2 py-2 font-normal text-xs">
+                    <i class="fa-solid fa-lock"></i>
+                  </span>
+                </div>
+                }
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+
+      <!-- end carousel media-->
+      @if (this.postService.post()!.User!) {
+      <a class="absolute left-2 md:left-5 top-2 md:top-5" (click)="closeModal()"
+        routerLink="/{{this.postService.post()!.User!.username}}">
+        @if(this.postService.post()!.User!.Profile) {
+        @if (this.postService.post()!.User!.Profile!.length > 0) {
+        <div [style.background-image]="'url(' + getProfileImageUrl(this.postService.post()!.User!) + ')'"
+          class="bg-cover flex flex-col rounded-full w-10 h-10 bg-zinc-100 dark:bg-zinc-800/50">
+        </div>
+        }
+
+        @if (this.postService.post()!.User!.Profile!.length == 0) {
+        <div class="rounded-full max-w-none w-10 h-10 object-cover bg-zinc-200 dark:bg-zinc-700">
+        </div>
+        }
+        } @else {
+        <div class="rounded-full max-w-none w-10 h-10 object-cover bg-zinc-200 dark:bg-zinc-700">
+        </div>
+        }
+
+      </a>
+      }
+      <div class="absolute right-2 md:right-5 top-2 md:top-5">
+        <div class="flex justify-between items-center space-x-2">
+          @if (this.postService.post()!.PostMedia && this.postService.post()!.PostMedia!.length! > 1) {
+          <div class="flex justify-center">
+            <div class="bg-black/50 rounded-2xl px-1 py-1 flex items-center">
+              <button class="text-sm md:text-sm text-white px-1" (click)="prevCarouselMedia()">
+                <i class="fa-solid fa-angle-left"></i>
+              </button>
+              <span class="mx-2 text-sm md:text-sm font-normal text-white">
+                {{ getCurrentSlideNumber() }} / {{getTotalSlideCount() }}
+              </span>
+              <button class="text-sm md:text-sm text-white px-1" (click)="nextCarouselMedia()">
+                <i class="fa-solid fa-angle-right"></i>
+              </button>
+            </div>
+          </div>
+          }
+
+          <div class="flex space-x-3">
+            @if (this.postService.post()!.isComment) {
+            <button (click)="onCommentDialog(this.postService.post()!)" class="inline-flex items-center" href="#">
+              <span class="mr-2 text-zinc-600 dark:text-zinc-300 text-lg">
+                <i class="fa-regular fa-comment"></i>
+              </span>
+              <span class="text-xs font-bold">{{
+                this.postService.post()!.commentCount! > 0 ? this.postService.post()!.commentCount! : (0 | thousands)
+                }}</span>
+            </button>
+            } @if (this.postService.post()!.PostMedia!.length > 0 && this.postService.post()!.type == 'POST') {
+            <button (click)="onTipDialog(this.postService.post()!)"
+              class="flex justify-between items-center space-x-1 text-xs font-semibold border border-zinc-300 dark:border-zinc-700 hover:bg-primary-50 hover:dark:bg-primary-800/10 text-zinc-600 dark:text-zinc-300 hover:text-primary-500 rounded-full px-2">
+              <span class=""><i class="fa-solid fa-gift"></i></span>
+              <span class="text-xs">{{ "sendTip" | translate }}</span>
+            </button>
+            }
+          </div>
+
+          <button (click)="closeModal()"
+            class="text-white bg-black/50 rounded-full w-10 h-10 flex justify-center items-center cursor-pointer transition-colors duration-300 hover:bg-black/40">
+            <i appIcon iconName="close-regular" [size]="'w-6 h-6'" [color]="'text-zinc-100'"></i>
+          </button>
+          <button (click)="onModalDropdown()"
+            class="text-white bg-black/50 rounded-full w-10 h-10 flex justify-center items-center cursor-pointer transition-colors duration-300 hover:bg-black/40">
+            <i appIcon iconName="more-vert-regular" [size]="'w-6 h-6'" [color]="'text-zinc-100'"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+
+  </div>
+</div>
+}
+
+@if (dialogService.activeModal() === 'dropdownMenu') {
+
+<div class="modal-center" (click)="dialogService.closeModal()">
+  <div class="bg-transparent transition-opacity duration-300" (click)="($event.stopPropagation())">
+    @if (this.postService.post()! && this.postService.post()!.PostMedia!.length > 0) {
+    <div class="bg-white dark:bg-background-dark rounded-xl shadow-lg border border-zinc-100 dark:border-zinc-800/40">
+      <div class="w-72 sm:w-96 p-1">
+        <input type="hidden" #bookmark>
+        <ul class="cursor-pointer divide-y divide-zinc-200/50 dark:divide-zinc-800 text-center font-normal">
+          @if (this.authService.user()) {
+
+          @if (postService.post()!.User!._id == this.authService.user()!._id) {
+          <li (click)="onEdit(postService.post()!)"
+            class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+            {{'edit' | translate}}
+          </li>
+          }
+
+          @if (postService.post()!.User!._id == this.authService.user()!._id) {
+          <li (click)="onDeleteDialog(postService.post()!)"
+            class="w-full py-3 px-4 hover:bg-red-50 dark:hover:bg-zinc-800/40 transition-colors duration-300 text-red-500">
+            {{'delete' | translate}}
+          </li>
+          }
+
+          <li (click)="copyText(postService.post()!)"
+            class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+            {{'copy_link_post' | translate}}
+          </li>
+
+          <li (click)="share(postService.post()!)"
+            class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+            {{'share' | translate}}
+          </li>
+
+          @if (postService.post()!.User!._id != this.authService.user()!._id && !bookmark.value) {
+          <li (click)="addPostBookmark(postService.post()!, bookmark.value = $safeNavigationMigration(postService.post()?._id)!)"
+            class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+            {{'save' | translate}}
+          </li>
+          } @else {
+          <li (click)="deleteBookmark(postService.post()!, bookmark.value = '')"
+            class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+            {{'notSave' | translate}}
+          </li>
+          }
+
+          @if (!postService.post()!.pined && (postService.post()!.User?._id === authService.user()!._id)) {
+          <li (click)="onPinToTop(postService.post()!)"
+            class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+            {{'pinToTop' | translate}}
+          </li>
+          }
+
+          @if (postService.post()!.pined && (postService.post()!.User?._id === authService.user()!._id)) {
+          <li (click)="onPinToTop(postService.post()!)"
+            class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+            {{'unpin' | translate}}
+          </li>
+          }
+
+          <li (click)="dialogService.closeModal()"
+            class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+            {{'report' | translate}}
+          </li>
+
+          <li (click)="dialogService.closeModal()"
+            class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+            {{'cancel' | translate}}
+          </li>
+          } @else {
+          <li (click)="copyText(postService.post()!)"
+            class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+            {{'copy_link_post' | translate}}
+          </li>
+
+          <li (click)="share(postService.post()!)"
+            class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+            {{'share' | translate}}
+          </li>
+
+          <li (click)="dialogService.closeModal()"
+            class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+            {{'report' | translate}}
+          </li>
+
+          <li (click)="dialogService.closeModal()"
+            class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+            {{'cancel' | translate}}
+          </li>
+          }
+        </ul>
+      </div>
+    </div>
+    }
+  </div>
+</div>
+}

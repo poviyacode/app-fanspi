@@ -1,6 +1,6 @@
 <<<<<<< HEAD
 
-# Appfanspi18
+# AppPoviya
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.2.
 
@@ -114,3 +114,6 @@ Stripe:
 ok :: 4242 4242 4242 4242
 fail :: 4000 0000 0000 0341
 
+
+git pull origin main
+npm run build && pm2 restart app-poviya

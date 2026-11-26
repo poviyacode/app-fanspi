@@ -1,0 +1,141 @@
+<article (click)="onPostClick()" [id]="'post-' + item()._id"
+    class="group relative w-full max-w-full sm:max-w-[450px] md:max-w-[500px] lg:max-w-[550px] mx-auto cursor-pointer bg-secondary-100 dark:bg-secondary-950 rounded-[0rem] overflow-hidden border border-secondary-200/50 dark:border-secondary-800/30 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.4)] dark:hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)]">
+
+    <div class="relative aspect-auto h-[260px] md:h-[320px] lg:h-[380px] xl:h-[420px] 2xl:h-[480px] overflow-hidden">
+
+        <div class="w-full h-full transition-all duration-700 ease-out" [class.blur-sm]="isPrivate()"
+            [class.opacity-5]="isPrivate()" [class.scale-105]="isPrivate()">
+            @if (item().PostMedia?.[0]; as media) {
+            @let mediaDetails = getMediaDetails($safeNavigationMigration(item().PostMedia?.[0]));
+
+            @if (!imageLoaded()) {
+            <div
+                class="absolute inset-0 animate-pulse bg-gradient-to-r from-secondary-200 to-secondary-300 dark:from-secondary-900 dark:to-secondary-800 flex items-center justify-center">
+            </div>
+            }
+
+            <img ngOptimizedImage [src]="($safeNavigationMigration(mediaDetails?.url)) || ''"
+                [alt]="item().title || 'Post'" fill priority (load)="imageLoaded.set(true)"
+                [class.opacity-0]="!imageLoaded()" [class.opacity-100]="imageLoaded()"
+                class="w-full h-full object-cover transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 group-hover:rotate-1" />
+
+            @if (media.type === 'video' && !isPrivate()) {
+            <div
+                class="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/20 transition-colors duration-500">
+                <div
+                    class="flex h-14 w-14 md:h-16 md:w-16 items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/30 text-white transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-110 group-hover:bg-white/30 group-hover:text-black group-hover:border-transparent shadow-[0_0_30px_rgba(0,0,0,0.2)]">
+                    <i appIcon iconName="play-solid" [size]="'w-5 h-5 md:w-6 h-6'" [color]="'text-white'"
+                        class="ml-1 transition-transform group-hover:scale-105"></i>
+                </div>
+            </div>
+            }
+            }
+        </div>
+
+        @if (isPrivate()) {
+        <div
+            class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 animate-in fade-in zoom-in-95 duration-500">
+            <div
+                class="w-10 h-10 md:w-12 md:h-12 bg-secondary-900/10 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center shadow-[0_20px_40px_rgba(0,0,0,0.3)] transition-transform duration-500 group-hover:scale-105">
+                <i appIcon iconName="lock-solid" [size]="'w-5 h-5 md:w-6 h-6'" [color]="'text-white/90'"></i>
+            </div>
+            <span
+                class="mt-3 text-[10px] font-black text-white/90 uppercase tracking-[0.2em] bg-secondary-900/10 px-3 py-1 rounded-full border border-white/5 backdrop-blur-md shadow-sm">
+                {{ 'private' | translate }}
+            </span>
+        </div>
+        }
+
+        <div class="absolute inset-0 flex flex-col justify-between p-1.5 md:p-2 pointer-events-none z-20">
+
+            <div class="flex justify-between items-start w-full gap-2">
+
+                <div class="flex-1 flex justify-start">
+                    @if (item().pined && showPined()) {
+                    <div
+                        class="flex h-7 w-7 items-center justify-center rounded-full bg-rose-500/80 dark:bg-rose-500/80 backdrop-blur-md border border-white/10 text-white shadow-lg transition-transform duration-500 hover:scale-105">
+                        <i appIcon iconName="keep-regular" [size]="'w-5 h-5'" [color]="'text-white'"></i>
+                    </div>
+                    }
+                </div>
+
+                @if (item().createdAt | isNew) {
+                <div
+                    class="flex px-2.5 py-1 rounded-xl bg-emerald-500 dark:bg-emerald-600 border border-emerald-400/20 shadow-[0_4px_12px_rgba(16,185,129,0.3)] animate-in fade-in zoom-in duration-500">
+                    <span class="text-[9px] font-extrabold text-white uppercase tracking-wider">
+                        {{ 'new' | translate }}
+                    </span>
+                </div>
+                }
+
+                <div class="flex-1 flex justify-end">
+                    @if (item().typeView === 'SUBSCRIBERS') {
+                    <div
+                        class="flex h-7 w-7 items-center justify-center rounded-full bg-amber-500 dark:bg-amber-600 border border-amber-400/20 text-white shadow-lg">
+                        <i appIcon iconName="paid-regular" [size]="'w-5 h-5'" [color]="'text-white'"></i>
+                    </div>
+                    }
+                </div>
+            </div>
+
+            @if (item().PostMedia!.length > 1) {
+            <div
+                class="absolute top-14 right-4 md:right-5 bg-black/50 backdrop-blur-md text-white/90 px-2.5 py-1 rounded-lg text-[10px] md:text-[11px] font-bold border border-white/10 shadow-md flex items-center gap-1.5 transition-all duration-500 group-hover:bg-primary-500 group-hover:border-transparent">
+                <i appIcon iconName="image-regular" [size]="'w-4 h-4'" [color]="'text-white/80'"></i>
+                <span>{{ item().PostMedia!.length }}</span>
+            </div>
+            }
+
+            <div class="w-full flex items-center justify-between gap-3 mt-auto">
+
+                @if (showProfile()) {
+                @let user = item().User;
+                @let hasProfile = $safeNavigationMigration(user?.Profile?.[0]);
+
+                <div class="flex items-center gap-2.5 min-w-0 bg-secondary-900/10 backdrop-blur-xl p-0.5 rounded-full border border-white/10 shadow-xl transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                    [class.translate-y-3]="!imageLoaded()" [class.opacity-0]="!imageLoaded()"
+                    [class.translate-y-0]="imageLoaded()" [class.opacity-100]="imageLoaded()">
+
+                    <div class="relative w-8 h-8 md:w-8 md:h-8 flex-shrink-0 rounded-full bg-secondary-800 transition-transform duration-500 group-hover:scale-105"
+                        [ngClass]="{
+                                'bg-gradient-to-tr from-pink-500 to-rose-500': $safeNavigationMigration(user?.live),
+                                'bg-gradient-to-tr from-emerald-400 to-teal-500': user?.online && !user?.live,
+                                'bg-white/20': !user?.online && !user?.live
+                             }">
+                        <div class="w-full h-full rounded-full overflow-hidden bg-secondary-900 border border-black/20">
+                            @if (hasProfile) {
+                            <img class="w-full h-full object-cover"
+                                [src]="($safeNavigationMigration(getMediaDetails(hasProfile)?.url)) || ''" width="500"
+                                height="500" />
+                            } @else {
+                            <div
+                                class="w-full h-full flex items-center justify-center text-[10px] font-black text-white uppercase">
+                                {{ getFirstLetter(user?.alias || user?.username || '') }}
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                } @else {
+                <div></div>
+                }
+
+                <div class="flex-shrink-0 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] delay-75"
+                    [class.translate-y-3]="!imageLoaded()" [class.opacity-0]="!imageLoaded()"
+                    [class.translate-y-0]="imageLoaded()" [class.opacity-100]="imageLoaded()">
+                    <div
+                        class="flex items-center gap-1.5 bg-secondary-900/10 backdrop-blur-xl px-3 py-1.5 rounded-full border border-white/10 text-[10px] md:text-[11px] font-normal text-white/90 tracking-wide shadow-xl">
+                        <i appIcon iconName="visibility-regular" [size]="'w-4 h-4'" [color]="'text-secondary-300'"></i>
+                        <span>{{ item().viewCounter|| 0 | numberFormat }}</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div
+            class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-85 pointer-events-none z-10">
+        </div>
+
+    </div>
+</article>

@@ -1,19 +1,19 @@
-import { Directive, ElementRef, HostListener } from '@angular/core';
+import { Directive, ElementRef, HostListener, inject } from '@angular/core';
 
 @Directive({
-  selector: '[appAutoResizeTextarea]'
+  selector: '[appAutoResizeTextarea]',
+  standalone: true
 })
 export class AutoResizeTextareaDirective {
 
-  constructor(private el: ElementRef) { }
+  private el = inject(ElementRef);
 
-  @HostListener('input', ['$event.target'])
-  onInput(textarea: HTMLTextAreaElement): void {
-    this.adjustTextareaHeight(textarea);
+  @HostListener('input', ['$event'])
+  onInput(event: Event): void {
+    this.adjustTextareaHeight(event.target as HTMLTextAreaElement);
   }
 
   ngAfterViewInit(): void {
-    // Ajusta la altura inicial después de que se renderice el componente
     this.adjustTextareaHeight(this.el.nativeElement);
   }
 

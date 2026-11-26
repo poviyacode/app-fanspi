@@ -1,0 +1,506 @@
+<div style="
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;" (click)="closeModal()">
+  <div
+    class="bg-[var(--color-background-dark)] rounded-3xl shadow-2xl border border-slate-200 dark:border-[var(--color-secondary-800)] overflow-hidden transition-colors duration-300"
+    (click)="($event.stopPropagation())" animate.enter="modal-animation-enter" animate.leave="modal-animation-leave">
+    <div class="w-screen full-height">
+      <div (wheel)="onScroll($event)" (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)">
+
+        <!-- image -->
+        <div
+          class="{{currentLinghtbox()?.type == 'image' ? 'block' : 'hidden'}} relative flex justify-center items-center full-height">
+          @if (currentLinghtbox()?.type == 'image') {
+          <img ngOptimizedImage priority="high" [src]="
+            currentLinghtbox()?.cloudflare
+              ? currentLinghtbox()?.cloudflare.result.variants[0]
+              : $safeNavigationMigration(currentLinghtbox()?.url)
+          " alt="" class="h-fit sm:h-full w-full sm:w-fit object-cover" />
+          }
+        </div>
+        <!-- video -->
+        <button (click)="togglePlayPauseHls()"
+          class="cursor-pointer relative flex justify-center items-center {{currentLinghtbox()?.type == 'video' ? 'block' : 'hidden'}}">
+
+          <div class="absolute transition-all duration-500" [class.opacity-0]="isPlaying" [class.scale-150]="isPlaying">
+            <div class="bg-black/40 backdrop-blur-md p-6 rounded-full border border-white/10">
+              <i appIcon iconName="play-solid" [size]="'w-12 h-12'" [color]="'text-white/90'"></i>
+            </div>
+          </div>
+
+          @if(this.isLoadingVideo()) {
+          <!-- Spinner de carga -->
+          @if (checkBufferingState()) {
+          <div class="video-loading-spinner">
+            <div class="video-spinner"></div>
+            <div class="buffer-stats hidden">
+              <span>Buffered: {{ getBufferedPercentage() | number:'1.0-0' }}%</span>
+              <span>Buffer restante: {{ getRemainingBufferTime() | number:'1.1-1' }}s</span>
+            </div>
+          </div>
+          }
+          }
+          <video #videoElement class="video-js vjs-fill bg-black full-height w-auto flex justify-center"
+            controlsList="nodownload noplaybackrate" disablePictureInPicture playsinline>
+          </video>
+        </button>
+
+        @if (isVideoLoading()) {
+        <div
+          class="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px] pointer-events-none z-10">
+          <svg class="animate-spin h-10 w-10 text-[var(--color-primary-500)]" xmlns="http://www.w3.org/2000/svg"
+            fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+            </circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
+          </svg>
+        </div>
+        }
+
+        @if (verifiedPrivate(this.postService.post()!)) {
+        <div
+          class="absolute inset-0 text-white dark:text-[var(--color-secondary-300)] bg-white/40 dark:bg-[var(--color-secondary-950)]/70 space-y-2 backdrop-blur-3xl">
+          <div class="space-x-1 flex flex-col justify-center items-center h-full space-y-1">
+            <i appIcon iconName="lock-regular" [size]="'w-20 h-20'" [color]="''"></i>
+            @if(this.postService.post()?.credit) {
+            <div
+              class="bg-gradient-to-r from-amber-500 to-amber-600 text-white text-md font-bold px-4 py-1.5 rounded-full flex items-center gap-1 shadow-lg">
+              <span appIcon iconName="povicoin-solid" [size]="'w-4 h-4'"></span>
+              <span>{{ this.postService.post()?.credit! }}</span>
+            </div>
+            }
+          </div>
+        </div>
+        }
+
+      </div>
+
+      <!-- option-->
+      <div class="fixed left-1/2 top-2 md:top-5 -translate-x-1/2 z-20">
+        <div class="flex justify-between items-center space-x-2">
+          @if (this.postService.post()?.PostMedia && this.postService.post()!.PostMedia?.length! > 1) {
+          <div class="flex justify-center">
+            <div class="bg-black/50 backdrop-blur-md rounded-2xl px-2 py-1 flex items-center border border-white/10">
+              <button type="button" class="text-sm md:text-sm text-white px-1 cursor-pointer"
+                (click)="prevCarouselMedia()">
+                <i appIcon iconName="arrow-back-regular" [size]="'w-4 h-4'" [color]="'text-zinc-100'"></i>
+              </button>
+              <span class="mx-2 text-sm md:text-sm font-bold text-white">
+                {{ getCurrentSlideNumber() }} / {{getTotalSlideCount() }}
+              </span>
+              <button type="button" class="text-sm md:text-sm text-white px-1 cursor-pointer"
+                (click)="nextCarouselMedia()">
+                <i appIcon iconName="arrow-forward-regular" [size]="'w-4 h-4'" [color]="'text-zinc-100'"></i>
+              </button>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+
+      <div
+        [ngClass]="showFullText() ? 'bg-[var(--color-secondary-950)]/90 backdrop-blur-xl border border-[var(--color-secondary-800)]' : ''"
+        class="fixed bottom-20 md:bottom-20 left-1 md:left-1 text-sm w-72 sm:w-72 md:w-96 rounded-2xl p-4 overflow-y-auto max-h-[80vh] transition-all duration-300">
+        @if(this.postService.post()?.isProfile) {
+        <a routerLink="/{{this.postService.post()?.User?.username}}" class="truncate">
+          <span class="truncate text-white font-bold text-lg hover:underline">
+            {{this.postService.post()?.User?.alias || this.postService.post()?.User?.username }}
+          </span>
+        </a>
+        }
+        <!-- Título (Expansible) -->
+        <h1 [class.line-clamp-1]="!showFullText()"
+          class="font-bold text-white leading-tight transition-all duration-300 ease-in-out mt-1">
+          {{ this.postService.post()?.title }}
+        </h1>
+
+        <!-- Descripción (Expansible) -->
+        <div class="w-full mt-2">
+
+          @if (postService.post()?.description) {
+          <p [class.line-clamp-2]="!showFullText()"
+            class="text-zinc-200 leading-relaxed transition-all duration-300 ease-in-out"
+            [innerHTML]="getSafeHtml($safeNavigationMigration(postService.post()?.description)!)">
+          </p>
+          }
+
+          @if (this.postService.post()?.age && this.showFullText()) {
+          <p class="flex items-center space-x-1 mt-2 text-zinc-300">
+            <i appIcon iconName="id-card-regular" [size]="'w-5 h-5'" [color]="'text-[var(--color-primary-400)]'"></i>
+            <span class="font-semibold lowercase">
+              {{ 'yearsOld' | translate: { age: this.postService.post()?.age || 18 } }}
+            </span>
+          </p>
+          }
+
+          @if (this.postService.post()?.Country?.name && this.showFullText()) {
+          <p [class.line-clamp-1]="!showFullText()" class="flex items-center space-x-1 mt-1 text-zinc-300">
+            <i appIcon iconName="map-pin-solid" [size]="'w-5 h-5'" [color]="'text-[var(--color-primary-400)]'"></i>
+            <span class="font-semibold">{{this.postService.post()?.Country?.name}}</span>
+            <span>/</span>
+            <span>{{this.postService.post()?.CountryState?.name}}</span>
+          </p>
+          }
+
+          <!-- Botón Ver Más / Ver Menos -->
+          @if (postService.post()?.description!) {
+          <button (click)="toggleText()"
+            class="cursor-pointer text-sm text-[var(--color-primary-400)] hover:underline transition-colors font-bold mt-1">
+            {{ showFullText() ? ('read.less' | translate) : ('read.more' | translate) }}
+          </button>
+          }
+
+        </div>
+
+        <!-- Botones de acción -->
+        @if (this.postService.post()?.type === 'AD') {
+        <div class="flex justify-start space-x-4 mt-4">
+          @if (this.postService.post()?.telegram) {
+          <button (click)="openTelegram($safeNavigationMigration(postService.post()?.telegram)!)"
+            class="cursor-pointer flex items-center justify-center bg-[#2CA5E0] text-white rounded-full px-4 py-1.5 text-sm font-semibold hover:bg-[#1d92c4] transition-all duration-300 shadow-md">
+            <img ngSrc="./public/social-media/telegram.png" class="w-5 h-5 mr-2" alt="Telegram" width="500"
+              height="500">
+            <span>Telegram</span>
+          </button>
+          }
+
+          @if (this.postService.post()?.whatsapp) {
+          <button
+            (click)="openWhatsApp($safeNavigationMigration(postService.post()?.phonePrefix)!, $safeNavigationMigration(postService.post()?.whatsapp)!, textMessage(postService.post()!))"
+            target="_blank" rel="noopener noreferrer"
+            class="cursor-pointer flex items-center justify-center bg-[#25D366] text-white rounded-full px-4 py-1.5 text-sm font-semibold hover:bg-[#1da851] transition-all duration-300 shadow-md">
+            <img ngSrc="./public/social-media/whatsapp.png" class="w-5 h-5 mr-2" alt="WhatsApp" width="500"
+              height="500">
+            <span>WhatsApp</span>
+          </button>
+          }
+        </div>
+        }
+
+      </div>
+
+      <div class="fixed right-4 md:right-4 top-2 md:top-5 z-20">
+        <button (click)="closeModal()"
+          class="text-white bg-black/40 backdrop-blur-md rounded-full w-10 h-10 flex justify-center items-center cursor-pointer transition-colors duration-300 hover:bg-black/60 border border-white/10">
+          <i appIcon iconName="close-regular" [size]="'w-6 h-6'" [color]="'text-zinc-100'"></i>
+        </button>
+      </div>
+
+      <!-- Botones laterales de interacción -->
+      <div class="fixed bottom-24 md:bottom-28 right-4 flex flex-col space-y-4 text-white z-20">
+        @if(this.postService.post()?.isProfile) {
+        @let user = $safeNavigationMigration(this.postService.post()?.User);
+        @let userProfile = $safeNavigationMigration(user?.Profile![0]);
+        <a routerLink="/{{user?.username}}" class="flex items-center">
+          <div
+            class="h-10 w-10 rounded-full flex justify-center items-center overflow-hidden border-2 border-[var(--color-zinc-50)] bg-[var(--color-secondary-900)] text-3xl text-[var(--color-primary-400)] shadow-lg">
+            @if (userProfile) {
+            <img class="h-10 w-10 object-cover rounded-full" [src]="getMediaDetails(userProfile)?.url" />
+            } @else {
+            {{ getFirstLetter(user?.alias!! || user?.username!!)}}
+            }
+          </div>
+        </a>
+        }
+
+        <!-- Botón de Like -->
+        @if (authService.user() && this.currentRoute() !== 'messages') {
+        <button (click)="onLikes(this.postService.post()!)" class="flex flex-col items-center cursor-pointer group">
+          <span
+            class="text-3xl transition-transform transform group-hover:scale-125 bg-black/40 backdrop-blur-md p-2 rounded-full border border-white/10 shadow-lg">
+            <i appIcon iconName="favorite-regular" [size]="'w-6 h-6'" [color]="''"></i>
+          </span>
+          <span class="text-xs font-bold mt-1 drop-shadow">
+            {{this.postService.post()?.likes! || 0 | thousands}}
+          </span>
+        </button>
+        }
+
+        <!-- Botón de Comentarios -->
+        @if (authService.user() && (this.postService.post()?.isComment) && this.currentRoute() !== 'messages') {
+        <button (click)="onCommentPost(this.postService.post()!)"
+          class="flex flex-col items-center cursor-pointer group">
+          <span
+            class="text-3xl transition-transform transform group-hover:scale-125 bg-black/40 backdrop-blur-md p-2 rounded-full border border-white/10 shadow-lg">
+            <i appIcon iconName="comment-regular" [size]="'w-6 h-6'" [color]="''"></i>
+          </span>
+          <span class="text-xs font-bold mt-1 drop-shadow">
+            {{this.postService.post()?.commentCount! > 0 ? this.postService.post()?.commentCount! : (0 | thousands)}}
+          </span>
+        </button>
+        }
+
+        <!-- Botón de Guardar -->
+        <input type="hidden" #bookmark>
+        @if(this.authService.user() && this.currentRoute() !== 'messages') {
+        @if (this.postService.post()?.isBookmarked) {
+        <button (click)="deletePostBookmark(postService.post()!, bookmark.value = '')"
+          class="flex flex-col items-center cursor-pointer group">
+          <span
+            class="text-3xl transition-transform transform group-hover:scale-125 bg-black/40 backdrop-blur-md p-2 rounded-full border border-white/10 shadow-lg text-[var(--color-primary-400)]">
+            <i appIcon iconName="bookmark-solid" [size]="'w-6 h-6'" [color]="''"></i>
+          </span>
+        </button>
+        } @else {
+        <button
+          (click)="addPostBookmark(postService.post()!, bookmark.value = $safeNavigationMigration(postService.post()?._id)!)"
+          class="flex flex-col items-center cursor-pointer group">
+          <span
+            class="text-3xl transition-transform transform group-hover:scale-125 bg-black/40 backdrop-blur-md p-2 rounded-full border border-white/10 shadow-lg">
+            <i appIcon iconName="bookmark-regular" [size]="'w-6 h-6'" [color]="''"></i>
+          </span>
+        </button>
+        }
+        }
+
+        <!-- Botón tip -->
+        @if (authService.user()) {
+        <button (click)="onTip(this.postService.post()!)" class="flex flex-col items-center cursor-pointer group">
+          <span
+            class="text-3xl transition-transform transform group-hover:scale-125 bg-black/40 backdrop-blur-md p-2 rounded-full border border-white/10 shadow-lg">
+            <i appIcon iconName="gift-regular" [size]="'w-6 h-6'" [color]="'text-[var(--color-primary-400)]'"></i>
+          </span>
+        </button>
+        }
+
+        <!-- Botón de Compartir -->
+        <button (click)="share(this.postService.post()!)" class="flex flex-col items-center cursor-pointer group">
+          <span
+            class="text-3xl transition-transform transform group-hover:scale-125 bg-black/40 backdrop-blur-md p-2 rounded-full border border-white/10 shadow-lg">
+            <i appIcon iconName="share-regular" [size]="'w-6 h-6'" [color]="''"></i>
+          </span>
+        </button>
+
+        @if(this.postService.post()?.isDownload) {
+        <button (click)="onDownloadPostModal(this.postService.post()!)"
+          class="flex flex-col items-center cursor-pointer group">
+          <span
+            class="text-3xl transition-transform transform group-hover:scale-125 bg-black/40 backdrop-blur-md p-2 rounded-full border border-white/10 shadow-lg">
+            <i appIcon iconName="download-regular" [size]="'w-6 h-6'" [color]="''"></i>
+          </span>
+        </button>
+        }
+
+        @if (authService.user() && this.currentRoute() !== 'messages') {
+        <button (click)="onModalDropdown(this.postService.post()!)"
+          class="flex flex-col items-center cursor-pointer group">
+          <span
+            class="text-3xl transition-transform transform group-hover:scale-125 bg-black/40 backdrop-blur-md p-2 rounded-full border border-white/10 shadow-lg">
+            <i appIcon iconName="more-horiz-regular" [size]="'w-6 h-6'" [color]="''"></i>
+          </span>
+        </button>
+        }
+      </div>
+
+      <!-- Modales internos del Post (Dropdown, Delete, Download) -->
+      <div class="fixed top-1/2 left-1/2">
+        <ng-container #container></ng-container>
+
+        <!-- dropdownPost -->
+        @if (postService.post() && dialogService.activeModal() === 'dropdownPost') {
+        <div
+          class="modal-center fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300"
+          (click)="dialogService.closeModal()">
+          <div
+            class="bg-white dark:bg-[var(--color-secondary-900)] rounded-3xl shadow-2xl border border-slate-200 dark:border-[var(--color-secondary-800)] overflow-hidden"
+            (click)="($event.stopPropagation())" animate.enter="modal-animation-enter"
+            animate.leave="modal-animation-leave">
+            <div class="w-72 sm:w-96 p-2">
+              <input type="hidden" #bookmark>
+
+              <ul
+                class="cursor-pointer divide-y divide-slate-100 dark:divide-[var(--color-secondary-800)] text-center font-medium text-sm text-slate-800 dark:text-[var(--color-secondary-200)]">
+
+                @if (this.authService.user()) {
+                @if (postService.post()!.User!._id == this.authService.user()!._id) {
+                <li (click)="onEditPostModal(postService.post()!)"
+                  class="w-full py-3 px-4 hover:bg-[var(--color-primary-500)]/10 hover:text-[var(--color-primary-500)] transition-colors duration-200 rounded-2xl">
+                  {{'edit' | translate}}
+                </li>
+                }
+
+                @if (postService.post()!.User!._id == this.authService.user()!._id) {
+                <li (click)="onDeletePostModal(postService.post()!)"
+                  class="w-full py-3 px-4 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors duration-200 text-red-500 rounded-2xl">
+                  {{'delete' | translate}}
+                </li>
+                }
+
+                @if (postService.post()!.User!._id != this.authService.user()!._id && !bookmark.value) {
+                <li
+                  (click)="addPostBookmark(postService.post()!, bookmark.value = $safeNavigationMigration(postService.post()?._id)!)"
+                  class="w-full py-3 px-4 hover:bg-[var(--color-primary-500)]/10 hover:text-[var(--color-primary-500)] transition-colors duration-200 rounded-2xl">
+                  {{'save' | translate}}
+                </li>
+                } @else {
+                <li (click)="deletePostBookmark(postService.post()!, bookmark.value = '')"
+                  class="w-full py-3 px-4 hover:bg-[var(--color-primary-500)]/10 hover:text-[var(--color-primary-500)] transition-colors duration-200 rounded-2xl">
+                  {{'notSave' | translate}}
+                </li>
+                }
+
+                @if (this.postService.post()?.type === 'POST' && !postService.post()!.pined &&
+                (postService.post()!.User?._id === authService.user()!._id)) {
+                <li (click)="onPinToTop(postService.post()!)"
+                  class="w-full py-3 px-4 hover:bg-[var(--color-primary-500)]/10 hover:text-[var(--color-primary-500)] transition-colors duration-200 rounded-2xl">
+                  {{'pinToTop' | translate}}
+                </li>
+                }
+
+                @if (this.postService.post()?.type === 'POST' && postService.post()!.pined &&
+                (postService.post()!.User?._id === authService.user()!._id)) {
+                <li (click)="onPinToTop(postService.post()!)"
+                  class="w-full py-3 px-4 hover:bg-[var(--color-primary-500)]/10 hover:text-[var(--color-primary-500)] transition-colors duration-200 rounded-2xl">
+                  {{'unpin' | translate}}
+                </li>
+                }
+                }
+
+                <li (click)="copyText(postService.post()!)"
+                  class="w-full py-3 px-4 hover:bg-[var(--color-primary-500)]/10 hover:text-[var(--color-primary-500)] transition-colors duration-200 rounded-2xl">
+                  {{'copy_link_post' | translate}}
+                </li>
+
+                <li (click)="share(postService.post()!)"
+                  class="w-full py-3 px-4 hover:bg-[var(--color-primary-500)]/10 hover:text-[var(--color-primary-500)] transition-colors duration-200 rounded-2xl">
+                  {{'share' | translate}}
+                </li>
+
+                <li (click)="dialogService.closeModal()"
+                  class="w-full py-3 px-4 hover:bg-[var(--color-primary-500)]/10 hover:text-[var(--color-primary-500)] transition-colors duration-200 rounded-2xl">
+                  {{'report' | translate}}
+                </li>
+
+                <li (click)="dialogService.closeModal()"
+                  class="w-full py-3 px-4 hover:bg-slate-100 dark:hover:bg-[var(--color-secondary-800)] transition-colors duration-200 rounded-2xl text-slate-500">
+                  {{'cancel' | translate}}
+                </li>
+              </ul>
+
+            </div>
+          </div>
+        </div>
+        }
+
+        <!-- delete post modal -->
+        @if (this.postService.post() && dialogService.activeModal() === 'deletePost') {
+        <div class="modal-center fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          (click)="dialogService.closeModal()">
+          <div
+            class="bg-white dark:bg-[var(--color-secondary-900)] rounded-3xl shadow-2xl border max-w-md mx-auto border-slate-200 dark:border-[var(--color-secondary-800)]"
+            (click)="($event.stopPropagation())" animate.enter="modal-animation-enter"
+            animate.leave="modal-animation-leave">
+
+            <form (submit)="onDeletePost($event)" novalidate class="p-6">
+              <div class="flex justify-center mb-4">
+                <div class="text-center text-xl flex items-center space-x-2 font-bold text-slate-800 dark:text-white">
+                  <span>
+                    <i appIcon iconName="info-circle-regular" [size]="'w-8 h-8'" [color]="'text-yellow-500'"></i>
+                  </span>
+                  <span>{{'confirmDelete' | translate}}</span>
+                </div>
+              </div>
+
+              <div class="flex justify-center items-center space-x-3 mt-6">
+                <button type="button"
+                  class="cursor-pointer bg-slate-100 hover:bg-slate-200 dark:bg-[var(--color-secondary-800)] dark:hover:bg-[var(--color-secondary-700)] text-slate-700 dark:text-[var(--color-secondary-200)] font-semibold py-2.5 px-5 rounded-full shadow-sm transition duration-200 text-sm"
+                  (click)="dialogService.closeModal()">
+                  {{ 'cancel' | translate }}
+                </button>
+                <button type="submit" [ngClass]="className.buttonClass()" class="py-2.5 px-5 rounded-full text-sm">
+                  {{ 'delete' | translate }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        }
+
+        <!-- download post modal -->
+        @if (this.postService.post() && dialogService.activeModal() === 'downloadPost') {
+        <div class="modal-center fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
+          (click)="dialogService.closeModal()">
+          <div
+            class="space-y-6 bg-white dark:bg-[var(--color-secondary-900)] rounded-3xl shadow-2xl border max-w-md w-full mx-auto p-6 border-slate-200 dark:border-[var(--color-secondary-800)]"
+            (click)="$event.stopPropagation()" animate.enter="modal-animation-enter"
+            animate.leave="modal-animation-leave">
+
+            <div class="flex justify-center items-center space-x-3">
+              <span>
+                <i appIcon iconName="download-regular" [size]="'w-10 h-10'"
+                  [color]="'text-[var(--color-primary-500)]'"></i>
+              </span>
+              <h2 class="text-xl font-bold text-slate-800 dark:text-white">{{ 'downloadPublication' | translate }}
+              </h2>
+            </div>
+
+            <div class="flex justify-center items-center space-x-1">
+              <span>
+                <i appIcon iconName="povicoin-solid" [size]="'w-6 h-6'" [color]="'text-amber-500'"></i>
+              </span>
+              <p class="text-lg font-bold text-slate-800 dark:text-white">
+                <span class="text-[var(--color-primary-500)]">
+                  {{ this.postService.post()?.User?.creditAmountDownload }}
+                </span>
+              </p>
+            </div>
+
+            <p class="text-slate-600 dark:text-[var(--color-secondary-300)] text-center text-sm">
+              {{ 'aboutToDownload' | translate }}
+            </p>
+
+            <!-- Sección de Balance -->
+            <div
+              class="bg-slate-50 dark:bg-[var(--color-secondary-950)] p-4 rounded-2xl border border-slate-200 dark:border-[var(--color-secondary-800)] shadow-inner">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <i appIcon iconName="povicoin-solid" [size]="'w-6 h-6'" [color]="'text-amber-500'"></i>
+                  <div>
+                    <p class="text-xs font-medium text-slate-500 dark:text-[var(--color-secondary-400)]">{{
+                      'currentBalance' | translate }}
+                    </p>
+                    <p class="text-base font-bold text-slate-800 dark:text-white">
+                      {{ userService.userCurrent()?.UserCredit?.current || 0 | number:'1.0-0' }}
+                    </p>
+                  </div>
+                </div>
+
+                <button (click)="openCreditPurchase()" [ngClass]="className.buttonClass()"
+                  class="px-4 py-2 w-auto rounded-full text-xs">
+                  <span class="font-semibold">{{ 'reload' | translate }}</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex justify-center space-x-3">
+              <button type="button" (click)="dialogService.closeModal()" [ngClass]="className.buttonSecondaryClass()"
+                class="py-2.5 px-5 rounded-full text-sm cursor-pointer">
+                {{ 'cancel' | translate }}
+              </button>
+
+              <button type="submit" (click)="onDownloadMedia()" [ngClass]="className.buttonClass()"
+                class="py-2.5 px-5 rounded-full text-sm cursor-pointer">
+                {{ 'download' | translate }}
+              </button>
+            </div>
+
+          </div>
+        </div>
+        }
+
+      </div>
+
+    </div>
+  </div>
+</div>

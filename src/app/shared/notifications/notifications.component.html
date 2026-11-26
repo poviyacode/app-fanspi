@@ -1,0 +1,81 @@
+<div class="fixed bottom-36 right-2 z-50 pointer-events-none space-y-3">
+    @for (item of notifications(); track item._id) {
+    <div class="pointer-events-auto" animate.enter="notification-enter" animate.leave="notification-leave">
+
+        <!-- Contenedor principal con borde de color dinámico -->
+        <div class="flex items-start bg-blue-100/90 dark:bg-blue-950/90 p-2 sm:p-3 rounded-xl shadow-lg mx-auto w-72 sm:w-80 relative overflow-hidden border-l-4 transition-all"
+            [ngClass]="{
+                'border-blue-500': item.type === 'MESSAGE',
+                'border-green-500': item.type === 'ONLINE',
+                'border-red-500': item.type === 'STREAMING',
+                'border-yellow-500': item.type === 'P2P_REQUEST',
+                'border-zinc-400': !item.type 
+             }">
+
+            <!-- Avatar -->
+            <img [src]="(item.icon || './public/logo/icon.webp') || ''" alt="Icon"
+                class="w-11 h-11 rounded-full object-cover mr-3 shrink-0 border-2 border-white dark:border-zinc-700 shadow-sm mt-1"
+                width="500" height="500" />
+
+            <div class="flex-grow min-w-0 w-full pr-2">
+
+                <!-- Etiqueta superior indicando el tipo -->
+                <div class="flex items-center gap-1.5 mb-1">
+                    @if (item.type === 'ONLINE') {
+                    <span class="relative flex h-2 w-2">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    <span class="text-[10px] font-bold text-green-500 uppercase tracking-wider">
+                        {{ 'online' | translate }}
+                    </span>
+                    } @else if (item.type === 'STREAMING') {
+                    <span class="relative flex h-2 w-2">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                    </span>
+                    <span class="text-[10px] font-bold text-red-500 uppercase tracking-wider">
+                        {{'live' | translate}}
+                    </span>
+                    } @else if (item.type === 'P2P_REQUEST') {
+                    <span class="relative flex h-2 w-2">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
+                    </span>
+                    <span class="text-[10px] font-bold text-yellow-500 uppercase tracking-wider">
+                        {{'searchingCashier' | translate}}
+                    </span>
+                    }
+                </div>
+
+                <h4 class="text-sm font-semibold text-zinc-800 dark:text-zinc-100 line-clamp-1">
+                    {{ item.title }}
+                </h4>
+                @if (item.type === 'MESSAGE') {
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 mt-0.5">
+                    {{ item.body }}
+                </p>
+                }
+            </div>
+
+            <!-- Botón de cerrar -->
+            <div class="w-auto flex-shrink-0 ml-1 -mt-1">
+                <button type="button" (click)="removeNotification(item._id!)"
+                    class="rounded-full w-7 h-7 flex justify-center items-center cursor-pointer transition-colors duration-300 bg-blue-200/30 dark:bg-blue-950/30  hover:bg-blue-200/30 dark:hover:bg-zinc-700 pointer-events-auto border-0">
+                    <i appIcon iconName="close-regular" [size]="'w-4 h-4'"
+                        [color]="'text-blue-400 hover:text-blue-500'"></i>
+                </button>
+            </div>
+
+            <!-- Timestamp -->
+            <small class="absolute bottom-1 right-2.5 text-[9px] text-zinc-400 dark:text-zinc-500">
+                {{ formatTimestamp(item.timestamp!) | dateAgo | translate }}
+            </small>
+
+        </div>
+    </div>
+    }
+</div>

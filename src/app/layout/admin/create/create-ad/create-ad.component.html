@@ -1,0 +1,246 @@
+@if (dialogService.activeModal() === 'createPostAd') {
+<div [ngClass]="modalClass()" class="modal-center">
+  <div [ngClass]="cardModalClass()" class="w-full max-w-3xl overflow-hidden" (click)="($event.stopPropagation())"
+    animate.enter="modal-animation-enter" animate.leave="modal-animation-leave">
+    <section class="p-2 sm:p-4 overflow-y-auto max-h-[80vh]">
+      <!-- Título -->
+      <h1 class="text-xl font-bold text-center mb-6">
+        👉👈 {{ 'newDating' | translate }}
+      </h1>
+
+      <!-- Formulario -->
+      <form [formGroup]="myform" (submit)="onSubmit()" novalidate class="space-y-4">
+
+        <!-- title -->
+        <fieldset class="">
+          <input formControlName="title" id="text" placeholder="title" autofocus [ngClass]="inputClass(myform, 'title')"
+            [maxlength]="150">
+        </fieldset>
+
+        <!-- description -->
+        <fieldset class="">
+          <textarea appAutoResizeTextarea formControlName="description" id="text" placeholder="What's new?" autofocus
+            [ngClass]="textareaClass(myform, 'description', 'h-20')" [maxlength]="500">
+              </textarea>
+        </fieldset>
+
+        <!-- link -->
+        <fieldset class="hidden">
+          <label for="link" class="font-semibold mb-2 hidden">{{ 'link' | translate }}</label>
+          <input formControlName="link" id="link" placeholder="{{ 'shareLinkPack' | translate }}"
+            [ngClass]="inputClass(myform, 'link')">
+        </fieldset>
+
+        <!-- country -->
+        <fieldset class="flex space-x-4">
+          <div class="w-3/6 flex flex-col">
+            <label for="country" class="mb-2 font-semibold hidden ">{{'country' |
+              translate}}</label>
+            <div class="relative">
+              <select formControlName="country" (change)="onCountryState($event)"
+                [ngClass]="selectClass(myform,'country')">
+                @for (item of countries(); track item) {
+                <option value="{{item._id}}">
+                  {{item.name!}}</option>
+                }
+              </select>
+            </div>
+          </div>
+          <div class="w-3/6 flex flex-col">
+            <label for="countryState" class="mb-2 font-semibold hidden">
+              {{'state' | translate}}</label>
+            <div class="relative">
+              <select formControlName="countryState" (change)="onStateCity($event)"
+                [ngClass]="selectClass(myform,'countryState')">
+                @for (item of countryStates(); track item) {
+                <option value="{{item._id}}">
+                  {{item.name}}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="flex space-x-4">
+          <div class="w-3/6 flex flex-col">
+            <label for="stateCity" class="mb-2 font-semibold hidden">{{'city' |translate}}</label>
+            <div class="relative">
+              <select formControlName="stateCity" [ngClass]="selectClass(myform,'stateCity')">
+                @for (item of stateCyties(); track item) {
+                <option value="{{item._id}}">
+                  {{item.name}}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- whatsapp -->
+        <fieldset class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+          <div class="sm:w-3/6 flex flex-col">
+            <label for="telegram" class="mb-2 font-semibold">{{'Telegram' | translate}}
+            </label>
+            <div class="relative">
+              <input formControlName="telegram" type="text" id="text" [ngClass]="inputClass(myform,'telegram')"
+                placeholder="username" class="pl-7" />
+              <div class="flex absolute inset-y-0 let-0 items-center pl-1 pointer-events-none">
+                <i appIcon iconName="alternate-regular" [size]="'w-5 h-5'"
+                  [color]="'text-cyan-600 dark:text-cyan-400'"></i>
+              </div>
+            </div>
+          </div>
+          <div class="sm:w-3/6 flex flex-col">
+            <label for="whatsapp" class="mb-2 font-semibold">{{ 'WhatsApp' | translate }}</label>
+            <div
+              class="flex justify-start items-center w-full bg-zinc-100 dark:bg-zinc-700 rounded-xl border border-zinc-100 dark:border-zinc-700">
+              <input formControlName="phonePrefix" id="text" placeholder="+591" readonly
+                [ngClass]="{'w-16 rounded-lg py-2 px-1 focus:outline-none focus:ring bg-zinc-100 dark:bg-zinc-700 focus:ring-zinc-200 active:ring-zinc-200 focus:dark:ring-zinc-700 active:ring active:dark:ring-zinc-700 pointer-events-none': true }">
+              <input formControlName="whatsapp" id="text" [ngClass]="inputClass(myform, 'whatsapp')"
+                autocomplete="off" />
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="flex items-center">
+          <label for="isComment" class="flex items-center cursor-pointer">
+            <div class="relative">
+              <input id="isComment" formControlName="isComment" type="checkbox" class="sr-only peer" />
+              <div
+                class="block w-10 h-6 rounded-full bg-zinc-300 dark:bg-zinc-700 peer-checked:bg-primary-600 transition duration-300">
+              </div>
+
+              <div
+                class="absolute left-1 top-1 w-4 h-4 bg-white dark:bg-zinc-50 rounded-full transition transform peer-checked:translate-x-full shadow-md duration-300">
+              </div>
+            </div>
+            <div class="ml-3 font-medium text-sm text-zinc-800 dark:text-zinc-200">
+              {{'allowUsersToComment' | translate}}
+            </div>
+          </label>
+        </fieldset>
+
+        <fieldset class="flex items-center">
+          <label for="isProfile" class="flex items-center cursor-pointer">
+            <div class="relative">
+              <input id="isProfile" formControlName="isProfile" type="checkbox" class="sr-only peer" />
+              <div
+                class="block w-10 h-6 rounded-full bg-zinc-300 dark:bg-zinc-700 peer-checked:bg-primary-600 transition duration-300">
+              </div>
+
+              <div
+                class="absolute left-1 top-1 w-4 h-4 bg-white dark:bg-zinc-50 rounded-full transition transform peer-checked:translate-x-full shadow-md duration-300">
+              </div>
+            </div>
+            <div class="ml-3 font-medium text-sm text-zinc-800 dark:text-zinc-200">
+              {{'showProfile' | translate}}
+            </div>
+          </label>
+        </fieldset>
+
+        <!-- files -->
+        <fieldset class="w-full  rounded-2xl">
+          <div
+            class="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-36 overflow-y-auto scrollbar-hide rounded-2xl">
+
+            @for (item of selectedFiles; track $index) {
+            <div
+              class="relative group flex flex-col justify-center items-center w-auto bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl shadow-lg overflow-hidden transition transform hover:scale-105">
+              <div class="flex flex-col justify-between items-stretch h-full w-full">
+
+                <div class="flex justify-center items-center h-full w-full overflow-hidden">
+                  @if (item.type == 'image') {
+                  <img
+                    class="object-cover h-28 w-full rounded-t-2xl transition duration-300 transform group-hover:scale-110"
+                    src="{{item.cloudflare.result.variants[0]}}" alt="watch-image" />
+                  }
+                  @if (item.type == 'video') {
+                  <img
+                    class="object-cover h-28 w-full rounded-t-2xl transition duration-300 transform group-hover:scale-110"
+                    [src]="item?.cloudflare ? 'https://customer-6kruyx7h361tmu11.cloudflarestream.com/' + item.cloudflare.result.uid + '/thumbnails/thumbnail.gif?time=1s&height=200&duration=6s' : item.urlSnapshot"
+                    alt="watch-image" />
+                  }
+                </div>
+
+                <div class="absolute top-2 right-2 z-10">
+                  <div
+                    class=" opacity-50  bg-red-500 hover:bg-red-600 text-white p-2 w-8 h-8 rounded-full shadow-lg flex justify-center items-center 
+                                                   transition-transform transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400">
+                    <i appIcon iconName="delete-regular" [color]="''" [size]="'w-6 h-6'"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            }
+
+            @for (item of filesArray(); track $index) {
+            @if (item.type === 'ORIGINAL') {
+            <div
+              class="relative group flex flex-col justify-center items-center w-auto bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl shadow-lg overflow-hidden transition transform hover:scale-105">
+              <div class="flex justify-center items-center h-full w-full overflow-hidden">
+                @if (item.typeFile![0] == 'image') {
+                <img
+                  class="object-cover h-28 w-full rounded-t-2xl transition duration-300 transform group-hover:scale-110"
+                  [src]="item.url" alt="preview-image" />
+                }
+                @if (item.typeFile![0] == 'video') {
+                <video autoplay [muted]="true" loop playsinline preload="none"
+                  class="object-cover h-28 w-full rounded-t-2xl transition duration-300 transform group-hover:scale-110"
+                  controls disablePictureInPicture controlsList="nodownload noplaybackrate">
+                  <source [src]="item.url" type="video/mp4" />
+                </video>
+                }
+              </div>
+              <div class="absolute top-2 right-2 z-10">
+                <button type="button" (click)="deleteImage(item)"
+                  class="cursor-pointer bg-red-500 hover:bg-red-600 text-white p-2 w-8 h-8 rounded-full shadow-lg flex justify-center items-center 
+                                               transition-transform transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400">
+                  <i appIcon iconName="delete-regular" [color]="''" [size]="'w-6 h-6'"></i>
+                </button>
+              </div>
+            </div>
+            }
+            }
+
+            <div
+              class="border-2 border-dashed border-zinc-200 dark:border-zinc-700 rounded-2xl cursor-pointer flex flex-col items-center justify-center h-28 bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-all duration-300">
+              <label for="fileImages" class="w-full h-full flex flex-col justify-center items-center cursor-pointer">
+                <input #fileInput class="hidden" type="file" id="fileImages" formControlName="fileImages"
+                  accept="image/*,video/*" multiple (change)="onFileChange($event)" />
+                <div class="text-zinc-500 dark:text-zinc-400">
+                  <i appIcon iconName="photo-library-regular" [color]="''" [size]="'w-10 h-10'"></i>
+                </div>
+                <div class="text-xs mt-2 text-zinc-500 dark:text-zinc-400 font-semibold">
+                  {{ "Max. " + maxSizeInMB | translate }} MB
+                </div>
+              </label>
+            </div>
+
+          </div>
+        </fieldset>
+
+        <fieldset class="break-inside-avoid p-0 text-center">
+          <p class="text-xs text-zinc-500 dark:text-zinc-500">
+            {{'explicitContentProhibited' | translate}}
+          </p>
+        </fieldset>
+
+        <!-- action buttons -->
+        <div class="flex justify-center space-x-4 mt-4 font-semibold">
+          <button type="button" (click)="onCloseModal()" [ngClass]="buttonSecondaryClass()">
+            {{'discard' | translate}}
+          </button>
+          <button type="submit" [disabled]="myform.status !== 'VALID'" [ngClass]="buttonClass()">
+            {{ this.post() ? 'update' : 'post' | translate }}
+          </button>
+        </div>
+
+        <pre class="hidden">
+                            {{myform.status}}
+                            {{myform.value| json}}
+                          </pre>
+
+      </form>
+    </section>
+  </div>
+</div>
+}

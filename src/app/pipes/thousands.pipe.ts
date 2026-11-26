@@ -1,11 +1,12 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-    name: 'thousands',
-    standalone: false
+  name: 'thousands',
+  standalone: true
 })
 export class ThousandsPipe implements PipeTransform {
   transform(value: number): string {
+
     if (value >= 1000) {
       const suffixes = ['', 'k', 'M', 'B', 'T'];
       const suffixNum = Math.floor(('' + value).length / 3);

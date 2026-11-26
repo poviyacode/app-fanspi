@@ -1,0 +1,207 @@
+<!-- Fondo oscuro difuminado (Backdrop) -->
+<div animate.enter="slideInRight-animation-enter" animate.leave="slideFadeIn-animation-leave"
+    class="fixed inset-0 z-50 bg-slate-900/40 dark:bg-black/60 backdrop-blur-xs transition-all" (click)="onClose()">
+</div>
+
+<!-- Panel lateral deslizante -->
+<div animate.enter="slideInRight-animation-enter" animate.leave="slideFadeIn-animation-leave"
+    class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white dark:bg-[var(--color-secondary-900)] shadow-2xl border-l border-slate-200 dark:border-[var(--color-secondary-800)] flex flex-col">
+
+    @if (paymentOrder(); as paymentOrder) {
+    <!-- Cabecera fija del Panel -->
+    <div
+        class="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-[var(--color-secondary-800)] flex-shrink-0">
+        <div class="flex items-center gap-3">
+            <div
+                class="flex items-center justify-center w-10 h-10 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/50 shadow-sm">
+                <i appIcon iconName="wallet-regular" [size]="'w-5 h-5'"
+                    [color]="'text-amber-600 dark:text-amber-400'"></i>
+            </div>
+            <div>
+                <h3 class="text-base font-extrabold text-slate-900 dark:text-white tracking-tight">
+                    {{ 'p2pOrderDetails' | translate }}
+                </h3>
+                <p class="text-xs text-slate-400 dark:text-[var(--color-secondary-400)] font-medium">
+                    {{ paymentOrder.createdAt! | dateAgo }}
+                </p>
+            </div>
+        </div>
+        <button (click)="onClose()"
+            class="cursor-pointer w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[var(--color-secondary-950)] dark:hover:bg-[var(--color-secondary-800)] text-slate-500 dark:text-[var(--color-secondary-400)] transition-colors shadow-sm">
+            <i appIcon iconName="close-regular" [size]="'w-5 h-5'" [color]="''"></i>
+        </button>
+    </div>
+
+    <!-- Contenido scrolleable del Panel -->
+    <div class="flex-1 overflow-y-auto p-6 space-y-5">
+
+        <!-- Tarjeta de Identificación & Escrow (ID Badge) -->
+        <div
+            class="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-[var(--color-secondary-950)] rounded-2xl border border-slate-200/80 dark:border-[var(--color-secondary-800)]">
+            <div class="flex flex-col gap-0.5">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                    {{ 'ID' | translate }}
+                </span>
+                <span class="text-xs font-mono font-bold text-slate-700 dark:text-slate-200 select-all">
+                    {{ paymentOrder.codeCollection! }}
+                </span>
+            </div>
+            <span
+                class="px-2.5 py-1 rounded-lg bg-primary-50 dark:bg-primary-950/50 border border-primary-200/50 dark:border-primary-900/50 text-[10px] font-extrabold text-primary-600 dark:text-primary-400 uppercase tracking-wider">
+                P2P Escrow
+            </span>
+        </div>
+
+        <!-- Bloque Principal: Método de Pago e Información Financiera -->
+        <div
+            class="p-4 bg-slate-50/60 dark:bg-[var(--color-secondary-950)] rounded-2xl border border-slate-200/80 dark:border-[var(--color-secondary-800)] flex flex-col gap-4">
+
+            <div class="flex items-center justify-between gap-3">
+                <!-- Método de Pago -->
+                <div class="flex items-center space-x-3 min-w-0">
+                    @let hasIcon =
+                    $safeNavigationMigration(paymentOrder.gatewayDetails?.PaymentMethodCategory?.icon?.[0]?.url);
+                    <div class="flex items-center justify-center shrink-0">
+                        @if(hasIcon){
+                        <div
+                            class="p-2.5 rounded-xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+                            <img [src]="hasIcon" class="w-6 h-6 object-contain">
+                        </div>
+                        } @else {
+                        <div
+                            class="p-2.5 rounded-xl bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-900/30">
+                            <i appIcon [iconName]="'wallet-regular'" [size]="'w-6 h-6'" [color]="''"></i>
+                        </div>
+                        }
+                    </div>
+                    <div class="flex flex-col min-w-0">
+                        <span
+                            class="text-[10px] uppercase font-semibold text-slate-400 dark:text-slate-500 tracking-wide">
+                            {{'paymentMethod' | translate}}
+                        </span>
+                        <span class="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">
+                            {{ paymentOrder?.gatewayDetails?.PaymentMethodCategory?.name || 'P2P Order' }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Monto y Divisa -->
+                <div class="flex flex-col items-end shrink-0">
+                    <div
+                        class="font-black text-lg text-slate-900 dark:text-white flex items-center space-x-1 tracking-tight">
+                        @if (paymentOrder.gatewayDetails?.actionType === 'ADD') {
+                        <span class="text-emerald-600 dark:text-emerald-400 font-black">+</span>
+                        } @else if (paymentOrder.gatewayDetails?.actionType === 'SELL' ||
+                        paymentOrder.gatewayDetails?.actionType === 'BUY') {
+                        <span class="text-rose-600 dark:text-rose-400 font-black">-</span>
+                        }
+                        <span>{{ paymentOrder.amount | number:'1.2-2' }}</span>
+                        <span class="text-xs font-bold text-slate-400 dark:text-slate-500 ml-1">
+                            {{ paymentOrder.Money?.iso }}
+                        </span>
+                    </div>
+
+                    @if (paymentOrder.gatewayDetails?.rawResponse?.credit) {
+                    <div
+                        class="inline-flex items-center space-x-1 px-2 py-0.5 mt-1 rounded-md bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/30 text-[10px] font-extrabold text-amber-600 dark:text-amber-400">
+                        <span>{{ paymentOrder.gatewayDetails?.rawResponse?.credit | number:'1.0-0' }}</span>
+                        <span appIcon iconName="povicoin-solid" [size]="'w-3 h-3'" class="text-amber-500"></span>
+                    </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Estado Intermedio de la Orden -->
+        @if(paymentOrder?.status === 'WAITING_CONFIRMATION') {
+        <div
+            class="flex items-center justify-center gap-2 p-3 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-900/40 text-amber-700 dark:text-amber-400 text-xs font-semibold animate-pulse shadow-sm">
+            <i appIcon iconName="schedule-regular" [size]="'w-4 h-4'" [color]="''"></i>
+            <span>{{ 'waitingPaymentConfirmation' | translate }}</span>
+        </div>
+        }
+
+        <!-- Estado en Disputa -->
+        @if(paymentOrder?.status === 'DISPUTE') {
+        <div
+            class="flex items-center justify-center gap-2 p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 text-xs font-bold w-full border border-rose-200/60 dark:border-rose-900/40 shadow-sm">
+            <i appIcon iconName="alert-regular" [size]="'w-4 h-4'"></i>
+            <span>{{'orderInDispute' | translate}}</span>
+        </div>
+        }
+
+    </div>
+
+    <!-- Pie de Página / Fila de Botones de Acción (Fijo abajo para mejor usabilidad en móvil/escritorio) -->
+    <!-- Pie de Página / Fila de Botones de Acción -->
+    @if(paymentOrder?.status === 'WAITING_CONFIRMATION' || paymentOrder?.status === 'PROCESSING') {
+    <div
+        class="p-6 border-t border-slate-100 dark:border-[var(--color-secondary-800)] bg-slate-50/50 dark:bg-[var(--color-secondary-950)]/50 flex flex-col gap-3 flex-shrink-0">
+
+        <!-- SI ES EL COMPRADOR (Receiver) -->
+        @if(transactionCredit?.Receiver === authService.user()?._id){
+
+        <!-- ⚠️ REGLAS Y ADVERTENCIAS PARA EL COMPRADOR -->
+        <div
+            class="flex items-start gap-2.5 p-3 rounded-xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/60 dark:border-amber-900/40 text-amber-800 dark:text-amber-300 text-xs">
+            <i appIcon iconName="alert-regular" [size]="'w-4 h-4'" [color]="'text-amber-600 dark:text-amber-400'"
+                class="shrink-0 mt-0.5 "></i>
+            <div class="flex flex-col gap-1">
+                <span class="font-bold uppercase tracking-wide text-[10px]">
+                    {{ 'p2pImportantNotice' | translate }}
+                </span>
+                <p class="leading-relaxed opacity-90">
+                    {{ 'p2pRuleWarning' | translate }}
+                    <strong> {{ 'p2pRuleSuspension' | translate }}</strong>.
+                </p>
+            </div>
+        </div>
+
+        @if(paymentOrder?.status === 'PROCESSING') {
+        <div class="grid grid-cols-2 gap-3 w-full pt-1">
+            <button (click)="cancelP2pUserOrder()" [ngClass]="className.buttonClass()" class="w-full py-3">
+                {{'cancelPayment' | translate}}
+            </button>
+            <button (click)="confirmP2pUserPayment()" [ngClass]="className.buttonPrimaryClass()" class="w-full py-3">
+                {{'paymentRealized' | translate}}
+            </button>
+        </div>
+        } @else {
+        <div class="flex flex-col gap-2.5 w-full pt-1">
+            <div
+                class="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-cyan-50 dark:bg-cyan-950/50 border border-cyan-200 dark:border-cyan-900 text-xs font-medium text-cyan-700 dark:text-cyan-300">
+                <span class="w-2 h-2 rounded-full bg-cyan-500 animate-ping"></span>
+                <span>{{'waitingForSellerRelease' | translate}}...</span>
+            </div>
+            <button (click)="appealOrDisputeP2pOrder()" [ngClass]="className.buttonClass()" class="w-full py-2.5">
+                {{'appeal' | translate}}
+            </button>
+        </div>
+        }
+        }
+
+        <!-- SI ES EL VENDEDOR (Sender) -->
+        @else if(transactionCredit?.Sender === authService.user()?._id){
+        <div class="flex flex-col gap-2.5 w-full pt-1">
+            <div
+                class="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-cyan-50 dark:bg-cyan-950/50 border border-cyan-200 dark:border-cyan-900 text-xs font-medium text-cyan-700 dark:text-cyan-300">
+                <span class="w-2 h-2 rounded-full bg-cyan-500 animate-ping"></span>
+                <span>{{'waitingForSellerRelease' | translate}}...</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3 w-full">
+                <button (click)="appealOrDisputeP2pOrder()" [ngClass]="className.buttonClass()" class="w-full py-3">
+                    {{'dispute' | translate}}
+                </button>
+                <button (click)="confirmP2pSenderReleasePayment()" [ngClass]="className.buttonPrimaryClass()"
+                    class="w-full py-3">
+                    {{'confirmPayment' | translate}}
+                </button>
+            </div>
+        </div>
+        }
+
+    </div>
+    }
+    }
+</div>

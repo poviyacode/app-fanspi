@@ -1,0 +1,232 @@
+<ng-container #container></ng-container>
+
+@if (isBrowser) {
+<main class="mx-auto max-w-7xl">
+
+  <!-- Cabecera Sticky de Chats -->
+  <section
+    class="sticky top-0 w-full py-3 px-4 text-xs bg-[var(--color-background-light)] dark:bg-[var(--color-background-dark)] text-slate-800 dark:text-zinc-200 z-10 transition-colors duration-300">
+
+    <div class="flex justify-between items-center space-x-5 h-12">
+
+      <button (click)="goBack()"
+        class="cursor-pointer flex items-center justify-center w-10 h-10 rounded-full transition duration-300 ease-in-out hover:bg-slate-100 dark:hover:bg-[var(--color-secondary-800)] text-slate-700 dark:text-zinc-200">
+        <i appIcon iconName="arrow-back-regular" [size]="'w-6 h-6'" [color]="''" class="flex-shrink-0 pl-1"></i>
+      </button>
+
+      <button (click)="onScrollTop()"
+        class="cursor-pointer flex items-center justify-center px-4 py-2 text-sm font-semibold text-center text-slate-700 dark:text-zinc-200 uppercase rounded-full transition duration-300 ease-in-out hover:bg-slate-100 dark:hover:bg-[var(--color-secondary-800)]">
+        <span>{{'chats'}}</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Contenedor Principal de la Lista -->
+  <section
+    class="mx-0 pb-16 sm:pb-4 px-2 pt-2 rounded-3xl shadow-xl bg-white dark:bg-[var(--color-secondary-900)] border border-slate-200 dark:border-[var(--color-secondary-800)] transition-colors duration-300">
+    <div
+      class="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0 space-x-0 sm:space-x-2 w-full p-2">
+      <form novalidate (ngSubmit)="onSubmitSearch()" [formGroup]="myFormSearch" class="w-full sm:w-full">
+        <div class="sm:flex sm:space-x-2 space-y-4 sm:space-y-0 items-center w-full">
+          <div class="relative w-full">
+            <div class="absolute left-3 top-2.5 text-slate-400 dark:text-[var(--color-secondary-400)] font-bold">
+              <i appIcon iconName="search-regular" [size]="'w-5 h-5'" [color]="''"></i>
+            </div>
+            <input formControlName="q" id="q"
+              class="pl-10 pr-4 w-full py-2.5 px-3 focus:outline-none bg-slate-50 dark:bg-[var(--color-secondary-950)] text-slate-900 dark:text-white rounded-xl border border-slate-200 dark:border-[var(--color-secondary-800)] focus:border-[var(--color-primary-500)] text-sm transition-colors"
+              placeholder="{{'search'}}" />
+          </div>
+        </div>
+      </form>
+
+      @if (!isTest) {
+      <button (click)="onCreateMessageBroadcast()" [ngClass]="buttonClass()"
+        class="cursor-pointer flex-shrink-0 w-full sm:w-auto flex items-center justify-center py-2.5 px-4 rounded-xl space-x-2 bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] text-white transition-colors duration-300 shadow-lg shadow-[var(--color-primary-500)]/20 text-sm font-medium">
+        <i appIcon iconName="communication-regular" [size]="'w-5 h-5'" [color]="''" class="flex-shrink-0"></i>
+        <span>{{'Nueva difusion'}}</span>
+      </button>
+      }
+    </div>
+
+    <!-- Lista de Chats -->
+    <div class="mt-4 flex flex-col w-full space-y-1.5 px-1">
+      @for (item of chatService.chats(); track item._id) {
+      <div #theLastList tabindex="0" (click)="onRowClick($index)" [class.bg-slate-50]="selectedRowIndex === $index"
+        [class.dark:bg-[var(--color-secondary-950)]]="selectedRowIndex === $index"
+        [class.shadow-sm]="selectedRowIndex === $index"
+        class="relative transition-all duration-300 rounded-2xl overflow-hidden group border border-transparent hover:border-slate-200 dark:hover:border-[var(--color-secondary-800)]">
+
+        <a [routerLink]="['messages', item._id]" (click)="onReceiver(item)"
+          class="flex items-center gap-3.5 w-full p-3.5 cursor-pointer hover:bg-slate-50/80 dark:hover:bg-[var(--color-secondary-950)]/60 transition-colors duration-200">
+
+          <!-- Avatar del usuario -->
+          <div class="relative flex-shrink-0 select-none">
+            <div [class.ring-2]="item.User?.live || item.User?.online"
+              [class.ring-[var(--color-primary-500)]]="item.User?.live"
+              [class.ring-offset-2]="item.User?.live || item.User?.online"
+              [class.dark:ring-offset-[var(--color-secondary-900)]]="item.User?.live || item.User?.online"
+              [class.animate-pulse]="item.User?.live" [class.ring-emerald-500]="item.User?.online && !item.User.live"
+              [class.ring-1]="!item.User?.online && !item.User?.live"
+              [class.ring-slate-200]="!item.User?.online && !item.User?.live"
+              [class.dark:ring-[var(--color-secondary-800)]]="!item.User?.online && !item.User?.live"
+              class="w-13 h-13 rounded-2xl flex justify-center items-center overflow-hidden bg-[var(--color-primary-500)] shadow-inner transition-transform duration-300 group-hover:scale-[1.03]">
+
+              @if (item.User?.Profile && item.User!.Profile!.length! > 0) {
+              <img class="w-full h-full object-cover" [src]="(getProfileImageUrl(item.User!)) || ''"
+                [alt]="item.User!.username" width="500" height="500" />
+              } @else {
+              <span class="text-lg font-semibold text-white uppercase tracking-wider">
+                {{ getFirstLetter(item.User?.alias || item.User?.username || '') }}
+              </span>
+              }
+            </div>
+
+            @if (item.User?.online) {
+            <span
+              class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-[var(--color-secondary-900)] rounded-full shadow-sm"></span>
+            }
+          </div>
+
+          <!-- Información del chat -->
+          <div class="flex-1 min-w-0 space-y-1">
+            <div class="flex justify-between items-baseline">
+              <div class="flex items-center gap-2 min-w-0">
+                <h3
+                  class="truncate text-sm font-semibold tracking-tight text-slate-800 dark:text-zinc-200 transition-colors"
+                  [class.text-[var(--color-primary-600)]]="(item.unreadCount ?? 0) > 0"
+                  [class.dark:text-[var(--color-primary-400)]]="(item.unreadCount ?? 0) > 0">
+                  {{ item.User?.alias || item.User?.username }}
+                </h3>
+
+                @if ((item.User?.countCredit?.current ?? 0) > 0) {
+                <div
+                  class="flex items-center gap-0.5 px-1.5 py-0.5 bg-amber-50 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-900/40 rounded-md text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
+                  <i appIcon iconName="povicoin-solid" size="w-2.5 h-2.5"></i>
+                  {{ $safeNavigationMigration(item.User?.countCredit?.current) | number:'1.0-0' }}
+                </div>
+                }
+              </div>
+
+              @if (item.LastMessage?.createdAt) {
+              <span class="text-[11px] font-medium tracking-wide whitespace-nowrap"
+                [class.text-[var(--color-primary-500)]]="(item.unreadCount ?? 0) > 0"
+                [class.text-slate-400]="(item.unreadCount ?? 0) === 0"
+                [class.dark:text-[var(--color-secondary-400)]]="(item.unreadCount ?? 0) === 0">
+                {{ $safeNavigationMigration(item.LastMessage!.createdAt)! | dateAgo }}
+              </span>
+              }
+            </div>
+
+            <div class="flex items-center gap-2 justify-between">
+              <div class="flex items-center gap-1.5 min-w-0 flex-1">
+                @if (item.LastMessage?.Sender === authService.user()?._id) {
+                <div class="flex-shrink-0">
+                  @if (item.LastMessage?.status === 'READ') {
+                  <i appIcon iconName="done-all-regular" size="w-4 h-4" color="text-[var(--color-primary-500)]"></i>
+                  } @else {
+                  <i appIcon iconName="check-regular" size="w-4 h-4"
+                    color="text-slate-400 dark:text-[var(--color-secondary-500)]"></i>
+                  }
+                </div>
+                }
+
+                <div class="truncate text-[13px] flex-1 leading-relaxed"
+                  [class.text-slate-900]="(item.unreadCount ?? 0) > 0"
+                  [class.dark:text-zinc-100]="(item.unreadCount ?? 0) > 0"
+                  [class.font-medium]="(item.unreadCount ?? 0) > 0"
+                  [class.text-slate-500]="(item.unreadCount ?? 0) === 0"
+                  [class.dark:text-[var(--color-secondary-300)]]="(item.unreadCount ?? 0) === 0">
+
+                  @let isReceiver = authService.user()! && authService.user()?._id !== item?.LastMessage?.Sender;
+
+                  @if ((item.LastMessage?.PostMedia?.length ?? 0) > 0) {
+                  <span
+                    class="flex items-center gap-1 line-clamp-1 w-full text-[var(--color-primary-600)] dark:text-[var(--color-primary-400)] font-medium">
+                    @if (item.LastMessage!.PostMedia![0].type === 'image') {
+                    <i appIcon iconName="image-regular" [size]="'w-4 h-4'" [color]="''"></i>
+                    } @else if (item.LastMessage!.PostMedia![0].type === 'video'){
+                    <i appIcon iconName="video-solid" size="w-4 h-4" [color]="''"></i>
+                    }
+                    <span class="block truncate"
+                      [innerHTML]="$safeNavigationMigration(item.LastMessage?.message)"></span>
+                  </span>
+                  } @else if (item.LastMessage?.type === 'MISSED_CALL' || item.LastMessage?.type === 'CALL') {
+                  <span class="flex items-center gap-1 font-medium text-rose-500">
+                    <i appIcon [iconName]="'phone-callback-regular'" size="w-3.5 h-3.5"
+                      [color]="item.LastMessage.type === 'CALL' ? 'text-[var(--color-primary-500)]' : 'text-rose-500'"></i>
+                    {{ (item.LastMessage.type === 'CALL' ? 'voiceCall' : 'missedVoiceCall') }}
+                  </span>
+                  } @else if (['TIP', 'CREATOR_SUBSCRIBE', 'POST'].includes(item.LastMessage?.type ?? '')) {
+                  <span
+                    class="inline-flex items-center gap-1 px-1.5 py-0.5 bg-slate-100 dark:bg-[var(--color-secondary-950)] border border-slate-200 dark:border-[var(--color-secondary-800)] rounded-md text-[11px] font-semibold text-slate-600 dark:text-[var(--color-secondary-300)]">
+                    <i appIcon iconName="povicoin-solid" size="w-3 h-3"></i>
+                    {{ item.LastMessage?.credit }}
+                    {{ (item.LastMessage?.type === 'TIP' ? 'tip' : item.LastMessage?.type === 'POST' ? 'publication' :
+                    'subscription') }}
+                  </span>
+                  } @else if (item.LastMessage?.type === 'DOWNLOAD') {
+                  <span
+                    class="inline-flex items-center gap-1 px-1.5 py-0.5 bg-slate-100 dark:bg-[var(--color-secondary-950)] border border-slate-200 dark:border-[var(--color-secondary-800)] rounded-md text-[11px] font-semibold text-slate-600 dark:text-[var(--color-secondary-300)]">
+                    <i appIcon iconName="povicoin-solid" size="w-3 h-3"></i>
+                    {{ item.LastMessage.credit }}
+                    {{ 'downloadedContent'}}
+                  </span>
+                  } @else if (item.LastMessage?.type === 'CONTENT_SALE') {
+                  <span
+                    class="inline-flex items-center gap-1 px-1.5 py-0.5 bg-slate-100 dark:bg-[var(--color-secondary-950)] border border-slate-200 dark:border-[var(--color-secondary-800)] rounded-md text-[11px] font-semibold text-slate-600 dark:text-[var(--color-secondary-300)]">
+                    <i appIcon iconName="povicoin-solid" size="w-3 h-3"></i>
+                    {{ item.LastMessage.credit }}
+                    {{(isReceiver ? 'contentPurchased' : 'contentSold')}}
+                  </span>
+                  } @else {
+                  <span [innerHTML]="$safeNavigationMigration(item.LastMessage?.message)"></span>
+                  }
+                </div>
+              </div>
+
+              @if ((item.unreadCount ?? 0) > 0) {
+              <span
+                class="flex-shrink-0 min-w-[18px] h-4.5 px-1.5 flex items-center justify-center bg-emerald-500 dark:bg-emerald-600 text-white text-[10px] font-semibold rounded-full shadow-md shadow-emerald-500/20 transform scale-100 transition-transform group-hover:scale-105">
+                {{ item.unreadCount! > 99 ? '99+' : item.unreadCount }}
+              </span>
+              }
+            </div>
+          </div>
+        </a>
+      </div>
+      }
+
+      <!-- Skeletons de carga -->
+      @if (loading()) {
+      @for (skele of [1,2,3,4]; track skele) {
+      <div class="flex items-center gap-3.5 p-3.5 opacity-60">
+        <div class="w-13 h-13 bg-slate-200 dark:bg-[var(--color-secondary-800)] rounded-2xl animate-pulse"></div>
+        <div class="flex-1 space-y-2.5">
+          <div class="flex justify-between items-center">
+            <div class="h-3 bg-slate-200 dark:bg-[var(--color-secondary-800)] rounded-full w-1/4 animate-pulse"></div>
+            <div class="h-2 bg-slate-200 dark:bg-[var(--color-secondary-800)] rounded-full w-10 animate-pulse"></div>
+          </div>
+          <div class="h-2.5 bg-slate-100 dark:bg-[var(--color-secondary-950)] rounded-full w-3/4 animate-pulse"></div>
+        </div>
+      </div>
+      }
+      }
+    </div>
+
+    <!-- Estado Vacío -->
+    @if (!loading() && chatService.chats().length === 0) {
+    <div class="flex flex-col items-center justify-center min-h-[45vh] text-center px-4 space-y-4">
+      <div
+        class="flex items-center justify-center w-16 h-16 bg-slate-50 dark:bg-[var(--color-secondary-950)] border border-slate-200 dark:border-[var(--color-secondary-800)] rounded-2xl shadow-sm text-slate-400 dark:text-[var(--color-secondary-500)]">
+        <i appIcon iconName="messages-regular" [size]="'w-8 h-8'" [color]="''"></i>
+      </div>
+      <div class="space-y-1">
+        <h2 class="text-lg font-semibold text-slate-700 dark:text-zinc-300">{{ 'noMessagesYet' }}</h2>
+      </div>
+    </div>
+    }
+
+  </section>
+
+</main>
+}

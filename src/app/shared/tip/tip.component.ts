@@ -1,26 +1,33 @@
-import { Component, computed, effect, inject, ViewChild, ViewContainerRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ComponentRef, computed, effect, EventEmitter, inject, Output, signal, ViewChild, ViewContainerRef, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MoneyService } from '../../services/money.service';
 import { ToastService } from '../../services/toast.service';
 import { AuthService } from '../../services/auth.service';
 import { TipService } from '../../services/tip.service';
-import { UserCreditService } from '../../services/user-credit.service';
 import { SpinnerService } from '../../services/spinner.service';
 import { Router } from '@angular/router';
 import { TransactionCreditService } from '../../services/transaction-credit.service';
 import { NumericValidatorTip } from '../../core/common/custom-validators.ts';
-import { CustomTranslatePipe } from '@pipes/translate.pipe';
-
-import { DynamicComponentService } from '../../services/dinamic-component.service';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { DialogService } from '@services/dialog.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Money } from '@interfaces/money';
-import { UserCredit } from '@interfaces/userCredit';
-import { Tools } from '@core/common/tools';
-import { DirectiveModule } from '@directive/directive.module';
+import { UIStyles } from '@core/common/uistyles';
 import { Subject, takeUntil } from 'rxjs';
-import { CreditPurchaseComponent } from '@shared/credit-purchase/credit-purchase.component';
-import { SocketService } from '@services/socket.service';
+import { SubscriptionService } from '@services/subscription.service';
+import { IconDirective } from '@directive/coin-svg.directive';
+import { User } from '@interfaces/user';
+import { environment } from '@environments/environment';
+import { KissService } from '@services/kiss.service';
+import { ToolsService } from '@services/tools.service';
+import { SoundService } from '@services/sound.service';
+import { UserCredit } from '@interfaces/transactionCredit';
+import { Tip } from '@interfaces/tip';
+import { LovenseSessionService } from '@services/lovense-session.service';
+import { Membership } from '@interfaces/membership';
+import { LovenseProduct } from '@interfaces/lovenseProduct';
+import { MembershipService } from '@services/membership.service';
+import { UserService } from '@services/user.service';
+import { CustomTranslatePipe } from '@pipes/translate.pipe';
 
 interface Gift {
   id: number;
@@ -32,41 +39,32 @@ interface Gift {
 @Component({
   selector: 'app-tip',
   imports: [
+    NgOptimizedImage,
+    CommonModule,
     CustomTranslatePipe,
     FormsModule,
     ReactiveFormsModule,
-    DirectiveModule
+    IconDirective
   ],
   providers: [],
-  animations: [
-    trigger('flyInOut', [
-      state('in', style({ transform: 'translateX(0) scale(1)', opacity: 1 })),
-      transition('void => *', [
-        style({ transform: 'translateX(0) scale(0.95)', opacity: 0 }),
-        animate('400ms cubic-bezier(0.68, -0.55, 0.27, 1.55)', style({ transform: 'translateX(0) scale(1)', opacity: 1 }))
-      ]),
-      transition('* => void', [
-        animate('300ms cubic-bezier(0.4, 0, 0.2, 1)', style({ transform: 'translateX(0) scale(0.95)', opacity: 0 }))
-      ]),
-    ]),
-  ],
   templateUrl: './tip.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './tip.component.scss'
 })
 export class TipComponent {
-
+  public className = UIStyles;
   loading: boolean = false;
   myform: FormGroup;
   money: Money;
-  userCredit: UserCredit | undefined;
-  tip: any;
+  tip: Tip;
+  lovenseControl = signal<Membership[]>([]);
+  chatId = signal(null);
 
   selectedGift: Gift | null = null;
 
   gifts: Gift[] = [
-    { id: 1, name: 'coffee', image: '☕', price: 2 },
-    { id: 2, name: 'rose', image: '🌹', price: 5 },
+    { id: 1, name: 'rose', image: '🌹', price: 1 },
+    { id: 2, name: 'coffee', image: '☕', price: 5 },
     { id: 3, name: 'wine', image: '🍷', price: 10 },
     { id: 4, name: 'heart', image: '💖', price: 20 },
     { id: 5, name: 'teddyBear', image: '🧸', price: 30 },
@@ -79,25 +77,32 @@ export class TipComponent {
     { id: 12, name: 'ring', image: '💍', price: 200 }
   ];
 
+  activeTab: 'gifts' | 'toys' = 'gifts';
+
   @ViewChild('container', { read: ViewContainerRef }) viewContainerRef!: ViewContainerRef;
   private destroy$ = new Subject<void>();
-  //audioSrc: string = 'assets/audio/money.mp3';
+  @Output() closeModal = new EventEmitter<void>();
 
   private fb = inject(FormBuilder);
-  private moneyService = inject(MoneyService);
   private toastService = inject(ToastService);
   private authService = inject(AuthService);
   public dialogService = inject(DialogService);
-  private transactionCreditService = inject(TransactionCreditService);
+  public transactionCreditService = inject(TransactionCreditService);
   public tipService = inject(TipService);
   private spinnerService = inject(SpinnerService);
   public router = inject(Router);
-  public userCreditService = inject(UserCreditService);
-  private socketService = inject(SocketService);
+  private subscriptionService = inject(SubscriptionService);
+  private kissService = inject(KissService);
+  private toolsService = inject(ToolsService);
+  private soundService = inject(SoundService);
+  public lovenseSessionService = inject(LovenseSessionService);
+  public membershipService = inject(MembershipService);
+  public userService = inject(UserService);
 
   constructor() {
     effect(() => {
-      this.tip = this.tipService.tip();
+      this.tip = this.tipService.tip()!;
+      this.lovenseControl.set(this.membershipService.memberships());
     });
   }
 
@@ -110,14 +115,6 @@ export class TipComponent {
     this.destroy$.complete();
   }
 
-  async userCreditFinOne() {
-    try {
-      this.userCredit = await this.userCreditService.credit;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   createFormControls() {
     this.myform = this.fb.group({
       amount: [5, [Validators.required, NumericValidatorTip]],
@@ -125,19 +122,30 @@ export class TipComponent {
     });
   }
 
-  findOneMoney() {
-    const data = {
-      iso: 'USD'
+  getProfileImageUrl(user: User): string {
+    const userProfile = user;
+    if (!userProfile || !userProfile.Profile || userProfile.Profile.length === 0) {
+      return '';
     }
-    this.moneyService.findOneIso(data).subscribe(res => {
-      if (res) {
-        this.money = res;
-      }
-    })
+
+    const profile = userProfile.Profile[0];
+
+    if (profile.cloudflare && profile.cloudflare.result && profile.cloudflare.result.variants && profile.cloudflare.result.variants.length > 0) {
+      return profile.cloudflare.result.variants[0];
+    }
+
+    return profile.url || '';
   }
 
-  closeModal() {
+  logout() {
     this.dialogService.closeModal();
+    this.subscriptionService.resetSubscribersUserJoin();
+    this.authService.logout();
+  }
+
+  // close
+  onCloseModal() {
+    this.closeModal.emit(); // Notifica al padre que el modal se cerró
   }
 
   selectGift(gift: Gift): void {
@@ -157,44 +165,20 @@ export class TipComponent {
 
   async onSubmit(price: number) {
     try {
-      this.dialogService.closeModal();
-      if (this.authService.user()) {
-        // create user credit
-        if (!this.userCreditService.userCredit()) {
-          const data = {
-            User: this.authService.user()!._id
-          }
-          this.userCreditService.create(data).subscribe(res => {
-            if (res) {
-              this.dialogService.toggleModal('creditPurchase');
-              this.spinnerService.close();
-            }
-          });
-          return;
-        }
 
-        if (Number(price) <= Number(this.userCreditService.userCredit()!.current)) {
+      this.onCloseModal();
+      if (this.authService.user()) {
+
+        if (Number(price) <= Number(this.userService.userCurrent()?.UserCredit?.current)) {
 
           this.spinnerService.start();
 
-          let data;
-
-          const commonData = {
-            type: this.tip.type,
+          let data: any = {
+            type: 'TIP',
+            typeContent: this.tip?.typeContent || 'NONE',
             creditAmount: Number(price),
-            Receiver: this.tip.user!._id,
+            ReceiverId: this.tip.user?._id,
           };
-
-          if (this.tip.type === 'TIP_ACCOUNT' || this.tip.type === 'TIP_CAM' || this.tip.type === 'TIP_CHAT' || this.tip.type === 'TIP_LIVE') {
-            data = {
-              ...commonData,
-            };
-          } else if (this.tip.type === 'TIP_POST') {
-            data = {
-              ...commonData,
-              Post: this.tip.post._id
-            };
-          }
 
           if (!data) {
             this.spinnerService.close();
@@ -203,61 +187,121 @@ export class TipComponent {
             });
             return;
           }
+
+          this.myform.patchValue({
+            amount: Number(5),
+          });
+
           this.transactionCreditService.createTransfer(data)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (res) => {
-                if (res) {
-
-                  if (this.tip.type === 'TIP_LIVE') {
-                    const sendData = {
-                      roomID: this.tip.roomID
-                    };
-                    this.socketService.socket.emit('live-tip-client', sendData);
-                  } else {
-                    this.playSound();
+                if (res?.TransactionCredit) {
+                  //sound
+                  if (this.tip?.typeContent !== 'LIVE') {
+                    this.soundService.playSoundTip();
                   }
-
                   this.toastService.start({ type: 'success', message: 'tipWasSent' });
-                  this.myform.patchValue({
-                    amount: Number(5),
-                  });
+                  this.kissService.start(2500);
+                } else {
+                  this.toastService.start({ type: 'error', message: 'somethingWentWrong' });
                 }
               },
               error: (err) => {
-                this.toastService.start({ type: 'error', message: 'somethingWentWrong' });
                 this.spinnerService.close();
               },
               complete: () => {
-                this.dialogService.closeModal();
                 this.spinnerService.close();
-                console.log('Request completed');
               }
             });
 
         } else {
           //buy credit
-          this.viewContainerRef.clear();
-          this.viewContainerRef.createComponent(CreditPurchaseComponent);
-          this.dialogService.toggleModal('creditPurchase');
+          this.openCreditPurchase();
         }
       } else {
-        this.viewContainerRef.clear();
-        this.viewContainerRef.createComponent(CreditPurchaseComponent);
-        this.dialogService.toggleModal('creditPurchase');
+        this.openCreditPurchase();
       }
     } catch (error) {
-      console.error(error);
+
     }
   }
 
-  playSound() {
-    const audio = new Audio('public/sounds/scale.mp3');
-    audio.play();
+  // lovense
+  onActivate(item: Membership) {
+    const { quantyTime, lovenseConfig } = item;
+    this.onCloseModal();
+    if (this.authService.user()) {
+
+      if (Number(item.credit) <= Number(this.userService.userCurrent()?.UserCredit?.current)) {
+
+        this.spinnerService.start();
+
+        const data = {
+          UserId: item.User,
+          level: lovenseConfig?.vibration || '',
+          timeSec: quantyTime,
+          toyId: item.lovenseConfig?.LovenseProduct.code,
+          transactionCredit: {
+            Site: environment.site,
+            creditAmount: Number(item.credit),
+            type: 'TIP',
+            ReceiverId: item.User!.toString(),
+          }
+        }
+
+        this.lovenseSessionService.sendCommandCloud(data).subscribe({
+          next: (res) => {
+            if (!res.result) {
+              this.toastService.start({ type: 'error', message: 'error.somethingWentWrong' });
+            }
+            this.kissService.start(2500);
+          },
+          error: (err) => {
+            this.spinnerService.close();
+          },
+          complete: () => {
+            this.spinnerService.close();
+          }
+        });
+      } else {
+        //buy credit
+        this.openCreditPurchase();
+      }
+    } else {
+      //buy credit
+      this.openCreditPurchase();
+    }
   }
 
-  //  input class
-  inputClass(formGroup: FormGroup, controlName: string,) {
-    return Tools.inputClass(formGroup, controlName);
+  onStop(item: LovenseProduct) {
+    this.spinnerService.start();
+    const UserId = this.authService.user()?._id || '';
+    const data = {
+      UserId: UserId,
+      toyId: item.code
+    }
+    this.lovenseSessionService.stopCommandCloud(data).subscribe({
+      next: (res) => {
+
+      },
+      error: (err) => {
+        this.spinnerService.close();
+      },
+      complete: () => {
+        this.spinnerService.close();
+      }
+    });
   }
+
+  // 
+  openCreditPurchase(): void {
+    this.closeModal.emit();
+    this.dialogService.toggleModal('creditPurchase');
+  }
+
+  getFirstLetter(name: string): string {
+    return this.toolsService.getFirstLetter(name);
+  }
+
 }

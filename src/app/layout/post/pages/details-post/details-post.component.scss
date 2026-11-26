@@ -1,0 +1,29 @@
+:host ::ng-deep .video-js {
+
+    /* Oculta todos los elementos de control */
+    .vjs-control-bar,
+    .vjs-big-play-button,
+    .vjs-modal-dialog,
+    .vjs-text-track-display,
+    .vjs-loading-spinner,
+    .vjs-error-display,
+    .vjs-dock-text {
+        display: none !important;
+    }
+
+    /* Elimina cualquier hover state */
+    &:hover .vjs-control-bar {
+        display: none !important;
+    }
+
+    /* Deshabilita interacciones */
+    pointer-events: none;
+    user-select: none;
+}
+
+.video-js {
+    width: 100vw !important;
+    /* Ocupa todo el ancho de la pantalla */
+    height: 100vh !important;
+    /* Ocupa todo el alto de la pantalla */
+}

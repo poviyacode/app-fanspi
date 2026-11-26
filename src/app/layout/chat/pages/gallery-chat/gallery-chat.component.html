@@ -1,0 +1,140 @@
+@if (isBrowser) {
+  <ng-container #container></ng-container>
+  <div class="mx-2 sm:mx-2 lg:mx-2 2xl:mx-2"> <!-- border border-t-0 dark:border-zinc-800 -->
+    <div
+      class="sticky top-0  w-full py-2 px-3 text-xs bg-background-light dark:bg-background-dark dark:text-zinc-200 z-10 ">
+      <!-- border-b border-zinc-200 dark:border-zinc-800 -->
+      <div class="flex justify-between items-center h-10 space-x-5">
+        <div class="flex justify-between items-center space-x-5">
+          <button (click)="goBack()" class="flex justify-center items-center">
+            <i class="fa-solid fa-chevron-left text-lg"></i>
+          </button>
+
+          <div class="flex flex-col justify-start cursor-pointer text-lg">
+            <div class="font-semibold">{{'chatGallery' | translate}}</div>
+
+            @if (this.chatService.chat()) {
+              <div class="text-xs text-zinc-600 dark:text-zinc-400 lowercase font-normal">
+                {{'with' | translate}}
+                {{this.chatService.chat()?.Receiver?.name || this.chatService.chat()?.Receiver?.username}}
+              </div>
+            } @else {
+              <div class="bg-white dark:bg-zinc-800/30 rounded-full h-4"></div>
+            }
+          </div>
+        </div>
+
+        <div class="hidden md:flex flex-col items-center cursor-pointer uppercase text-lg w-full md:w-96">
+
+        </div>
+      </div>
+    </div>
+
+    @if(idChat) {
+      <div class="my-3 flex justify-start items-center space-x-2 sm:space-x-5 text-sm font-semibold">
+
+        <!-- All Link -->
+        <a routerLink="/chats/gallery/{{idChat}}" [routerLinkActiveOptions]="{exact: true}"
+          routerLinkActive="bg-primary-600 dark:bg-primary-600 text-white"
+          [class]="router.isActive('/chats/gallery/' + idChat, false) ? 'bg-primary-600 text-white' : 'bg-white dark:bg-zinc-800/80 text-zinc-800 dark:text-zinc-300'"
+          class="hover:bg-primary-600 dark:hover:bg-primary-600 hover:text-white transition-colors duration-300 ease-in-out rounded-full px-5 py-2 shadow-lg space-x-2 flex items-center">
+          <span>{{'all' | translate}}</span>
+          <span class="bg-white dark:bg-zinc-700 text-zinc-800 dark:text-zinc-300 rounded-full px-2 py-0.5 shadow-inner">
+            {{ totalImage() + totalVideo() }}
+          </span>
+        </a>
+
+        <!-- Photos Link -->
+        <a routerLink="/chats/gallery/{{idChat}}/image" [routerLinkActiveOptions]="{exact: false}"
+          routerLinkActive="bg-primary-600 dark:bg-primary-600 text-white"
+          [class]="router.isActive('/chats/gallery/' + idChat + '/image', false) ? 'bg-primary-600 text-white' : 'bg-white dark:bg-zinc-800/80 text-zinc-800 dark:text-zinc-300'"
+          class="hover:bg-primary-600 dark:hover:bg-primary-600 hover:text-white transition-colors duration-300 ease-in-out rounded-full px-5 py-2 shadow-lg space-x-2 flex items-center">
+          <span>{{'photos' | translate}}</span>
+          <span class="bg-zinc-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-300 rounded-full px-2 py-0.5 shadow-inner">
+            {{ totalImage() }}
+          </span>
+        </a>
+
+        <!-- Video Link -->
+        <a routerLink="/chats/gallery/{{idChat}}/video" [routerLinkActiveOptions]="{exact: true}"
+          routerLinkActive="bg-primary-600 dark:bg-primary-600 text-white"
+          [class]="router.isActive('/chats/gallery/' + idChat + '/video', false) ? 'bg-primary-600 text-white' : 'bg-white dark:bg-zinc-800/80 text-zinc-800 dark:text-zinc-300'"
+          class="hover:bg-primary-600 dark:hover:bg-primary-600 hover:text-white transition-colors duration-300 ease-in-out rounded-full px-5 py-2 shadow-lg space-x-2 flex items-center">
+          <span>{{'videos' | translate}}</span>
+          <span class="bg-zinc-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-300 rounded-full px-2 py-0.5 shadow-inner">
+            {{ totalVideo() }}
+          </span>
+        </a>
+      </div>
+    }
+
+  </div>
+
+  <!-- container -->
+
+  <div class="px-2">
+    @if (postMediaService.postMedias().length > 0) {
+      <div class="space-y-4 pt-0">
+
+        <div class=" grid grid-cols-3 sm:grid-cols-4 gap-1 sm:gap-1">
+          @for (item of postMediaService.postMedias(); track $index) {
+            <figure #theLastList>
+              <div class="relative text-zinc-50 transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                <!-- Image Post -->
+                @if (item.type == 'image') {
+                  <img (click)="onModalPost(item, $index)"
+                    [src]="item.cloudflare ? item.cloudflare.result.variants[0] : item.url" alt="{{$index}}"
+                    class="w-full h-44 sm:h-64 lg:h-72 object-cover cursor-pointer rounded-md shadow-md hover:shadow-xl transition-transform duration-300 ease-in-out">
+                }
+
+                <!-- Video Post -->
+                @if (item.type == 'video') {
+                  <img (click)="onModalPost(item, $index)"
+                    [src]="item.cloudflare ? 'https://customer-6kruyx7h361tmu11.cloudflarestream.com/' + item.cloudflare.result.uid + '/thumbnails/thumbnail.gif?time=1s&height=200&duration=6s' : item.urlSnapshot"
+                    alt="{{$index}}"
+                    class="w-full h-44 sm:h-64 lg:h-72 object-cover cursor-pointer rounded-md shadow-md hover:shadow-xl transition-transform duration-300 ease-in-out">
+                }
+
+                <!-- Paid Tag -->
+                @if (item.Message!.typeView == 'PAID') {
+                  <div
+                    class="absolute top-0 left-0 bg-green-600 dark:bg-green-700 border border-green-500 shadow-md rounded-full px-2 pb-1 text-white text-xs m-2">
+                    {{'paid' | translate}}
+                  </div>
+                }
+
+                <!-- Subscription expired overlay -->
+                @if (subscriptionExpiredQuery(item)) {
+                  <div
+                    class="absolute inset-0 bg-zinc-100/70 dark:bg-zinc-900/60 text-white flex items-center justify-center {{item.Message!.previewMedia ? 'rounded-md backdrop-blur-lg m-2 sm:m-5' : 'backdrop-blur-3xl'}}">
+                    <div class="text-center">
+                      <i class="fa-solid fa-lock text-xl"></i>
+                    </div>
+                  </div>
+                }
+
+                <!-- Play Icon for Video -->
+                @if (item.type == 'video') {
+                  <div (click)="onModalPost(item, $index)"
+                    class="absolute inset-0 flex items-center justify-center text-white dark:text-zinc-300 opacity-90 cursor-pointer transition-transform duration-300 hover:scale-125">
+                    <i class="fa-solid fa-play text-4xl"></i>
+                  </div>
+                }
+              </div>
+            </figure>
+          }
+        </div>
+
+      </div>
+    } @else if(loading) {
+      <div class="my-40 flex justify-center items-center">
+        <div class="w-16 h-16 border-t-4 border-primary-500 border-solid rounded-full animate-spin">
+        </div>
+      </div>
+    } @else {
+      <div class="my-40 text-center font-light text-3xl">
+        {{'there_is_no_data' | translate}}
+      </div>
+    }
+  </div>
+}

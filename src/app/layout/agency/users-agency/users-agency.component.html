@@ -1,0 +1,261 @@
+@if (isBrowser) {
+<ng-container #container></ng-container>
+
+@if (dialogService.activeModal() === 'searchProfiles') {
+<div [ngClass]="modalClass()" (click)="onCloseModal()"
+    class="modal-center fixed inset-0 flex items-center justify-center p-4 z-50 backdrop-blur-md bg-slate-900/60 dark:bg-black/70 transition-all duration-300">
+    <div [ngClass]="cardModalClass()"
+        class="w-full h-auto max-h-[90vh] max-w-md sm:max-w-xl mx-auto overflow-hidden bg-white dark:bg-[var(--color-secondary-900)] backdrop-blur-2xl border border-slate-200 dark:border-[var(--color-secondary-800)] shadow-2xl rounded-[2.5rem]"
+        (click)="($event.stopPropagation())" animate.enter="modal-animation-enter"
+        animate.leave="modal-animation-leave">
+        <section class="w-full h-full p-6 sm:p-8 overflow-y-auto max-h-[90vh] space-y-6">
+
+            <!-- Cabecera del Modal -->
+            <div class="space-y-2 border-b border-slate-100 dark:border-[var(--color-secondary-800)] pb-4">
+                <div class="flex justify-between items-center relative">
+                    <h2
+                        class="text-xl font-black tracking-tight flex items-center gap-2.5 mx-auto text-slate-900 dark:text-white">
+                        <span
+                            class="flex items-center justify-center w-9 h-9 rounded-full bg-[var(--color-primary-500)]/10 text-[var(--color-primary-500)]">
+                            <i appIcon iconName="search-regular" [size]="'w-5 h-5'" [color]="''"></i>
+                        </span>
+                        <span
+                            class="bg-gradient-to-r from-[var(--color-primary-500)] to-rose-600 bg-clip-text text-transparent">
+                            {{ 'searchGirlfriend' | translate }} 💖
+                        </span>
+                    </h2>
+                    <button (click)="onCloseModal()"
+                        class="absolute right-0 cursor-pointer flex justify-center items-center bg-slate-100 hover:bg-[var(--color-primary-500)]/10 dark:bg-[var(--color-secondary-800)] dark:hover:bg-[var(--color-secondary-700)] text-slate-500 hover:text-[var(--color-primary-500)] rounded-full p-2.5 w-10 h-10 transition-all duration-200">
+                        <span appIcon iconName="close-regular" [size]="'w-5 h-5'" [color]="''"></span>
+                    </button>
+                </div>
+
+                <p
+                    class="text-slate-500 dark:text-[var(--color-secondary-300)] font-normal text-sm sm:text-base text-center">
+                    {{'findAndChooseYourIdealGirlfriend' | translate}}
+                </p>
+            </div>
+
+            <!-- Formulario de Búsqueda -->
+            <form novalidate (ngSubmit)="onSearch()" [formGroup]="myForm" class="space-y-5">
+
+                <!-- Input Principal de Búsqueda -->
+                <div class="relative group">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-[var(--color-primary-500)]/25 to-rose-500/25 rounded-2xl blur-md opacity-0 group-focus-within:opacity-100 transition-opacity duration-300">
+                    </div>
+                    <div class="relative flex items-center">
+                        <div class="absolute left-4 text-[var(--color-primary-500)] pointer-events-none">
+                            <i appIcon iconName="favorite-regular" [size]="'w-5 h-5'" aria-hidden="true"
+                                [color]="''"></i>
+                        </div>
+                        <input type="text" formControlName="search"
+                            placeholder="{{'searchGirlfriendByNameOrCharacteristics' | translate}}"
+                            (keydown.enter)="onSearch()"
+                            class="w-full pl-12 pr-4 py-3.5 rounded-2xl border border-slate-200 dark:border-[var(--color-secondary-800)] bg-slate-50 dark:bg-[var(--color-secondary-950)] text-base sm:text-lg font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]/40 focus:border-[var(--color-primary-500)] placeholder-slate-400 dark:placeholder-[var(--color-secondary-500)] transition-all duration-200 shadow-inner">
+                    </div>
+                </div>
+
+                <!-- Filtro de Edad Optimizado (Ancho Completo) -->
+                <div
+                    class="relative group bg-slate-50 dark:bg-[var(--color-secondary-950)] rounded-2xl p-4 border border-slate-200 dark:border-[var(--color-secondary-800)] hover:border-[var(--color-primary-500)]/40 transition-colors">
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="flex items-center gap-3 shrink-0">
+                            <span
+                                class="w-9 h-9 rounded-xl bg-[var(--color-primary-500)] flex items-center justify-center text-white">
+                                <i appIcon iconName="cake-regular" [size]="'w-5 h-5'" [color]="'text-white'"
+                                    class="group-hover:scale-110 transition-transform"></i>
+                            </span>
+                            <span
+                                class="text-sm sm:text-base font-semibold text-slate-700 dark:text-[var(--color-secondary-200)]">
+                                {{'girlfriendAge' | translate}}
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input formControlName="minAge" type="text" placeholder="18" min="18" max="99"
+                                class="w-16 py-2 bg-white dark:bg-[var(--color-secondary-900)] text-center text-sm font-bold text-slate-900 dark:text-white border border-slate-200 dark:border-[var(--color-secondary-800)] rounded-xl focus:ring-2 focus:ring-[var(--color-primary-500)]/40 focus:outline-none">
+                            <span class="text-slate-400 font-medium">—</span>
+                            <input formControlName="maxAge" type="text" placeholder="35" min="18" max="99"
+                                class="w-16 py-2 bg-white dark:bg-[var(--color-secondary-900)] text-center text-sm font-bold text-slate-900 dark:text-white border border-slate-200 dark:border-[var(--color-secondary-800)] rounded-xl focus:ring-2 focus:ring-[var(--color-primary-500)]/40 focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón de Acción Principal -->
+                <button (click)="onSearch()" [ngClass]="className.buttonPrimaryClass()"
+                    class="w-full rounded-2xl flex items-center justify-center gap-2.5 py-4 font-bold cursor-pointer group">
+                    <i appIcon iconName="search-regular" [size]="'w-5 h-5'" [color]="'text-white'"
+                        class="group-hover:scale-110 transition-transform"></i>
+                    <span class="text-base tracking-wide text-white">
+                        {{'searchGirlfriend' | translate}}
+                    </span>
+                </button>
+
+            </form>
+
+        </section>
+    </div>
+</div>
+}
+
+<header class="fixed top-0 inset-x-0 z-50 pointer-events-none" aria-label="Navegación superior">
+    <div class="mx-auto max-w-screen-xl px-4 py-4 sm:px-6 pointer-events-auto">
+        <div
+            class="flex items-center justify-between gap-3 bg-white/90 dark:bg-[var(--color-secondary-900)]/90 backdrop-blur-3xl border border-slate-200 dark:border-[var(--color-secondary-800)] shadow-[0_8px_32px_rgba(0,0,0,0.1)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] rounded-full px-5 py-3 transition-all duration-300">
+
+            <!-- Logo con animación de pulso y halo -->
+            <a [routerLink]="['/']"
+                class="flex items-center gap-3 shrink-0 rounded-full transition-all duration-300 active:scale-95 focus-visible:outline-none focus-visible:outline-2 focus-visible:outline-[var(--color-primary-500)] group stagger-item cursor-pointer"
+                aria-label="Ir al inicio" title="Inicio">
+
+                <div
+                    class="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full p-[2px] bg-gradient-to-tr from-[var(--color-primary-600)] via-rose-500 to-[var(--color-primary-500)] shadow-lg shadow-[var(--color-primary-500)]/30 group-hover:shadow-[var(--color-primary-500)]/60 transition-all duration-300">
+                    <div
+                        class="w-full h-full rounded-full bg-slate-100 dark:bg-[var(--color-secondary-950)] overflow-hidden relative flex items-center justify-center">
+                        <i appIcon iconName="icon-yuvinka" [size]="'w-11 h-11'" [color]="''"></i>
+                        <div
+                            class="absolute inset-0 bg-[var(--color-primary-500)]/15 dark:bg-[var(--color-primary-500)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hidden sm:flex flex-col justify-center -ml-0.5">
+                    <span
+                        class="text-[24px] leading-none font-black tracking-tighter text-slate-900 dark:text-white select-none pb-[2px]">
+                        {{ 'yuvinka' | translate }}
+                    </span>
+                    <span
+                        class="text-[10px] uppercase font-bold tracking-[0.2em] text-[var(--color-primary-600)] dark:text-[var(--color-primary-400)]">
+                        {{ 'Love Secret' | translate }}
+                    </span>
+                </div>
+            </a>
+
+            <!-- Botón de búsqueda tipo barra de exploración moderna -->
+            <div class="flex-1 flex justify-center stagger-item max-w-md">
+                <button type="button" (click)="onSearchToogle()"
+                    class="relative overflow-hidden w-full max-w-[260px] sm:max-w-md flex items-center justify-center sm:justify-start gap-3 px-4 py-3 rounded-full bg-slate-100 dark:bg-[var(--color-secondary-950)] hover:bg-slate-200 dark:hover:bg-[var(--color-secondary-800)] border border-slate-200 dark:border-[var(--color-secondary-800)] hover:border-[var(--color-primary-500)]/50 transition-all cursor-pointer focus:outline-none group shadow-inner"
+                    aria-label="{{'searchGirlfriend' | translate}}" aria-haspopup="true"
+                    title="{{'searchGirlfriend' | translate}}">
+
+                    <!-- Shimmer effect refinado -->
+                    <span
+                        class="absolute inset-0 bg-gradient-to-r from-transparent via-slate-900/5 dark:via-white/10 to-transparent"
+                        [style.transform]="shimmerState === 'active' ? 'translateX(100%)' : 'translateX(-100%)'"
+                        [style.transition]="shimmerState === 'active' ? 'transform 0.7s ease-in-out' : 'none'">
+                    </span>
+
+                    <span
+                        class="flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-tr from-[var(--color-primary-600)] to-[var(--color-primary-500)] text-white shadow-md shadow-[var(--color-primary-500)]/30 shrink-0 relative z-10 group-hover:scale-110 transition-transform">
+                        <i appIcon iconName="search-regular" [size]="'w-3.5 h-3.5'" [color]="''"></i>
+                    </span>
+                    <span
+                        class="block text-slate-700 dark:text-[var(--color-secondary-200)] text-sm sm:text-base font-medium transition-colors truncate relative z-10">
+                        {{ 'searchGirlfriend' | translate }} <span
+                            class="text-[var(--color-primary-500)] dark:text-[var(--color-primary-400)]">💖</span>
+                    </span>
+
+                </button>
+            </div>
+
+            <!-- Botón Live con rotación y neón -->
+            <button type="button" (click)="onLive()" (mouseenter)="onHoverRotate('hovered')"
+                (mouseleave)="onHoverRotate('normal')"
+                class="shrink-0 relative flex items-center justify-center w-11 h-11 rounded-full bg-slate-100 dark:bg-[var(--color-secondary-950)] hover:bg-slate-200 dark:hover:bg-[var(--color-secondary-800)] border border-slate-200 dark:border-[var(--color-secondary-800)] text-[var(--color-primary-600)] dark:text-[var(--color-primary-400)] transition-all focus:outline-none group shadow-md cursor-pointer stagger-item"
+                aria-label="Transmisiones en vivo" title="Ver contenido en vivo">
+
+                <i appIcon iconName="live-tv-regular" [size]="'w-5 h-5'" [color]="''"
+                    class="group-hover:scale-110 transition-transform duration-300"></i>
+
+                <!-- Indicador de live con destello pulsante -->
+                <span class="absolute top-0.5 right-0.5 flex h-2.5 w-2.5">
+                    <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                    <span
+                        class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500 border-2 border-white dark:border-[var(--color-secondary-900)]"></span>
+                </span>
+            </button>
+
+        </div>
+    </div>
+</header>
+
+<!-- Catálogo de Novias - Diseño Inmersivo Moderno -->
+<section class="relative z-10 mx-auto max-w-dvw mt-28 mb-32">
+    <div class="hidden text-center px-4 mb-14 space-y-4">
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-slate-900 dark:text-white">
+            {{'chooseYourGirlfriend' | translate}}
+            <span
+                class="bg-gradient-to-r from-[var(--color-primary-400)] via-pink-400 to-[var(--color-primary-400)] bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(244,63,94,0.3)]">
+                💖
+            </span>
+        </h1>
+        <p
+            class="text-base sm:text-lg text-slate-500 dark:text-[var(--color-secondary-300)] max-w-2xl mx-auto font-normal leading-relaxed">
+            {{'visualizeProfiles' |translate}}
+        </p>
+    </div>
+
+    <!-- Masonry Grid Organizado -->
+    <div class="flex flex-wrap gap-0 justify-center">
+
+        <!-- Tarjetas Reales -->
+        @for (item of this.userService.usersProfile(); track item._id) {
+        @defer (on viewport) {
+        <app-profile-card [item]="item" class="flex-grow shrink-0 basis-[calc(50%-0.5rem)] 
+         sm:basis-[calc(33.33%-1rem)]  
+         lg:basis-[calc(25%-1rem)] 
+         xl:basis-[calc(20%-1rem)] 
+         2xl:basis-[calc(16.66%-1rem)]
+         max-w-[calc(50%-0.25rem)] 
+         sm:max-w-[32%] 
+         lg:max-w-[24%] 
+         xl:max-w-[19%] 
+         2xl:max-w-[15.5%]" />
+        } @placeholder {
+        <div
+            class="flex-grow shrink-0 basis-[calc(50%-0.5rem)] sm:basis-[calc(33.33%-1rem)] lg:basis-[calc(25%-1rem)] xl:basis-[calc(20%-1rem)] 2xl:basis-[calc(16.66%-1rem)] max-w-[calc(50%-0.25rem)] sm:max-w-[32%] lg:max-w-[24%] xl:max-w-[19%] 2xl:max-w-[15.5%] h-[340px] bg-slate-100 dark:bg-[var(--color-secondary-900)] backdrop-blur-xl border border-slate-200 dark:border-[var(--color-secondary-800)] rounded-[0rem] animate-pulse">
+        </div>
+        }
+        }
+
+        <!-- Skeletons de Carga con efecto Glass -->
+        @if (isLoading()) {
+        @for (h of ['h-[280px]', 'h-[350px]', 'h-[310px]', 'h-[380px]', 'h-[290px]', 'h-[340px]', 'h-[300px]',
+        'h-[320px]',
+        'h-[360px]', 'h-[280px]', 'h-[340px]', 'h-[310px]']; track $index) {
+        <div
+            class="flex-grow shrink-0 basis-[calc(50%-0.5rem)] 
+                sm:basis-[calc(33.33%-1rem)] 
+                lg:basis-[calc(25%-1rem)] 
+                xl:basis-[calc(20%-1rem)] 
+                2xl:basis-[calc(16.66%-1rem)]
+                max-w-[calc(50%-0.25rem)] 
+                sm:max-w-[32%]
+                lg:max-w-[24%] 
+                xl:max-w-[19%] 
+                2xl:max-w-[15.5%]
+                relative overflow-hidden rounded-[0rem] bg-slate-100 dark:bg-[var(--color-secondary-900)] backdrop-blur-xl border border-slate-200 dark:border-[var(--color-secondary-800)] animate-pulse mb-4 shadow-xl">
+
+            <!-- Simulación de contenido inferior -->
+            <div class="absolute bottom-6 left-5 right-5 space-y-3">
+                <div class="flex items-center gap-2">
+                    <div class="h-5 w-3/4 bg-slate-200 dark:bg-[var(--color-secondary-800)] rounded-xl"></div>
+                    <div class="h-5 w-1/4 bg-slate-200 dark:bg-[var(--color-secondary-800)] rounded-xl"></div>
+                </div>
+                <div class="h-10 w-full bg-slate-200 dark:bg-[var(--color-secondary-800)] rounded-2xl"></div>
+            </div>
+
+            <div class="absolute inset-0 flex items-center justify-center opacity-10">
+                <i appIcon iconName="heart-solid" [size]="'w-12 h-12'" [color]="'text-[var(--color-primary-400)]'"></i>
+            </div>
+        </div>
+        }
+        }
+
+        <!-- Relleno invisible para mantener alineación -->
+        <div class="flex-[100] grow-[100] basis-auto h-0"></div>
+    </div>
+
+</section>
+}

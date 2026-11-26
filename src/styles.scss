@@ -72,8 +72,8 @@ button {
 }
 
 input:checked~.dot {
-  transform: translateX(10%);
-  background-color: #02a85c;
+  transform: translateX(100%);
+  background-color: #EC3434;
 }
 
 .file-select {
@@ -617,7 +617,7 @@ input:checked~.dot {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.3);
+  // background-color: rgba(0, 0, 0, 0.3);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -749,41 +749,290 @@ input:checked~.dot {
       rgba(255, 255, 255, 0));
 }
 
-@keyframes logoEntrance {
+.chat-background {
+  /* Fondo Degradado */
+  background: radial-gradient(circle at center,
+      /* Inicia el degradado desde el centro */
+      hsl(230, 15%, 35%) 0%,
+      /* Azul oscuro/índigo más brillante en el centro */
+      hsl(220, 15%, 15%) 70%,
+      /* Transición a un color casi negro/gris oscuro */
+      hsl(220, 15%, 10%) 100%
+      /* Color más oscuro en los bordes */
+    );
+}
+
+/* Clases para la entrada y salida nativa */
+.modal-animation-enter {
+  animation: scaleModalIn 400ms cubic-bezier(0.68, -0.55, 0.27, 1.55) both;
+}
+
+.modal-animation-leave {
+  transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1), opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+@keyframes scaleModalIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 1. Animación para el contenedor principal (Fade in sutil) */
+.list-fade-in {
+  animation: fadeInContainer 500ms ease-out forwards;
+}
+
+@keyframes fadeInContainer {
   from {
     opacity: 0;
-    filter: blur(10px);
-    transform: translateY(30px);
   }
 
   to {
     opacity: 1;
-    filter: blur(0);
-    transform: translateY(0);
   }
 }
 
-.animate-logo {
-  opacity: 0;
-  /* Estado inicial para evitar FOUC */
-  animation: logoEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: 0.1s;
-  /* Pequeño retraso opcional */
+/* 2. Entrada del mensaje (Enviado o Recibido) */
+.message-enter {
+  animation: messageIn 350ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-/* Animación del título (Cinemática) */
-.reveal-word {
-  display: inline-block;
-  opacity: 0;
-  transform: translateY(20px) scale(0.95);
-  filter: blur(10px);
-  animation: cinematicReveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
+@keyframes messageIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+    filter: blur(3px);
+  }
 
-@keyframes cinematicReveal {
-  100% {
+  to {
     opacity: 1;
     transform: translateY(0) scale(1);
     filter: blur(0);
+  }
+}
+
+/* 3. Salida del mensaje (Cuando se elimina) */
+.message-leave {
+  animation: messageOut 250ms cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  overflow: hidden;
+  /* Evita que el contenido desborde mientras colapsa la altura */
+}
+
+@keyframes messageOut {
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+    filter: blur(4px);
+    height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+}
+
+
+/* Entrada del chat (equivalente a void => *) */
+.chat-enter {
+  animation: chatIn 350ms cubic-bezier(0.21, 1.02, 0.43, 1.01) forwards;
+}
+
+@keyframes chatIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Salida del chat (equivalente a * => void) */
+.chat-leave {
+  animation: chatOut 250ms cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes chatOut {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+}
+
+/* Entrada de la notificación (Aparece desde abajo) */
+.notification-enter {
+  animation: notificationIn 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes notificationIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Salida de la notificación (Se desvanece hacia abajo) */
+.notification-leave {
+  animation: notificationOut 200ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes notificationOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+}
+
+/* 1. ANIMACIÓN DE ENTRADA */
+.toast-animation-enter {
+  animation: toastEnter 400ms cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+@keyframes toastEnter {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 20px) scale(0.95);
+    filter: blur(4px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* 2. ANIMACIÓN DE SALIDA */
+.toast-animation-leave {
+  animation: toastLeave 250ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes toastLeave {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 10px) scale(0.98);
+    filter: blur(2px);
+  }
+}
+
+/* --- Backdrop Animation (Fade) --- */
+.backdrop-animation-enter {
+  animation: backdropEnter 300ms cubic-bezier(0, 0, 0.2, 1) forwards;
+}
+
+.backdrop-animation-leave {
+  animation: backdropLeave 200ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes backdropEnter {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes backdropLeave {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+
+/* --- Slide Animation (Desde la izquierda) --- */
+.slide-animation-enter {
+  animation: slideEnter 300ms cubic-bezier(0, 0, 0.2, 1) forwards;
+}
+
+.slide-animation-leave {
+  animation: slideLeave 200ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes slideEnter {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideLeave {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+/* view detail */
+.slideInRight-animation-enter {
+  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.slideFadeIn-animation-leave {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }

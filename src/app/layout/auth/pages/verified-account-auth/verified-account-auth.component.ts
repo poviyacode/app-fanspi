@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { Tools } from '@core/common/tools';
+import { UIStyles } from '@core/common/uistyles';
 import { CustomTranslatePipe } from '@pipes/translate.pipe';
 import { AuthService } from '@services/auth.service';
 import { EmailService } from '@services/email.service';
@@ -96,7 +96,7 @@ export default class VerifiedAccountAuthComponent {
     this.verificationCode = Math.floor(100000 + Math.random() * 900000);
 
     const correo = {
-      from: `"Yuvinka" <support@fanspi.com>`,
+      from: `"Yuvinka" <support@poviya.com>`,
       to: this.authService.user()?.email, // Correo del usuario
       subject: `${this.verificationCode} - Yuvinka Sign-in Verification`, // Asunto del correo
       html: `

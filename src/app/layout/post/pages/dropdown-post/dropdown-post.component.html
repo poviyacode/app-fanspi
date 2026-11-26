@@ -1,0 +1,111 @@
+<ng-container #container></ng-container>
+@if (postService.post() && dialogService.activeModal() === 'dropdownPost') {
+<div class="modal-center" (click)="dialogService.closeModal()"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 transition-opacity duration-300">
+  <div class="bg-white dark:bg-background-dark rounded-xl shadow-lg border border-zinc-100 dark:border-zinc-800/40"
+    (click)="($event.stopPropagation())" animate.enter="modal-animation-enter" animate.leave="modal-animation-leave">
+    <div class="w-72 sm:w-96 p-1">
+      <input type="hidden" #bookmark>
+
+      <ul class="cursor-pointer divide-y divide-zinc-100 dark:divide-zinc-800 text-center font-normal">
+
+        @if (this.authService.user()) {
+        @if (postService.post()!.User!._id == this.authService.user()!._id) {
+        <li (click)="onEdit(postService.post()!)"
+          class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+          {{'edit' | translate}}
+        </li>
+        }
+
+        @if (postService.post()!.User!._id == this.authService.user()!._id) {
+        <li (click)="onDeleteDialog(postService.post()!)"
+          class="w-full py-3 px-4 hover:bg-red-50 dark:hover:bg-zinc-800/40 transition-colors duration-300 text-red-500">
+          {{'delete' | translate}}
+        </li>
+        }
+
+        @if (postService.post()!.User!._id != this.authService.user()!._id && !bookmark.value) {
+        <li
+          (click)="addPostBookmark(postService.post()!, bookmark.value = $safeNavigationMigration(postService.post()?._id)!)"
+          class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+          {{'save' | translate}}
+        </li>
+        } @else {
+        <li (click)="deleteBookmark(postService.post()!, bookmark.value = '')"
+          class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+          {{'notSave' | translate}}
+        </li>
+        }
+
+        @if (!postService.post()!.pined && (postService.post()!.User?._id === authService.user()!._id)) {
+        <li (click)="onPinToTop(postService.post()!)"
+          class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+          {{'pinToTop' | translate}}
+        </li>
+        }
+
+        @if (postService.post()!.pined && (postService.post()!.User?._id === authService.user()!._id)) {
+        <li (click)="onPinToTop(postService.post()!)"
+          class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+          {{'unpin' | translate}}
+        </li>
+        }
+
+        }
+
+        <li (click)="copyText(postService.post()!)"
+          class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+          {{'copy_link_post' | translate}}
+        </li>
+
+        <li (click)="share(postService.post()!)"
+          class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+          {{'share' | translate}}
+        </li>
+
+        <li (click)="dialogService.closeModal()"
+          class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+          {{'report' | translate}}
+        </li>
+
+        <li (click)="dialogService.closeModal()"
+          class="w-full py-3 px-4 hover:bg-primary-50 dark:hover:bg-zinc-800/40 transition-colors duration-300">
+          {{'cancel' | translate}}
+        </li>
+      </ul>
+
+    </div>
+  </div>
+</div>
+}
+
+@if (this.postService.post() && dialogService.activeModal() === 'deletePost') {
+<div class="modal-center" (click)="dialogService.closeModal()">
+  <div
+    class=" bg-white dark:bg-background-dark rounded-3xl shadow-lg border max-w-md mx-auto border-zinc-100 dark:border-zinc-800/40"
+    (click)="($event.stopPropagation())" animate.enter="modal-animation-enter" animate.leave="modal-animation-leave">
+
+    <form (submit)="onDelete($event)" novalidate class="p-5">
+      <div class="flex justify-between mb-5 space-x-5">
+        <div class="text-center text-3xl flex items-center space-x-2 font-light">
+          <span><i class="fas fa-exclamation-circle text-yellow-500 text-2xl"></i></span>
+          <span>{{'confirmDelete' | translate}}</span>
+        </div>
+      </div>
+
+      <div class="flex justify-center items-center space-x-5 mt-4">
+        <button type="button"
+          class="bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-zinc-800 dark:text-zinc-200 font-semibold py-2 px-5 rounded-full shadow transition duration-200 ease-in-out"
+          (click)="dialogService.closeModal()">
+          {{ 'cancel' | translate }}
+        </button>
+        <button type="submit" [ngClass]="buttonClass()" class="py-2 px-5 rounded-full">
+          {{ 'delete' | translate }}
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+}

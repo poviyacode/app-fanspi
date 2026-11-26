@@ -1,0 +1,435 @@
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+
+    <!-- Tutorial de Conexión / Código QR con Fondo Estilizado -->
+    <fieldset [ngClass]="cardClass()" class="relative w-full overflow-hidden transition-colors">
+
+        <!-- Imagen de fondo con opacidad y efecto difuminado -->
+        <div class="absolute inset-0 z-0 opacity-10 dark:opacity-20 pointer-events-none">
+            <img src="./public/logo/lovense-finder-2.jpg" alt="Lovense Background" class="w-full h-full object-cover">
+        </div>
+
+        <!-- Contenido principal (debe ir en z-10 para estar por encima del fondo) -->
+        <div class="relative z-10 flex flex-col justify-between h-full">
+            @if(!lovenseSessionService.lovenseSession() ||
+            lovenseSessionService.lovenseSession()?.status === 'DISCONNECTED') {
+
+            <!-- Cabecera del Tutorial -->
+            <div class="flex items-center justify-between mb-5 pb-4 border-b border-zinc-100 dark:border-zinc-800/60">
+                <div class="text-left">
+                    <span
+                        class="inline-block px-3 py-1 mb-2 text-xs font-semibold tracking-wide text-tertiary-600 dark:text-tertiary-400 uppercase bg-tertiary-100 dark:bg-tertiary-500/10 rounded-full">
+                        {{ "stepByStep" | translate }}
+                    </span>
+                    <h3 class="text-lg font-bold text-zinc-900 dark:text-white tracking-tight">
+                        {{ "connectLovenseTitle" | translate }}
+                    </h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                        {{ "connectLovenseSubtitle" | translate }}
+                    </p>
+                </div>
+                <div
+                    class="w-auto h-8 rounded-xl bg-tertiary-50 dark:bg-tertiary-950/40 border border-tertiary-200 dark:border-tertiary-800/50 p-2 flex items-center justify-center shadow-inner flex-shrink-0">
+                    <img src="./public/logo/lovense.png" alt="Lovense" class="w-full h-full object-contain">
+                </div>
+            </div>
+
+            <!-- Contenido dinámico (QR o Botón Generar) -->
+            <div
+                class="flex flex-col items-center justify-center py-4 border-y border-zinc-100 dark:border-zinc-800/60 my-2 bg-white/50 dark:bg-zinc-900/30 rounded-xl">
+                @if (urlImageQr(); as url) {
+                <div
+                    class="p-4 bg-white rounded-2xl shadow-md dark:shadow-tertiary-950/20 mb-3 transition-transform hover:scale-105 duration-300 border border-zinc-200 dark:border-none">
+                    <img [src]="url" alt="Lovense QR Code" class="w-44 h-44 object-contain">
+                </div>
+                <p class="text-xs font-medium text-zinc-600 dark:text-zinc-300 flex items-center gap-1.5 mt-2">
+                    <i appIcon iconName="smartphone" [size]="'w-4 h-4 text-tertiary-600 dark:text-tertiary-400'"
+                        aria-hidden="true" [color]="''"></i>
+                    {{ "scanQrWithLovenseApp" | translate }}
+                </p>
+                } @else {
+                <div class="py-6 text-center">
+                    <div
+                        class="w-16 h-16 mx-auto mb-4 rounded-full bg-tertiary-100 dark:bg-tertiary-500/10 flex items-center justify-center text-tertiary-600 dark:text-tertiary-400 shadow-inner">
+                        <i appIcon iconName="qr-code-regular" [size]="'w-8 h-8'" aria-hidden="true" [color]="''"></i>
+                    </div>
+                    <p class="text-sm text-zinc-600 dark:text-zinc-300 mb-4 max-w-xs mx-auto">
+                        {{ "generateQrDescription" | translate }}</p>
+                    <button (click)="generateQR()" [ngClass]="buttonClass()"
+                        class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-tertiary-600 hover:bg-tertiary-500 text-white font-medium text-sm transition-all shadow-lg shadow-tertiary-600/20">
+                        <i appIcon iconName="qr-code-regular" [size]="'w-4 h-4'" aria-hidden="true" [color]="''"></i>
+                        <span>{{ "generateQR" | translate }}</span>
+                    </button>
+                </div>
+                }
+            </div>
+
+            <!-- Mini Guía / Pasos rápidos -->
+            <div class="grid grid-cols-2 gap-3 mt-4 pt-2 text-left">
+                <div
+                    class="flex items-start gap-2.5 p-3 rounded-xl bg-zinc-50/80 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800/50 backdrop-blur-sm">
+                    <span
+                        class="flex-shrink-0 w-5 h-5 rounded-full bg-tertiary-100 dark:bg-tertiary-500/20 text-tertiary-600 dark:text-tertiary-400 flex items-center justify-center text-xs font-bold">1</span>
+                    <span class="text-xs text-zinc-600 dark:text-zinc-300 leading-tight">
+                        {{ "openLovenseApp" | translate }}
+                    </span>
+                </div>
+                <div
+                    class="flex items-start gap-2.5 p-3 rounded-xl bg-zinc-50/80 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800/50 backdrop-blur-sm">
+                    <span
+                        class="flex-shrink-0 w-5 h-5 rounded-full bg-tertiary-100 dark:bg-tertiary-500/20 text-tertiary-600 dark:text-tertiary-400 flex items-center justify-center text-xs font-bold">2</span>
+                    <span class="text-xs text-zinc-600 dark:text-zinc-300 leading-tight">
+                        {{ "scanOrConnect" | translate}}
+                    </span>
+                </div>
+            </div>
+
+            } @else {
+            <!-- Estado Conectado Elegante -->
+            <div class="py-12 s flex flex-col items-center justify-center text-center">
+                <div
+                    class="relative flex items-center justify-center w-20 h-20 mb-4 rounded-full bg-emerald-500 dark:bg-green-400 border border-emerald-200 dark:border-green-500/20">
+                    <span
+                        class="absolute inline-flex w-full h-full rounded-full bg-emerald-400 dark:bg-green-400 opacity-20 animate-ping"></span>
+                    <i appIcon iconName="check" [size]="'w-8 h-8 text-emerald-600 dark:text-green-400'"
+                        aria-hidden="true" [color]="''"></i>
+                </div>
+                <h4 class="text-lg font-bold text-zinc-900 dark:text-white mb-1">
+                    {{ "sessionConnected" | translate }}
+                </h4>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 max-w-xs">
+                    {{ "devicesReadyToUse" | translate }}
+                </p>
+
+                <button (click)="disconnectAllToys()" [ngClass]="buttonClass()"
+                    class="mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-tertiary-600 hover:bg-tertiary-500 text-white font-medium text-sm transition-all shadow-lg shadow-tertiary-600/20">
+                    <i appIcon iconName="plus" [size]="'w-4 h-4'" aria-hidden="true" [color]="''"></i>
+                    <span>{{ "disconnectToys" | translate }}</span>
+                </button>
+            </div>
+            }
+        </div>
+    </fieldset>
+
+    <!-- Lista de Dispositivos y Pruebas -->
+    @if(lovenseSessionService.lovenseSession()?.status === 'CONECTED') {
+    <fieldset [ngClass]="cardClass()" class="w-full p-6">
+        <div class="flex items-center justify-between mb-5 pb-3 border-b border-zinc-100 dark:border-zinc-800/60">
+            <div class="flex items-center gap-2">
+                <h3 class="font-bold text-zinc-900 dark:text-white text-sm uppercase tracking-wider">
+                    {{ "devices" | translate }}
+                </h3>
+                <span
+                    class="px-2 py-0.5 text-[10px] font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 rounded-full">
+                    {{ lovenseProductService.lovenseProducts().length }}
+                </span>
+            </div>
+            <span class="text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+                {{ "online" | translate }}
+            </span>
+        </div>
+
+        <div class="flex flex-col gap-3.5">
+            @for(item of lovenseProductService.lovenseProducts(); track item._id) {
+            <div
+                class="group flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-900/80 hover:bg-zinc-100 dark:hover:bg-zinc-900 border border-zinc-200 dark:border-zinc-800/80 rounded-xl gap-4 transition-all duration-200 shadow-sm">
+
+                <!-- Información del producto, imagen y estado -->
+                <div class="flex items-center gap-3.5">
+                    @if(item.PostMedia && item.PostMedia.length > 0) {
+                    <div
+                        class="w-12 h-12 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 overflow-hidden flex-shrink-0 flex items-center justify-center shadow-sm">
+                        <img [src]="item.PostMedia[0].url || item.PostMedia[0]" [alt]="item.name"
+                            class="w-full h-full object-cover">
+                    </div>
+                    } @else {
+                    <div
+                        class="p-3 bg-tertiary-100 dark:bg-gradient-to-br dark:from-tertiary-500/20 dark:to-indigo-500/10 text-tertiary-600 dark:text-tertiary-400 rounded-xl border border-tertiary-200 dark:border-tertiary-500/20 shadow-inner">
+                        <i appIcon iconName="activity-regular" [size]="'w-5 h-5'" aria-hidden="true" [color]="''"></i>
+                    </div>
+                    }
+
+                    <div>
+                        <span
+                            class="text-zinc-900 dark:text-white font-semibold text-base capitalize block tracking-wide">
+                            {{item.name }}
+                        </span>
+                        @if(item.status === 0) {
+                        <span
+                            class="text-xs text-rose-600 dark:text-red-400 font-medium flex items-center gap-1.5 mt-0.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500 dark:bg-red-500"></span>
+                            {{ "disconnected" | translate }}
+                        </span>
+                        } @else {
+                        <span
+                            class="text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1.5 mt-0.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            {{ "connected" | translate }}
+                        </span>
+                        }
+                    </div>
+                </div>
+
+                <!-- Botones de Prueba (Test / Stop) -->
+                <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                    <button (click)="onAddToyLovense(item)" [ngClass]="buttonPrimaryClass()" class="">
+                        <i appIcon iconName="plus-regular" [size]="'w-4 h-4'" aria-hidden="true" [color]="''"></i>
+                        <span class="font-semibold text-xs tracking-wide uppercase">
+                            {{ "addPackages" | translate }}
+                        </span>
+                    </button>
+                </div>
+            </div>
+            }
+
+            @if(lovenseProductService.lovenseProducts().length === 0) {
+            <div
+                class="relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 text-center bg-zinc-50/80 dark:bg-zinc-900/40">
+                <!-- Fondo sutil de Lovense integrado -->
+                <div class="absolute inset-0 z-0 opacity-10 pointer-events-none">
+                    <img src="./public/logo/lovense-finder-1.jpg" alt="Lovense background"
+                        class="w-full h-full object-cover">
+                </div>
+
+                <div class="relative z-10 flex flex-col items-center">
+                    <!-- Imagen ilustrativa o logo -->
+                    <div
+                        class="w-auto h-8 mb-4 rounded-2xl bg-tertiary-100 dark:bg-tertiary-500/10 border border-tertiary-200 dark:border-tertiary-500/20 p-2 flex items-center justify-center shadow-inner">
+                        <img src="./public/logo/lovense.png" alt="Lovense" class="w-full h-full object-contain">
+                    </div>
+
+                    <h4 class="text-base font-bold text-zinc-900 dark:text-white mb-1">
+                        {{ "noDevicesFound" | translate}}
+                    </h4>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 max-w-sm mb-5 leading-relaxed">
+                        {{ "noDevicesDescription" | translate }}
+                    </p>
+
+                    <!-- Mini pasos del tutorial -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full text-left mb-5">
+                        <div
+                            class="flex items-center gap-2.5 p-2.5 rounded-xl bg-white dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 text-xs text-zinc-600 dark:text-zinc-300">
+                            <span
+                                class="w-5 h-5 rounded-full bg-tertiary-100 dark:bg-tertiary-500/20 text-tertiary-600 dark:text-tertiary-400 flex items-center justify-center font-bold flex-shrink-0">1</span>
+                            <span>
+                                {{'turnOnYourLovenseDevice' | translate}}
+                            </span>
+                        </div>
+                        <div
+                            class="flex items-center gap-2.5 p-2.5 rounded-xl bg-white dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 text-xs text-zinc-600 dark:text-zinc-300">
+                            <span
+                                class="w-5 h-5 rounded-full bg-tertiary-100 dark:bg-tertiary-500/20 text-tertiary-600 dark:text-tertiary-400 flex items-center justify-center font-bold flex-shrink-0">2</span>
+                            <span>
+                                {{'pairItThrough' | translate}}
+                                <a href="https://lovense.com/connect" target="_blank"
+                                    class="text-tertiary-600 dark:text-tertiary-400 font-semibold underline hover:text-tertiary-500">
+                                    {{'lovenseConnect' | translate}}
+                                </a>.
+                            </span>
+                        </div>
+                    </div>
+
+                    <a href="https://lovense.com/connect" target="_blank"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-tertiary-600 hover:bg-tertiary-500 text-white text-xs font-semibold rounded-xl shadow-lg shadow-tertiary-600/20 transition-all hover:scale-[1.02]">
+                        <i appIcon iconName="external-link" [size]="'w-4 h-4'" aria-hidden="true" [color]="''"></i>
+                        <span>{{"goToLovenseConnect" | translate}}</span>
+                    </a>
+                </div>
+            </div>
+            }
+        </div>
+    </fieldset>
+    }
+</div>
+
+<div [ngClass]="cardClass()" class="grid grid-cols-1 gap-6 items-start mt-6">
+
+    <!-- Cabecera / Título -->
+    <div class="flex items-start justify-between mb-4">
+        <div>
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                {{'toySex' | translate}}
+            </h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                {{'theInteractiveToyReactsAutomaticallyToYourTips' | translate}}
+                <span class="block sm:inline">
+                    {{'doYouHaveAToy' | translate}}
+                </span>
+
+                <button type="button" (click)="generateQR()"
+                    class="text-pink-600 dark:text-pink-500 hover:underline font-medium">
+                    {{'pairing' | translate}}
+                </button>
+            </p>
+        </div>
+    </div>
+
+    <!-- Tabla de Opciones o Estado Vacío -->
+    @if (lovenseControls().length > 0) {
+    <div class="mt-6">
+        <!-- Encabezados de la tabla (Ocultos en móvil, visibles en pantallas grandes) -->
+        <div
+            class="hidden lg:grid grid-cols-5 text-xs font-semibold text-gray-500 dark:text-gray-400 tracking-wider uppercase pb-3 border-b border-gray-200 dark:border-gray-800 px-2">
+            <div>{{'duration' | translate}}</div>
+            <div>{{'vibration' | translate}}</div>
+            <div>{{'credits' | translate}}</div>
+            <div>{{'product' | translate}}</div>
+            <div class="text-right">{{'actions' | translate}}</div>
+        </div>
+
+        <!-- Filas dinámicas -->
+        <div class="divide-y divide-gray-200 dark:divide-gray-800/60">
+            <div *ngFor="let item of lovenseControls()"
+                class="flex flex-col lg:grid lg:grid-cols-5 items-start lg:items-center py-4 lg:py-3.5 gap-4 lg:gap-0 hover:bg-gray-100 dark:hover:bg-gray-800/40 transition-colors p-3 lg:px-2 rounded-xl lg:rounded-lg border border-gray-200 lg:border-transparent dark:border-gray-800 lg:dark:border-transparent mb-3 lg:mb-0 shadow-sm lg:shadow-none">
+
+                <!-- Duración -->
+                <div class="flex lg:block items-center justify-between w-full lg:w-auto">
+                    <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 lg:hidden">{{'duration' |
+                        translate}}:</span>
+                    <span class="text-sm font-medium text-gray-900 dark:text-white">
+                        {{ item.quantyTime }}s
+                    </span>
+                </div>
+
+                <!-- Vibración -->
+                <div class="flex items-center justify-between lg:justify-start w-full lg:w-auto gap-2">
+                    <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 lg:hidden">{{'vibration' |
+                        translate}}:</span>
+                    <div class="flex items-center gap-2">
+                        @switch (item.lovenseConfig?.vibration) {
+                        @case ('low') {
+                        <span class="text-amber-500 flex items-center">
+                            <i appIcon iconName="low-vibration-regular" [size]="'w-5 h-5'" aria-hidden="true"
+                                [color]="''"></i>
+                        </span>
+                        }
+                        @case ('medium') {
+                        <span class="text-amber-500 flex items-center">
+                            <i appIcon iconName="medium-vibration-regular" [size]="'w-5 h-5'" aria-hidden="true"
+                                [color]="''"></i>
+                        </span>
+                        }
+                        @case ('high') {
+                        <span class="text-red-500 flex items-center">
+                            <i appIcon iconName="high-vibration-regular" [size]="'w-5 h-5'" aria-hidden="true"
+                                [color]="''"></i>
+                        </span>
+                        }
+                        @case ('wave') {
+                        <span class="text-pink-500 flex items-center">
+                            <i appIcon iconName="wave-vibration-regular" [size]="'w-5 h-5'" aria-hidden="true"
+                                [color]="''"></i>
+                        </span>
+                        }
+                        @case ('pulse') {
+                        <span class="text-pink-500 flex items-center">
+                            <i appIcon iconName="pulse-vibration-regular" [size]="'w-5 h-5'" aria-hidden="true"
+                                [color]="''"></i>
+                        </span>
+                        }
+                        @default {
+                        <span class="text-red-500 flex items-center">
+                            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                                <path d="M13 2L3 14h7v8l10-12h-7V2z" />
+                            </svg>
+                        </span>
+                        }
+                        }
+                        <span class="text-sm capitalize font-medium text-gray-700 dark:text-gray-200">
+                            @if (item.lovenseConfig?.vibration === 'wave') {
+                            {{'wave' | translate}}
+                            } @else if (item.lovenseConfig?.vibration === 'pulse') {
+                            {{'pulse' | translate}}
+                            } @else if (item.lovenseConfig?.vibration === 'low') {
+                            {{'low' | translate}}
+                            } @else if (item.lovenseConfig?.vibration === 'medium') {
+                            {{'medium' | translate}}
+                            } @else if (item.lovenseConfig?.vibration === 'high') {
+                            {{'high' | translate}}
+                            } @else {
+                            {{'standard' | translate}}
+                            }
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Tokens / Créditos -->
+                <div class="flex items-center justify-between lg:justify-start w-full lg:w-auto">
+                    <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 lg:hidden">{{'credits' |
+                        translate}}:</span>
+                    <div class="flex items-center font-bold text-gray-900 dark:text-white tracking-wide gap-1">
+                        <span>{{ item.credit }}</span>
+                        <span appIcon iconName="povicoin-solid" [size]="'w-6 h-6'" aria-hidden="true"></span>
+                    </div>
+                </div>
+
+                <!-- Producto -->
+                <div class="flex items-center justify-between lg:justify-start w-full lg:w-auto gap-3">
+                    <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 lg:hidden">{{'product' |
+                        translate}}:</span>
+                    @let product = item.lovenseConfig?.LovenseProduct;
+                    <div class="flex items-center gap-2.5">
+                        @if(product && product.PostMedia && product.PostMedia.length > 0) {
+                        <div
+                            class="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 overflow-hidden flex-shrink-0 flex items-center justify-center shadow-sm">
+                            <img [src]="product.PostMedia[0].url || product.PostMedia[0]" [alt]="product.name"
+                                class="w-full h-full object-cover">
+                        </div>
+                        } @else {
+                        <div
+                            class="p-2.5 lg:p-3 bg-tertiary-100 dark:bg-gradient-to-br dark:from-tertiary-500/20 dark:to-indigo-500/10 text-tertiary-600 dark:text-tertiary-400 rounded-xl border border-tertiary-200 dark:border-tertiary-500/20 shadow-inner flex items-center justify-center">
+                            <i appIcon iconName="activity-regular" [size]="'w-5 h-5'" aria-hidden="true"
+                                [color]="''"></i>
+                        </div>
+                        }
+                        <div
+                            class="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate max-w-[140px] lg:max-w-none">
+                            {{ product?.name || ('No product' | translate) }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acciones -->
+                <div
+                    class="flex items-center gap-2 w-full lg:w-auto justify-end pt-2 lg:pt-0 border-t border-gray-100 lg:border-t-0 dark:border-gray-800">
+                    <button (click)="onActivate(item)"
+                        class="flex-1 lg:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl transition-all shadow-md shadow-emerald-950/10 dark:shadow-emerald-950/30 hover:scale-[1.02] active:scale-95">
+                        <i appIcon iconName="play-regular" [size]="'w-4 h-4'" aria-hidden="true" [color]="''"></i>
+                        <span class="font-semibold text-xs tracking-wide uppercase">
+                            {{ "test" | translate }}
+                        </span>
+                    </button>
+
+                    <button (click)="onStop(item)"
+                        class="flex-1 lg:flex-none flex items-center justify-center gap-1.5 px-3.5 py-2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 rounded-xl transition-all hover:scale-[1.02] active:scale-95">
+                        <i appIcon iconName="stop-regular" [size]="'w-4 h-4'" aria-hidden="true" [color]="''"></i>
+                        <span class="font-semibold text-xs tracking-wide uppercase">
+                            {{ "Stop" | translate }}
+                        </span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    } @else {
+    <!-- Estado Vacío (Empty State) -->
+    <div
+        class="flex flex-col items-center justify-center py-10 px-4 text-center border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-xl mt-4 bg-gray-50/50 dark:bg-gray-800/20">
+        <div class="p-3 bg-pink-50 dark:bg-pink-950/40 text-pink-500 rounded-full mb-3">
+            <i appIcon iconName="wave-vibration-regular" [size]="'w-6 h-6'" aria-hidden="true" [color]="''"></i>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900 dark:text-white">
+            {{'noPackagesConfigured' | translate}}
+        </h3>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-xs mb-5">
+            {{'addDurationAndVibrationOptions' | translate}}
+        </p>
+        <button (click)="onAddPackage()" [ngClass]="buttonPrimaryClass()">
+            <i appIcon iconName="add-regular" [size]="'w-4 h-4'" aria-hidden="true" [color]="''"></i>
+            {{'addPackages' | translate}}
+        </button>
+    </div>
+    }
+
+</div>

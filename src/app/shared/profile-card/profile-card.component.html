@@ -1,0 +1,197 @@
+<article class="break-inside-avoid group h-full flex flex-col state-card-entry">
+    <div class="relative h-[380px] sm:h-[400px] md:h-[420px] lg:h-[440px] xl:h-[460px] overflow-hidden rounded-none bg-background-dark border border-white/15 
+                shadow-2xl flex flex-col transition-all duration-500
+                hover:border-primary-500/60 hover:shadow-[0_0_35px_rgba(230,0,103,0.25)]">
+
+        @let user = item();
+        @let hasProfile = $safeNavigationMigration(user?.Profile?.[0]);
+
+        <!-- Imagen de Fondo / Contenedor Principal -->
+        <button (click)="onProfile(item())" class="absolute inset-0 w-full h-full overflow-hidden z-0 bg-secondary-950">
+
+            @if (hasProfile && !imageLoaded()) {
+            <div class="absolute inset-0 flex items-center justify-center bg-background-dark/90 backdrop-blur-md z-20">
+                <div class="relative">
+                    <div class="absolute inset-0 animate-ping rounded-full bg-primary-500/20"></div>
+                    <i appIcon iconName="heart-solid" [size]="'w-12 h-12'" [color]="'text-primary-500/40'"></i>
+                </div>
+            </div>
+            }
+
+            @if (hasProfile) {
+            <img [src]="($safeNavigationMigration(getMediaDetails(hasProfile)?.url)) || ''"
+                (load)="imageLoaded.set(true)" (error)="handleImageError($event)" [class.opacity-0]="!imageLoaded()"
+                [class.opacity-100]="imageLoaded()"
+                class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 filter saturate-110 brightness-95"
+                alt="Profile" priority>
+            } @else {
+            <div
+                class="flex h-full w-full items-center justify-center bg-gradient-to-tr from-primary-950/80 via-secondary-900 to-black">
+                <span
+                    class="text-8xl font-black opacity-30 text-transparent bg-clip-text bg-gradient-to-br from-white via-primary-400 to-secondary-600">
+                    {{ item().alias?.[0] || item().username?.[0] }}
+                </span>
+            </div>
+            }
+
+            <!-- Capas de Gradiente Artísticas para legibilidad perfecta -->
+            <div
+                class="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/60 to-transparent z-10">
+            </div>
+            <div class="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-background-dark/80 to-transparent z-10">
+            </div>
+        </button>
+
+        <!-- Indicador de Estado (Live / Online) Flotante Superior -->
+        @if (item().transmissionType === 'STREAMING'
+        || item().transmissionType === 'VIDEOCALL'
+        || item().transmissionType === 'LIVE_MATCH') {
+        <div class="absolute top-3 left-3 sm:top-4 sm:left-4 z-30 transition-all duration-300"
+            [class.opacity-0]="hasProfile && !imageLoaded()">
+            <div
+                [class]="item().transmissionType === 'STREAMING' 
+                || item().transmissionType === 'VIDEOCALL'
+                || item().transmissionType === 'LIVE_MATCH'
+        ? 'flex items-center gap-2 rounded-2xl bg-gradient-to-r from-primary-950/90 via-secondary-950/90 to-primary-950/95 backdrop-blur-2xl border border-primary-500/70 px-3.5 py-1.5 shadow-[0_0_20px_rgba(230,0,103,0.35)] ring-1 ring-primary-500/30' 
+        : 'flex items-center gap-2 rounded-2xl bg-gradient-to-r from-tertiary-950/90 via-secondary-950/90 to-tertiary-950/95 backdrop-blur-2xl border border-tertiary-500/70 px-3.5 py-1.5 shadow-[0_0_20px_rgba(34,197,94,0.3)] ring-1 ring-tertiary-500/30'">
+
+                <!-- Indicador de pulso animado -->
+                <span class="relative flex h-2.5 w-2.5 items-center justify-center">
+                    @if (item().transmissionType === 'STREAMING'
+                    || item().transmissionType === 'VIDEOCALL') {
+                    <span
+                        class="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary-400 opacity-80"></span>
+                    <span
+                        class="relative inline-flex h-2 w-2 rounded-full bg-primary-500 shadow-[0_0_8px_#e60067]"></span>
+                    } @else {
+                    <span
+                        class="absolute inline-flex h-full w-full animate-ping rounded-full bg-tertiary-400 opacity-60"></span>
+                    <span
+                        class="relative inline-flex h-2 w-2 rounded-full bg-tertiary-400 shadow-[0_0_8px_#22c55e]"></span>
+                    }
+                </span>
+
+                <!-- Texto de estado con mejor tipografía y espaciado -->
+                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-white drop-shadow-sm">
+                    {{ item().transmissionType === 'STREAMING' ? 'live' :
+                    item().transmissionType === 'VIDEOCALL' ? 'videoCall' :
+                    item().transmissionType === 'LIVE_MATCH' ? 'videoCall' :
+                    'online' | translate }}
+                </span>
+            </div>
+        </div>
+        }
+
+        <!-- Contenido Inferior Estilizado -->
+        <div class="absolute inset-x-0 bottom-0 p-3.5 sm:p-4 md:p-5 z-20 flex flex-col justify-end gap-2.5 sm:gap-3 transition-opacity duration-300"
+            [class.opacity-0]="hasProfile && !imageLoaded()">
+
+            <!-- Datos de Identidad (Nombre, Edad y Ubicación) -->
+            <button (click)="onProfile(item())" class="flex flex-col gap-0.5 sm:gap-1 group/text">
+                <div class="flex items-center justify-between gap-2">
+                    <h3
+                        class="text-lg sm:text-xl md:text-2xl font-black tracking-tight text-white truncate drop-shadow-md group-hover/text:text-primary-300 transition-colors">
+                        {{ item().alias || item().username }}
+                    </h3>
+                    @if (item().age) {
+                    <span
+                        class="shrink-0 text-xs font-bold bg-primary-500/20 border border-primary-500/30 backdrop-blur-md px-2 py-0.5 rounded-full text-white">
+                        {{ item().age! | calculateAge }}
+                    </span>
+                    }
+                </div>
+                <div class="flex items-center gap-1.5 text-zinc-300">
+                    <i appIcon iconName="location-on-regular" size="w-3.5 h-3.5" color="text-primary-400"
+                        class="shrink-0"></i>
+                    <span class="text-[10px] font-bold uppercase tracking-widest truncate">
+                        {{ item().Country?.name || ('peopleAroundYou' | translate) }}
+                    </span>
+                </div>
+            </button>
+
+            <!-- Tarjeta Central: Distinción clara entre Rental Girlfriend y VIP -->
+            @if(item().Membership && item().Membership!.length > 0){
+            @let membership = item().Membership![0];
+
+            <div
+                [class]="item().rentalGirlfriend
+            ? 'relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-secondary-800/20 via-primary-950/20 to-secondary-950/20 border border-primary-500/50 p-2.5 sm:p-3 backdrop-blur-md shadow-lg flex flex-row items-center justify-between gap-3 group transition-all duration-300 hover:border-primary-500/80'
+            : 'relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-secondary-900/5 via-sky-950/5 to-secondary-950/5 border border-sky-500/5 p-2.5 sm:p-3 backdrop-blur-md shadow-lg flex flex-row items-center justify-between gap-3 group transition-all duration-300 hover:border-sky-500/10'">
+
+                <!-- Contenido Principal (Texto y tiempo) -->
+                <div class="flex items-center gap-2 z-10 min-w-0">
+                    <div class="flex flex-col gap-0.5 truncate">
+                        @if(item().rentalGirlfriend) {
+                        <!-- Estilo Rental Girlfriend (Fucsia / Magenta de la marca) -->
+                        <span
+                            class="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-primary-300 flex items-center gap-1.5 truncate">
+                            <span class="w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulse shrink-0"></span>
+                            <span class="truncate">{{ 'girlfriendFor' | translate }}</span>
+                        </span>
+                        } @else {
+                        <!-- Estilo VIP (Ámbar / Dorado exclusivo y diferente) -->
+                        <span
+                            class="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-sky-500 flex items-center gap-1.5 truncate">
+                            <span class="w-1.5 h-1.5 rounded-full bg-sky-600 font-bold animate-pulse shrink-0"></span>
+                            <span class="truncate">{{ 'vipAccess' | translate }}</span>
+                        </span>
+                        }
+
+                        <span class="text-xs sm:text-sm font-extrabold  tracking-wide truncate text-zinc-200">
+                            {{ membership?.quantyTime }}
+                            @switch (membership?.typeTime) {
+                            @case ('DAILY') {
+                            {{ membership.quantyTime === 1 ? ('day' | translate) : ('days' | translate) }}
+                            }
+                            @case ('MONTHLY') {
+                            {{ membership.quantyTime === 1 ? ('month' | translate) : ('months' | translate) }}
+                            }
+                            }
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Sección de Créditos/Precio -->
+                <div
+                    class="shrink-0 flex items-center gap-1.5 bg-black/5 border border-white/10 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl z-10 shadow-inner backdrop-blur-md group-hover:border-white/20 transition-colors">
+                    <span class="text-base sm:text-lg font-black text-white tracking-tight drop-shadow-md">
+                        {{ membership?.credit ?? 0 }}
+                    </span>
+                    <span appIcon iconName="povicoin-solid" [size]="'w-4 h-4'"
+                        class="text-povicoin drop-shadow shrink-0"></span>
+                </div>
+            </div>
+            }
+
+            <!-- Botonera de Acción Inferior Moderna -->
+            <footer class="w-full">
+                @if (item().transmissionType === 'STREAMING') {
+                <button (click)="onLiveStream(item())" class="flex w-full h-10 sm:h-11 rounded-2xl bg-gradient-to-r from-primary-500 via-primary-600 to-secondary-700 text-[11px] font-black uppercase tracking-wider text-white
+                            shadow-lg shadow-primary-500/30 hover:scale-[1.02] active:scale-98 transition-all cursor-pointer
+                            items-center justify-center gap-2">
+                    <i appIcon iconName="videocam-regular" [size]="'w-4 h-4 sm:w-5 sm:h-5'" [color]="''"
+                        aria-hidden="true"></i>
+                    <span>{{ 'joinLive' | translate }}</span>
+                </button>
+                } @else if (item().online) {
+                <button (click)="onChat(item())" class="flex w-full h-10 sm:h-11 rounded-2xl bg-gradient-to-r from-green-500 to-green-600 text-white text-[11px] font-black uppercase tracking-wider
+                            shadow-lg shadow-tertiary-500/25 hover:from-green-400 hover:to-green-500 hover:scale-[1.02] active:scale-98 transition-all
+                            items-center justify-center gap-2">
+                    <i appIcon iconName="messages-regular" [size]="'w-4 h-4 sm:w-5 sm:h-5'" [color]="''"
+                        aria-hidden="true"></i>
+                    <span>{{ 'chat' | translate }}</span>
+                </button>
+                } @else {
+                <button (click)="onMatch(item())" class="hidden w-full h-10 sm:h-11 rounded-2xl bg-primary-500 text-white text-[11px] font-black uppercase tracking-wider
+                            shadow-lg shadow-primary-500/25 hover:bg-primary-400 hover:scale-[1.02] active:scale-98 transition-all
+                            items-center justify-center gap-2">
+                    <i appIcon iconName="heart-solid" [size]="'w-4 h-4 sm:w-5 sm:h-5'"
+                        [color]="'text-white group-hover/btn:text-primary-500'"></i>
+                    <span>Hacer Match</span>
+                </button>
+                }
+            </footer>
+
+        </div>
+    </div>
+</article>

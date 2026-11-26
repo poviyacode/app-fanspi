@@ -1,0 +1,8 @@
+.messages-container {
+    display: flex; // 1. Convierte el contenedor en un entorno Flexbox
+    flex-direction: column-reverse; // 2. Invierte el eje: el inicio del scroll ahora es el fondo
+    overflow-y: auto; // 3. Mantiene el scrollbar vertical nativo
+
+    // Puedes mantener aquí abajo tus gradientes o estilos decorativos previos:
+    // background: transparent;
+}

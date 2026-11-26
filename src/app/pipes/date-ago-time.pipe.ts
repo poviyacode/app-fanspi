@@ -2,16 +2,15 @@ import { Pipe, PipeTransform, ChangeDetectorRef, OnDestroy, NgZone } from '@angu
 import { ToolsService } from '@services/tools.service';
 
 @Pipe({
-    name: 'dateAgoTime',
-    pure: false,
-    standalone: false
+  name: 'dateAgoTime',
+  pure: false
 })
 export class DateAgoTimePipe implements PipeTransform, OnDestroy {
 
   private lastUpdate: string;
   private timer: any;
 
-  constructor(private toolsService: ToolsService, private cdr: ChangeDetectorRef, private ngZone: NgZone) {}
+  constructor(private toolsService: ToolsService, private cdr: ChangeDetectorRef, private ngZone: NgZone) { }
 
   transform(value: any): any {
     if (!value) return value;

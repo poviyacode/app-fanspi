@@ -1,0 +1,139 @@
+@if (this.postService.post() && dialogService.activeModal() === 'commentPost') {
+<div class="modal-center fixed inset-0 flex items-center justify-center p-0 z-50" (click)="onCloseModal()">
+  <div [ngClass]="cardModalClass()" class="w-full max-w-3xl overflow-hidden transform"
+    (click)="($event.stopPropagation())" animate.enter="modal-animation-enter" animate.leave="modal-animation-leave">
+    @if (this.postService.post()! && this.postService.post()!.PostMedia!.length > 0) {
+    <section class="p-4 sm:p-6 overflow-y-auto max-h-[80vh]">
+
+      <div class="flex justify-between items-center space-x-5">
+        <div class="flex justify-center items-center w-full">
+          <div class="mx-auto font-semibold">
+            <span>{{ 'comments' | translate:{ count: this.postService.post()?.commentCount || 0 } }}</span>
+          </div>
+        </div>
+        <button (click)="onCloseModal()"
+          class="flex justify-center items-center hover:bg-zinc-100 hover:dark:bg-zinc-700/30 cursor-pointer rounded-full p-2 w-8 h-8">
+          <span appIcon iconName="close-regular" [size]="'w-6 h-6'" [color]="''"></span>
+        </button>
+      </div>
+
+      <div class="overflow-y-auto max-h-96">
+        <!-- Comments content --->
+        @if (this.commentService.comments().length > 0) {
+        <div class="mt-2">
+          <!-- Comment row -->
+          @for (item of this.commentService.comments(); track $index) {
+          @if (item.User) {
+          <div #commentTheLastList class="media flex pb-4">
+            <a class="mr-2" routerLink="/{{item.User!.username!}}">
+              <div
+                class="rounded-full max-w-none w-9 h-9 object-cover border-2 border-zinc-700/10 bg-purple-100 dark:bg-purple-800/10 text-purple-500 shadow flex justify-center items-center text-xl">
+                @if (item.User && item.User.Profile && item.User.Profile.length > 0) {
+                <img class="rounded-full max-w-none w-9 h-9 object-cover"
+                  [src]="item.User.Profile[0].cloudflare?.result?.variants?.[0] || item.User.Profile[0].url || ''" />
+                }@else {
+                {{ getFirstLetter(item.User.alias!! || item.User.username!!)}}
+                }
+              </div>
+            </a>
+            <div class="media-body w-full">
+              <div class="flex justify-between items-center">
+                <div class="flex justify-start items-end">
+                  <a class="inline-block text-xs font-semibold mr-2 text-zinc-700 dark:text-zinc-300 line-clamp-1"
+                    routerLink="/{{item.User!.username}}">
+                    {{item.User!.alias || item.User.username}}
+                  </a>
+                </div>
+                <button>
+                  <i class="fa-regular fa-heart"></i>
+                </button>
+              </div>
+              <p [innerHTML]="innerText(item.text)"></p>
+              <div class=" flex justify-start items-center space-x-2 ">
+                <div class="text-zinc-400 dark:text-zinc-500 text-xs">
+                  {{item.createdAt! | dateAgo}}
+                </div>
+                @if (authService.user() && (item.User._id === authService.user()!._id ||
+                this.postService.post()!.User?._id ===
+                authService.user()!._id)) {
+                <button (click)="onCommentDeleteDialog(item._id!)"
+                  class="cursor-pointer text-xs text-zinc-400 dark:text-zinc-500 font-semibold  ">
+                  {{'delete' | translate}}
+                </button>
+                }
+                <div class="hidden cursor-pointer text-xs text-zinc-400 dark:text-zinc-500 font-semibold">
+                  {{'reply' | translate}}
+                </div>
+              </div>
+            </div>
+          </div>
+          }
+          }
+          <!-- End comments row -->
+
+          <!-- More comments -->
+          <!-- <div class="w-full">
+                  <a href="#"
+                    class="py-3 px-4 w-full block bg-zinc-100 dark:bg-zinc-700 text-center rounded-lg font-medium hover:bg-zinc-200 dark:hover:bg-zinc-600 transition ease-in-out delay-75">Show
+                  more comments</a>
+                </div> -->
+          <!-- End More comments -->
+        </div>
+        } @else if(commentLoading) {
+        <div class="my-2 flex justify-center items-center">
+          <div class="w-8 h-8 border-t-4 border-primary-500 border-solid rounded-full animate-spin">
+          </div>
+        </div>
+        } @else {
+        <div class="my-2 text-center font-light text-sm text-zinc-600 dark:text-zinc-400">
+          {{'commentPrompt' | translate}}
+        </div>
+        }
+        <!-- End Comments content -->
+      </div>
+
+      @if (this.authService.user()!) {
+      <div class="sticky pt-2 ">
+        <div class="relative">
+          <form [formGroup]="commentMyform" novalidate class="flex items-center w-full space-x-1">
+
+            <div
+              class="rounded-full max-w-none w-10 h-10 object-cover border-2 border-secondary-200/10 bg-secondary-100 dark:bg-secondary-800/10 text-purple-500 shadow flex justify-center items-center text-2xl">
+              @if (this.authService.user() && this.authService.user()!.Profile &&
+              this.authService.user()!.Profile!.length > 0) {
+              <img class="rounded-full max-w-none w-9 h-9 object-cover"
+                [src]="this.authService.user()!.Profile![0].cloudflare?.result?.variants?.[0] || this.authService.user()!.Profile![0].url || ''" />
+              } @else {
+              {{ getFirstLetter(this.authService.user()?.alias!! || this.authService.user()?.username!!)}}
+              }
+            </div>
+
+            <div class="relative flex items-center w-full">
+              <textarea appAutoResizeTextarea formControlName="text" id="text" maxlength="150"
+                [ngClass]="className.inputClass(commentMyform, 'text')" placeholder="{{'addComment' | translate}}"
+                (keydown.enter)="onEnterKey($event)" class="pr-6 w-full rounded-full py-2 px-2">
+              </textarea>
+              <button (click)="onCommentSend()"
+                [ngClass]="commentMyform.status == 'VALID' ? 'text-primary-500 hover:bg-secondary-200 hover:dark:bg-secondary-700 ' : 'opacity-50 text-zinc-500'"
+                class="flex absolute right-1 bottom-1 items-center p-1 w-8 h-8 rounded-full justify-center">
+                <i appIcon iconName="send-regular" [size]="'w-6 h-6'" [color]="''"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      } @else {
+      <div class="flex justify-center mb-1">
+        <a routerLink="/auth/login"
+          class="inline-flex items-center justify-center rounded-full focus:outline-none text-white bg-primary-500 hover:bg-primary-600 border-transparent hover:border-zinc-500 dark:hover:border-zinc-800 px-6 py-2">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          <span class="ml-2 text-sm tracking-wide truncate">{{'login' | translate}}</span>
+        </a>
+      </div>
+      }
+
+    </section>
+    }
+  </div>
+</div>
+}

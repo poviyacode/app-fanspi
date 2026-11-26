@@ -1,0 +1,323 @@
+<!-- Fondo oscuro difuminado (Backdrop) -->
+<div animate.enter="slideInRight-animation-enter" animate.leave="slideFadeIn-animation-leave"
+    class="fixed inset-0 z-50 bg-white/5 dark:bg-secondary-900/5 backdrop-blur-xs transition-all" (click)="onClose()">
+</div>
+
+<!-- Panel lateral deslizante -->
+<div animate.enter="slideInRight-animation-enter" animate.leave="slideFadeIn-animation-leave"
+    class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white dark:bg-[var(--color-secondary-900)] shadow-2xl border-l border-slate-200 dark:border-[var(--color-secondary-800)] flex flex-col">
+
+    @let paymentOrder = item?.PaymentOrder;
+
+    <!-- Cabecera del Panel -->
+    <div
+        class="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-[var(--color-secondary-800)]">
+        <div class="flex items-center gap-3">
+            <div
+                class="flex items-center justify-center w-10 h-10 rounded-2xl bg-slate-100 dark:bg-[var(--color-secondary-950)] text-slate-600 dark:text-[var(--color-secondary-300)] border border-slate-200 dark:border-[var(--color-secondary-800)] shadow-sm">
+                @if (item && item.creditAmount! >= 0) {
+                <i appIcon iconName="arrow-upward-regular" [size]="'w-5 h-5'" [color]="''"
+                    class="text-emerald-600 dark:text-emerald-400"></i>
+                } @else {
+                <i appIcon iconName="arrow-downward-regular" [size]="'w-5 h-5'" [color]="''"
+                    class="text-rose-500 dark:text-rose-400"></i>
+                }
+            </div>
+            <div>
+                <h3 class="text-base font-extrabold text-slate-900 dark:text-white uppercase tracking-tight">
+                    {{ 'transactionDetail' | translate }}
+                </h3>
+                <p class="text-xs text-slate-400 dark:text-[var(--color-secondary-400)] font-medium">
+                    {{ item?.registerAt! | dateAgo }}
+                </p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <!-- Botón de Chat condicional basado en la estructura de paymentOrder -->
+            @if (paymentOrder?.gatewayDetails?.Chat) {
+            <button (click)="onChat(paymentOrder)"
+                class="cursor-pointer w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[var(--color-secondary-950)] dark:hover:bg-[var(--color-secondary-800)] text-slate-500 dark:text-[var(--color-secondary-400)] transition-colors shadow-sm"
+                title="{{ 'chat' | translate }}">
+                <i appIcon iconName="messages-regular" [size]="'w-5 h-5'" [color]="''"></i>
+            </button>
+            }
+
+            <button (click)="onClose()"
+                class="cursor-pointer w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[var(--color-secondary-950)] dark:hover:bg-[var(--color-secondary-800)] text-slate-500 dark:text-[var(--color-secondary-400)] transition-colors shadow-sm">
+                <i appIcon iconName="close-regular" [size]="'w-5 h-5'" [color]="''"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Contenido del Detalle -->
+    <div class="flex-1 overflow-y-auto p-6 space-y-6">
+        @if (item) {
+
+        <!-- Sección de Usuario (Remitente / Receptor) -->
+        @let targetUser = (item.Receiver && item.Receiver._id !== authService.user()?._id) ? item.Receiver :
+        item.Sender;
+        @let hasProfile = $safeNavigationMigration(targetUser?.Profile?.[0]);
+
+        @if (targetUser) {
+        <div
+            class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-[var(--color-secondary-950)]/50 border border-slate-100 dark:border-[var(--color-secondary-800)]">
+            <div class="flex items-center gap-3">
+                <a [routerLink]="['/', targetUser.username]" class="w-11 h-11 flex-shrink-0"
+                    (click)="$event.stopPropagation(); onClose()">
+                    @if (hasProfile) {
+                    <img class="object-cover w-11 h-11 rounded-full shadow-sm"
+                        [src]="$safeNavigationMigration(getMediaDetails(hasProfile)?.url)"
+                        [alt]="targetUser.alias || targetUser.username" />
+                    } @else {
+                    <div
+                        class="rounded-full w-11 h-11 object-cover bg-slate-200 dark:bg-[var(--color-secondary-800)] flex justify-center items-center text-sm font-bold text-slate-700 dark:text-[var(--color-secondary-200)]">
+                        {{ getFirstLetter(targetUser.alias! || targetUser.username!) }}
+                    </div>
+                    }
+                </a>
+                <div>
+                    <span
+                        class="text-[10px] font-semibold text-slate-400 dark:text-[var(--color-secondary-500)] uppercase tracking-wider block">
+                        {{ (item.Sender?._id === authService.user()?._id ? 'sentTo' : 'receivedFrom') | translate }}
+                    </span>
+                    <p class="text-sm font-bold text-slate-900 dark:text-white mt-0.5">
+                        {{ targetUser.alias || ('@' + targetUser.username) }}
+                    </p>
+                    <p class="text-xs text-slate-500 dark:text-[var(--color-secondary-400)]">
+                        &#64;{{ targetUser.username }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        }
+
+        <!-- Tarjeta Principal: Tipo y Estado -->
+        <div class="grid grid-cols-2 gap-3">
+            <div
+                class="flex flex-col p-4 rounded-2xl bg-slate-50 dark:bg-[var(--color-secondary-950)]/50 border border-slate-100 dark:border-[var(--color-secondary-800)]">
+                <span
+                    class="text-[10px] font-semibold text-slate-400 dark:text-[var(--color-secondary-500)] uppercase tracking-wider">
+                    {{ 'type' | translate }}
+                </span>
+                <div class="mt-1 text-sm font-bold text-slate-900 dark:text-white">
+                    @switch (item.type) {
+                    @case ('POST') { {{ 'publication' | translate }} }
+                    @case ('DOWNLOAD') { {{ 'download' | translate }} }
+                    @case ('CREATOR_SUBSCRIBE') { {{ 'subscription' | translate }} }
+                    @case ('TIP') { {{ 'tip' | translate }} }
+                    @case ('MESSAGE') { {{ 'message' | translate }} }
+                    @case ('CREDIT') { {{ 'credit' | translate }} }
+                    @case ('WITHDRAWAL_MONEY') { {{ 'withdrawal' | translate }} }
+                    @case ('CONTENT_SALE') { {{ 'contentSale' | translate }} }
+                    @case ('SEND_MONEY') { {{ (item.Sender?._id === authService.user()?._id ? 'sent' : 'received') |
+                    translate }} }
+                    @case ('TRANSFER') { {{ 'transfer' | translate }} }
+                    }
+                </div>
+            </div>
+
+            <div
+                class="flex flex-col p-4 rounded-2xl bg-slate-50 dark:bg-[var(--color-secondary-950)]/50 border border-slate-100 dark:border-[var(--color-secondary-800)]">
+                <span
+                    class="text-[10px] font-semibold text-slate-400 dark:text-[var(--color-secondary-500)] uppercase tracking-wider">
+                    {{ 'status' | translate }}
+                </span>
+                <div class="mt-1">
+                    @switch (item.status) {
+                    @case ('ACCEPT') {
+                    <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/50">
+                        {{ 'completed' | translate }}
+                    </span>
+                    }
+                    @case ('DECLINE') {
+                    <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 border border-rose-200/50 dark:border-rose-800/50">
+                        {{ 'declined' | translate }}
+                    </span>
+                    }
+                    @case ('CANCELED') {
+                    <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400 border border-amber-200/50 dark:border-amber-800/50">
+                        {{ 'canceled' | translate }}
+                    </span>
+                    }
+                    @case ('ERROR') {
+                    <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 border border-rose-200/50 dark:border-rose-800/50">
+                        {{ 'error' | translate }}
+                    </span>
+                    }
+                    @case ('PENDING') {
+                    <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-50 text-yellow-700 dark:bg-yellow-950/60 dark:text-yellow-400 border border-yellow-200/50 dark:border-yellow-800/50">
+                        {{ 'pending' | translate }}
+                    </span>
+                    }
+                    @case ('PROCESSING') {
+                    <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-400 border border-sky-200/50 dark:border-sky-800/50">
+                        {{ 'processing' | translate }}
+                    </span>
+                    }
+                    @case ('DISPUTE') {
+                    <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-400 border border-red-200/50 dark:border-red-800/50">
+                        {{ 'dispute' | translate }}
+                    </span>
+                    }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Valores: Monto y Balance -->
+        @if (item.typeSender === 'BUY' && item.PaymentOrder) {
+        <div class="grid grid-cols-2 gap-3">
+            <div
+                class="p-4 rounded-2xl bg-slate-50 dark:bg-[var(--color-secondary-950)]/50 border border-slate-100 dark:border-[var(--color-secondary-800)]">
+                <span
+                    class="text-[10px] font-semibold text-slate-400 dark:text-[var(--color-secondary-500)] uppercase tracking-wider">
+                    {{ 'credits' | translate }}
+                </span>
+                <p class="text-xl font-black text-slate-900 dark:text-white mt-1 flex items-center gap-1.5">
+                    <span
+                        [ngClass]="item.creditAmount! >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'">
+                        {{ item.creditAmount | number:'1.0-0' }}
+                    </span>
+                    <span appIcon iconName="povicoin-solid" [size]="'w-4 h-4'" class="text-amber-500"></span>
+                </p>
+            </div>
+            <div
+                class="p-4 rounded-2xl bg-slate-50 dark:bg-[var(--color-secondary-950)]/50 border border-slate-100 dark:border-[var(--color-secondary-800)]">
+                <span
+                    class="text-[10px] font-semibold text-slate-400 dark:text-[var(--color-secondary-500)] uppercase tracking-wider">
+                    {{ 'amountPaid' | translate }}
+                </span>
+                <p class="text-md font-black text-slate-900 dark:text-white mt-1 flex items-center gap-1.5">
+                    <span class="text-emerald-600 dark:text-emerald-400">
+                        {{ paymentOrder?.amount| number:'1.2-2' }}
+                    </span>
+                    <span>
+                        {{paymentOrder?.Money?.iso}}
+                    </span>
+                </p>
+            </div>
+        </div>
+        <!-- Historial de Abonos Elegante -->
+        @if (paymentOrder?.installments?.length > 0) {
+        <div class="pt-2">
+            <details class="group">
+                <summary
+                    class="flex justify-between items-center font-bold cursor-pointer list-none text-[10px] text-zinc-400 uppercase tracking-widest hover:text-zinc-600 transition-colors">
+                    <span>{{'viewPaymentHistory' | translate}}</span>
+                    <span
+                        class="transition-transform group-open:rotate-180 p-1 bg-zinc-100 dark:bg-zinc-800 rounded-md">
+                        <svg fill="none" height="12" stroke="currentColor" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="3" viewBox="0 0 24 24" width="12">
+                            <path d="M6 9l6 6 6-6"></path>
+                        </svg>
+                    </span>
+                </summary>
+
+                <div class="my-4 space-y-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
+                    @for (payment of paymentOrder?.installments; track payment) {
+                    @if(payment.status === 'ACCEPT') {
+                    <div
+                        class="flex justify-between items-center p-3 rounded-xl bg-zinc-50/50 dark:bg-zinc-800/30 border border-zinc-100 dark:border-zinc-800 transition-all hover:border-emerald-200 dark:hover:border-emerald-800">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] font-bold text-zinc-800 dark:text-zinc-200">
+                                {{ payment.date| date:'mediumDate' }}
+                            </span>
+                            <span class="text-[9px] text-zinc-400 uppercase">
+                                {{ payment.date | date:'shortTime'}}
+                            </span>
+                        </div>
+                        <span class="text-sm font-black text-emerald-600 dark:text-emerald-400">
+                            +{{ $safeNavigationMigration(payment?.partialAmount) | number:'1.2-2' }}
+                            {{ payment?.partialMoney?.iso }}
+                        </span>
+                    </div>
+                    }
+                    }
+                </div>
+            </details>
+        </div>
+        }
+        } @else {
+        <!-- Sección de Valores: Monto y Balance -->
+        <div class="grid grid-cols-2 gap-3">
+            <div
+                class="p-4 rounded-2xl bg-slate-50 dark:bg-[var(--color-secondary-950)]/50 border border-slate-100 dark:border-[var(--color-secondary-800)]">
+                <span
+                    class="text-[10px] font-semibold text-slate-400 dark:text-[var(--color-secondary-500)] uppercase tracking-wider">
+                    {{ 'amount' | translate }}
+                </span>
+                <p class="text-xl font-black text-slate-900 dark:text-white mt-1 flex items-center gap-1.5">
+                    <span
+                        [ngClass]="item.creditAmount! >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'">
+                        {{ item.creditAmount | number:'1.0-0' }}
+                    </span>
+                    <span appIcon iconName="povicoin-solid" [size]="'w-4 h-4'" class="text-amber-500"></span>
+                </p>
+            </div>
+            <div
+                class="p-4 rounded-2xl bg-slate-50 dark:bg-[var(--color-secondary-950)]/50 border border-slate-100 dark:border-[var(--color-secondary-800)]">
+                <span
+                    class="text-[10px] font-semibold text-slate-400 dark:text-[var(--color-secondary-500)] uppercase tracking-wider">
+                    {{ 'balance' | translate }}
+                </span>
+                <p class="text-xl font-black text-slate-900 dark:text-white mt-1">
+                    {{ item.balance ?? '-' }}
+                </p>
+            </div>
+        </div>
+        }
+
+        <!-- Información Adicional / Metadatos -->
+        <div
+            class="p-4 rounded-2xl bg-slate-50 dark:bg-[var(--color-secondary-950)]/50 border border-slate-100 dark:border-[var(--color-secondary-800)] space-y-3">
+            <div class="flex justify-between items-center text-xs">
+                <span
+                    class="text-slate-400 dark:text-[var(--color-secondary-500)] font-medium uppercase tracking-wider">
+                    {{ 'date' | translate }}
+                </span>
+                <span class="font-semibold text-slate-700 dark:text-[var(--color-secondary-300)]">
+                    {{ item.registerAt! | dateAgo }}
+                </span>
+            </div>
+            <div class="h-[1px] w-full bg-slate-200/60 dark:bg-[var(--color-secondary-800)]"></div>
+            <div class="flex justify-between items-center text-xs">
+                <span
+                    class="text-slate-400 dark:text-[var(--color-secondary-500)] font-medium uppercase tracking-wider">
+                    {{ 'idTransaction' | translate }}
+                </span>
+                <span
+                    class="font-mono text-[11px] text-slate-600 dark:text-[var(--color-secondary-300)] bg-slate-200/50 dark:bg-[var(--color-secondary-800)] px-2 py-0.5 rounded-md">
+                    {{ item.code }}
+                </span>
+            </div>
+        </div>
+        }
+    </div>
+
+    <!-- Pie de página del Panel -->
+    <div
+        class="p-6  border-t border-slate-100 dark:border-[var(--color-secondary-800)] bg-slate-50/50 dark:bg-[var(--color-secondary-950)]/50 flex justify-between gap-3">
+
+        @if(paymentOrder?.movementType === 'P2P'
+        && (paymentOrder.status === 'PENDING'
+        || paymentOrder.status === 'PROCESSING'
+        || paymentOrder.status === 'WAITING_CONFIRMATION' )
+        ) {
+        <button (click)="onCancelOrderP2p(item!)" [ngClass]="className.buttonSecondaryClass()">
+            {{'cancelPayment' | translate}}
+        </button>
+        }
+        <button (click)="onClose()" [ngClass]="className.buttonClass()">
+            {{ 'close' | translate }}
+        </button>
+
+    </div>
+
+</div>

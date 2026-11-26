@@ -1,0 +1,28 @@
+.kiss-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    /* Mueve el contenedor al centro */
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
+
+.svg-kiss {
+    /* Aplica la animación de "beat" mientras está visible */
+    animation: beat 0.8s infinite alternate;
+}
+
+@keyframes beat {
+    from {
+        /* Estado inicial: tamaño normal */
+        transform: scale(1);
+        filter: brightness(1);
+        /* Brillo normal */
+    }
+
+    to {
+        /* Estado final: un poco más grande y más brillante */
+        transform: scale(1.1);
+        filter: brightness(1.2);
+    }
+}

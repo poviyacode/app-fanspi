@@ -1,0 +1,226 @@
+@if (isBrowser) {
+<div class="mx-auto max-w-7xl">
+  <ng-container #container></ng-container>
+  <header
+    class="sticky top-0 w-full py-3 px-4 text-xs bg-background-light dark:bg-background-dark dark:text-zinc-200 z-10">
+
+    <div class="flex justify-between items-center space-x-5 h-12">
+
+      <button (click)="goBack()"
+        class="cursor-pointer flex items-center justify-center w-10 h-10 rounded-full transition duration-300 ease-in-out hover:bg-zinc-100 dark:hover:bg-zinc-800">
+        <i appIcon iconName="arrow-back-regular" [size]="'w-6 h-6'" [color]="''" class="flex-shrink-0 pl-1"></i>
+      </button>
+
+      <button (click)="onScrollTop()"
+        class="cursor-pointer flex items-center justify-center px-4 py-2 text-sm font-semibold text-center text-zinc-700 dark:text-zinc-200 uppercase rounded-full transition duration-300 ease-in-out hover:bg-zinc-100 dark:hover:bg-zinc-800">
+        <span>{{'purchaseHistory' | translate}}</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="my-3 mx-2 flex flex-col sm:flex-col justify-start space-x-5 text-sm font-semibold">
+    <!-- Balance Card -->
+    <div
+      class=" bg-gradient-to-r from-white to-zinc-50 dark:from-zinc-800 dark:to-zinc-900 p-4 rounded-xl border border-zinc-100 dark:border-zinc-700 shadow-md">
+      <div class="flex items-center justify-between">
+        <!-- Left Side: Icon and Balance -->
+        <div class="flex items-center gap-2">
+          <i appIcon iconName="povicoin-solid" [size]="'w-6 h-6'" [color]="'text-amber-500'"></i>
+          <div>
+            <p class="text-xs font-medium text-zinc-600 dark:text-zinc-300">{{ 'currentBalance' | translate }}</p>
+            <p class="text-lg font-bold text-zinc-800 dark:text-zinc-100">
+              {{ userService.userCurrent()?.UserCredit?.current || 0 | number:'1.0-0' }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Right Side: Reload Button -->
+        <button (click)="openCreditPurchase()" [ngClass]="buttonClass()">
+          <span class="text-sm">{{ 'reload' | translate }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Status Links -->
+    <div class="flex flex-row items-center space-x-5 mt-4">
+      <!-- Accepted Link -->
+      <a routerLink="/admin/purchases/active" [routerLinkActiveOptions]="{exact: false}"
+        routerLinkActive="bg-primary-600 dark:bg-primary-600 text-white"
+        [class]="router.isActive('/admin/purchases/active', false) ? 'bg-primary-600 text-white' : 'bg-white dark:bg-zinc-800/80 text-zinc-800 dark:text-zinc-300'"
+        class="hover:bg-primary-600 dark:hover:bg-primary-600 hover:text-white transition-colors duration-300 ease-in-out rounded-full px-5 py-2 shadow-lg space-x-2 flex items-center">
+        <span>{{'accepted' | translate}}</span>
+        <span class="bg-white dark:bg-zinc-700 text-zinc-800 dark:text-zinc-300 rounded-full px-2 py-0.5 shadow-inner">
+          {{ count?.accept ? count?.accept : 0 }}
+        </span>
+      </a>
+
+      <!-- Suspended Link -->
+      <a routerLink="/admin/purchases/suspended" [routerLinkActiveOptions]="{exact: false}"
+        routerLinkActive="bg-primary-600 dark:bg-primary-600 text-white"
+        [class]="router.isActive('/admin/purchases/suspended', false) ? 'bg-primary-600 text-white' : 'bg-white dark:bg-zinc-800/80 text-zinc-800 dark:text-zinc-300'"
+        class="hover:bg-primary-600 dark:hover:bg-primary-600 hover:text-white transition-colors duration-300 ease-in-out rounded-full px-5 py-2 shadow-lg space-x-2 flex items-center">
+        <span>{{'suspended' | translate}}</span>
+        <span
+          class="bg-zinc-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-300 rounded-full px-2 py-0.5 shadow-inner">
+          {{ count?.decline ? count?.decline : 0 }}
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <main class="mx-2 mb-20">
+
+    <div class="flex flex-col ">
+      <div class="overflow-x-auto">
+        <div class="inline-block min-w-full py-2 align-middle">
+          <div class="overflow-hidden border border-zinc-200 dark:border-zinc-800 md:rounded-lg shadow-lg">
+            <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-800">
+              <tbody class="bg-white divide-y divide-zinc-200 dark:divide-zinc-800 dark:bg-zinc-900">
+                @for (item of this.transactionCreditService.transactionCredits(); track $index) {
+                <tr #theLastList [class.bg-green-100]="selectedRowIndex === $index"
+                  [class.dark:bg-green-800]="selectedRowIndex === $index" (click)="onRowClick($index)"
+                  class="cursor-pointer hover:bg-green-50 dark:hover:bg-green-800 transition-all duration-150 ease-in-out">
+
+                  <!-- Icon and Payment details -->
+                  <td
+                    class="px-2 py-2 sm:px-4 sm:py-4 flex flex-col lg:flex-row items-start lg:items-center space-y-2 lg:space-y-0 lg:space-x-2">
+                    @if (item.type === 'CREDIT') {
+                    <div class="font-bold flex justify-center items-center space-x-2">
+                      <span appCoinSvg size="w-6 h-6"></span>
+                      <div class="text-left flex flex-col">
+                        <span class="text-sm text-zinc-700 dark:text-zinc-300 whitespace-nowrap">
+                          {{ 'coins' | translate }}
+                        </span>
+                        <span class="text-xs text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
+                          {{ $safeNavigationMigration(item.PaymentOrder?.amount) | number:'1.0-2' }} {{
+                          item.PaymentOrder?.Money?.iso }}
+                        </span>
+                      </div>
+                    </div>
+                    } @else {
+                    <div class="flex items-center gap-x-2">
+                      <a [routerLink]="['/', item.Receiver!.username]" class="w-8 h-8">
+                        @if (item.Receiver!.Profile!.length > 0) {
+                        <img class="object-cover w-8 h-8 rounded-full shadow-lg"
+                          [src]="item.Receiver!.Profile![0].cloudflare ? item.Receiver!.Profile![0].cloudflare.result.variants[0] ? item.Receiver!.Profile![0].cloudflare.result.variants[0] : item.Receiver!.Profile![0].url : ''"
+                          alt="{{item.Receiver!.name ? item.Receiver!.name : item.Receiver!.username}}" />
+                        } @else {
+                        <div
+                          class="rounded-full w-8 h-8 object-cover border-2 border-zinc-100 dark:border-zinc-800 bg-zinc-100 dark:bg-primary-800/10 shadow flex justify-center items-center text-primary-500">
+                          {{ getFirstLetter(item.Receiver?.alias!! || item.Receiver?.username!!)}}
+                        </div>
+                        }
+                      </a>
+                      <div>
+                        @if (item.Receiver!.name) {
+                        <h2 class="text-sm font-medium text-zinc-800 dark:text-white">{{item.Receiver!.name | truncate:
+                          9
+                          }}
+                        </h2>
+                        }
+                        @if (item.Receiver!.username) {
+                        <p class="text-xs font-normal text-zinc-500 dark:text-zinc-400">
+                          &#64;{{ item.Receiver!.username |truncate: 9 }}
+                        </p>
+                        }
+                      </div>
+                    </div>
+                    }
+                  </td>
+
+                  <!-- Transaction type and time with item.code -->
+                  <td class="px-2 py-2 sm:px-4 sm:py-4 text-sm text-zinc-700 dark:text-zinc-300 whitespace-nowrap">
+                    @if (item.type === 'CREATOR_SUBSCRIBE') {
+                    <h3 class="text-sm font-semibold">{{'subscription' | translate}}</h3>
+                    }
+                    @if (item.type === 'CREDIT') {
+                    <h3 class="text-sm font-semibold">{{'purchase' | translate}}</h3>
+                    }
+                    @if (item.type === 'MESSAGE') {
+                    <h3 class="text-sm font-semibold">{{'message' | translate}}</h3>
+                    }
+                    @if (item.type === 'TIP') {
+                    <h3 class="text-sm font-semibold">{{'tip' | translate}}</h3>
+                    }
+                    @if (item.type === 'AD') {
+                    <h3 class="text-sm font-semibold">{{'ad' | translate}}</h3>
+                    }
+                    @if (item.type === 'POST') {
+                    <h3 class="text-sm font-semibold">{{'publication' | translate}}</h3>
+                    }
+                    <span class="text-xs text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
+                      {{item.registerAt! | dateAgo}}</span>
+                    <span class="block mt-1 text-xs text-zinc-500 dark:text-zinc-400">{{ 'ID: ' }}{{ item.code }}</span>
+                  </td>
+
+                  <!-- Credit amount and status -->
+                  <td
+                    class="px-2 py-2 sm:px-4 sm:py-4 text-sm text-zinc-700 dark:text-zinc-300 whitespace-nowrap font-semibold">
+                    <div class="items-center space-x-2 ml-auto flex justify-end">
+                      <span>{{ item.creditAmount | number:'1.0-0' }}</span>
+                      <span appIcon iconName="povicoin-solid" [size]="'w-5 h-5'"></span>
+                    </div>
+                    <div class="flex justify-end mt-1">
+                      @if (item.status == 'ACCEPT') {
+                      <div
+                        class="inline-flex items-center rounded-full gap-x-2 text-emerald-500 bg-emerald-50 dark:bg-emerald-900 px-2 py-1">
+                        <h2 class="text-xs font-normal">{{'accept' | translate}}</h2>
+                      </div>
+                      }
+                      @if (item.status == 'DECLINE') {
+                      <div
+                        class="inline-flex items-center rounded-full gap-x-2 text-red-500 bg-red-50 dark:bg-red-900 px-2 py-1">
+                        <h2 class="text-xs font-normal">{{'declined' | translate}}</h2>
+                      </div>
+                      }
+                    </div>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    @if(loading()) {
+    <div class="flex justify-center items-center space-x-2 mt-5">
+      <span class="relative flex h-3 w-3">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-3 w-3 bg-primary-500"></span>
+      </span>
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"
+          style="animation-delay: 150ms;"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+      </span>
+      <span class="relative flex h-2.5 w-2.5">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"
+          style="animation-delay: 300ms;"></span>
+        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary-500"></span>
+      </span>
+    </div>
+    }
+
+    @if (!loading() && this.transactionCreditService.transactionCredits().length === 0) {
+    <div class="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-6 text-zinc-500
+        dark:text-zinc-400">
+      <!-- Ícono principal -->
+      <div class="flex items-center justify-center w-24 h-24 bg-white dark:bg-zinc-800 rounded-full shadow-md">
+        <i appIcon iconName="purchases-regular" [size]="'w-12 h-12'" [color]="'text-zinc-500 dark:text-zinc-400'"></i>
+      </div>
+
+      <!-- Título principal -->
+      <h2 class="text-2xl font-medium text-zinc-700 dark:text-zinc-200">{{'noPurchasesYet' | translate}}</h2>
+
+      <!-- Mensaje secundario -->
+      <p class="text-base font-light max-w-md hidden">
+        {{'noSubscribersDescription' | translate}}
+      </p>
+
+    </div>
+    }
+  </main>
+</div>
+}

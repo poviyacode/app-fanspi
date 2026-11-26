@@ -1,9 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-    name: 'numberMoney',
-    pure: true,
-    standalone: false
+  name: 'numberMoney',
+  pure: true,
+  standalone: true
 })
 export class NumberMoneyPipe implements PipeTransform {
     transform(value: any, ...args: any[]) {

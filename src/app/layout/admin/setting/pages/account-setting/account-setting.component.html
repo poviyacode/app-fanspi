@@ -1,0 +1,354 @@
+@if (this.authService.user()) {
+<ng-container #container></ng-container>
+<div class="columns-1 sm:columns-2 lg:columns-2 gap-4 space-y-4">
+
+  <!-- role -->
+  <fieldset [ngClass]="cardClass()"
+    class="flex flex-col justify-center flex-wrap gap-4 w-full break-inside-avoid p-4 sm:p-6 font-medium">
+
+    @if (getRoles('CREATOR')) {
+    <button (click)=" onSubmitChangeRole('CLIENT')" [ngClass]="buttonClass()" class="">
+      <i appIcon iconName="user-regular" [size]="'w-6 h-6'" aria-hidden="true" [color]="''"></i>
+      <span>{{ 'switchAccountPersonal' | translate }}</span>
+    </button>
+    }
+
+    @if (getRoles('CLIENT')) {
+    <button (click)=" onSubmitChangeRole('CREATOR')" [ngClass]="buttonClass()" class="">
+      <i appIcon iconName="attach-money-regular" [size]="'w-6 h-6'" aria-hidden="true" [color]="''"></i>
+      <span>{{ 'becomeACreator' | translate }}</span>
+    </button>
+    }
+
+  </fieldset>
+
+  <!-- username -->
+  <fieldset [ngClass]="cardClass()" class="w-full break-inside-avoid p-4 sm:p-6">
+
+    <!-- Show username -->
+    <div class="flex justify-between items-center mb-4">
+      <div class="flex items-center space-x-2">
+        <i appIcon iconName="circle-user-regular" [size]="'w-6 h-6'" [color]="''"></i>
+        <h4 class="text-lg font-semibold">{{ 'user' | translate }}</h4>
+      </div>
+      <div (click)="onChangeEditUsername()" class="cursor-pointer">
+        <i appIcon iconName="edit-regular" [size]="'w-6 h-6'" [color]="''"></i>
+      </div>
+    </div>
+
+    <div>
+      <ul class="mt-2 divide-y divide-zinc-200 dark:divide-zinc-700 text-zinc-700 dark:text-zinc-400">
+        <li class="flex items-center space-x-2">
+          <span class="font-semibold">{{ this.authService.user()?.username }}</span>
+        </li>
+      </ul>
+      <div class="flex justify-center mt-5">
+        <button (click)="onChangeEditUsername()" [ngClass]="buttonClass()">
+          <span class="font-semibold text-sm">{{ "change" | translate }}</span>
+        </button>
+      </div>
+    </div>
+  </fieldset>
+
+  @if (dialogService.activeModal() === 'username') {
+  <div [ngClass]="modalClass()" class="modal-center" (click)="onCloseModal()">
+    <div [ngClass]="cardModalClass()" class="w-full max-w-xl overflow-hidden" (click)="($event.stopPropagation())"
+      animate.enter="modal-animation-enter" animate.leave="modal-animation-leave">
+
+      <section class="p-2 sm:p-4 overflow-y-auto max-h-[80vh]">
+        <div class="flex justify-between items-center mb-4">
+          <h4 class="text-lg font-semibold">{{ 'changeUsername' | translate }}</h4>
+        </div>
+
+        <form [formGroup]="myformUsername" (submit)="onSubmitUsername()" novalidate class="space-y-4">
+          <div>
+            <div class="flex flex-col">
+              <label for="username" class="mb-2 font-semibold hidden">{{ 'username' | translate }}</label>
+              <div class="relative w-full">
+                <input formControlName="username" id="text" [ngClass]="inputClass(myformUsername, 'username')" />
+                @if (existUsername) {
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <i appIcon iconName="error-regular" [size]="'w-4 h-4'" [color]="'text-red-500'"></i>
+                </div>
+                }
+              </div>
+            </div>
+            <div>
+              <span class="text-slate-400 text-xs">{{domain}}/{{ myformUsername.value.username }}</span>
+            </div>
+          </div>
+
+          <div class="flex justify-center space-x-5 mt-5">
+            <button type="button" (click)="onCloseModal()" [ngClass]="buttonSecondaryClass()">
+              {{'discard' | translate}}
+            </button>
+            <button type="submit" [ngClass]="buttonClass()" [disabled]="!myformUsername.valid">
+              <span class="font-semibold text-sm">{{ "save" | translate }}</span>
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </div>
+  }
+
+  <!-- password -->
+  <fieldset [ngClass]="cardClass()"
+    class="w-full break-inside-avoid dark:text-zinc-200 p-4 sm:p-6 transition-shadow duration-300">
+
+    <!-- Show change password button -->
+    <div class="flex justify-between items-center mb-4">
+      <div class="flex items-center space-x-2">
+        <i appIcon iconName="lock-regular" [size]="'w-6 h-6'" [color]="''"></i>
+        <h4 class="text-lg font-semibold">
+          {{ 'changePassword' | translate }}
+        </h4>
+      </div>
+      <button (click)="onChangeEditPassword()" class="cursor-pointer">
+        <i appIcon iconName="edit-regular" [size]="'w-6 h-6'" [color]="''"></i>
+      </button>
+    </div>
+    <div class="flex justify-center mt-5">
+      <button type="submit" (click)="onChangeEditPassword()" [ngClass]="buttonClass()">
+        <span class="font-semibold text-sm">{{ "change" | translate }}</span>
+      </button>
+    </div>
+  </fieldset>
+
+  @if (dialogService.activeModal() === 'password') {
+  <div [ngClass]="modalClass()" class="modal-center" (click)="onCloseModal()">
+    <div [ngClass]="cardModalClass()" class="w-full max-w-xl overflow-hidden" (click)="($event.stopPropagation())"
+      animate.enter="modal-animation-enter" animate.leave="modal-animation-leave">
+      <section class="p-2 sm:p-4 overflow-y-auto max-h-[80vh]">
+        <div class="flex justify-between items-center mb-4">
+          <h4 class="text-lg font-semibold">{{ 'changePassword' | translate }}</h4>
+        </div>
+
+        <form [formGroup]="myformPasword" (submit)="onSubmitPassword()" novalidate class="px-2 sm:px-0 mt-4">
+          <div class="mb-4 grid grid-cols-1 gap-4">
+            <!-- Password current -->
+            <div class="flex flex-col">
+              <label for="passwordCurrent" class="mb-2 font-semibold">{{ 'passwordCurrent' | translate }}</label>
+              <div class="relative w-full">
+                <input formControlName="passwordCurrent" id="text"
+                  [ngClass]="inputClass(myformPasword, 'passwordCurrent')" />
+                @if (existPassword) {
+                <div class="flex absolute inset-y-0 right-0 items-center pr-2 pointer-events-none">
+                  <i appIcon iconName="user-circle-regular" [size]="'w-6 h-6'" [color]="'text-red-500'"></i>
+                </div>
+                }
+              </div>
+            </div>
+
+            <!-- Password field -->
+            <div class="flex flex-col">
+              <label for="password" class="mb-2 font-semibold">{{ 'password' | translate }}</label>
+              <div class="relative w-full">
+                <input formControlName="password" id="text" [ngClass]="inputClass(myformPasword, 'password')" />
+                @if (existPassword) {
+                <div class="flex absolute inset-y-0 right-0 items-center pr-2 pointer-events-none">
+                  <i appIcon iconName="error-regular" [size]="'w-4 h-4'" [color]="'text-red-500'"></i>
+                </div>
+                }
+              </div>
+            </div>
+
+            <!-- Confirm password field -->
+            <div class="flex flex-col">
+              <label for="confirmPassword" class="mb-2 font-semibold">{{ 'repeatpassword' | translate }}</label>
+              <div class="relative w-full">
+                <input formControlName="confirmPassword" id="text"
+                  [ngClass]="inputClass(myformPasword, 'confirmPassword')" />
+                @if (existPassword) {
+                <div class="flex absolute inset-y-0 right-0 items-center pr-2 pointer-events-none">
+                  <i appIcon iconName="error-regular" [size]="'w-4 h-4'" [color]="'text-red-500'"></i>
+                </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit button -->
+          <div class="flex justify-center space-x-5 mt-5">
+            <button type="button" (click)="onCloseModal()" [ngClass]="buttonSecondaryClass()">
+              {{'discard' | translate}}
+            </button>
+            <button type="submit" [ngClass]="buttonClass()" [disabled]="!myformPasword.valid">
+              <span class="font-semibold text-sm">{{ "save" | translate }}</span>
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </div>
+  }
+
+  <!-- email -->
+  <fieldset [ngClass]="cardClass()" class="w-full break-inside-avoid p-4 sm:p-6">
+
+    <!-- Show email -->
+    <div class="flex justify-between items-center mb-4">
+      <div class="flex items-center space-x-2">
+        <i appIcon iconName="mail-regular" [size]="'w-6 h-6'" [color]="''"></i>
+        <h4 class="text-lg font-semibold">{{ 'email' | translate }}</h4>
+      </div>
+      <button (click)="onChangeEditEmail()" class="cursor-pointer">
+        <i appIcon iconName="edit-regular" [size]="'w-6 h-6'" [color]="''"></i>
+      </button>
+    </div>
+
+    <div>
+      <ul class="mt-2 divide-y divide-zinc-200 dark:divide-zinc-700 text-zinc-700 dark:text-zinc-400 space-y-5">
+        <li class="flex justify-between items-center pt-4">
+          <span class="font-medium">{{ this.authService.user()!.email }}</span>
+          @if (authService.user()?.emailVerified) {
+          <i appIcon iconName="check-circle-regular" [size]="'w-8 h-8'" [color]="'text-green-500'"></i>
+          } @else {
+          <i appIcon iconName="warning-regular" [size]="'w-8 h-8'" [color]="'text-yellow-500'"></i>
+          }
+        </li>
+      </ul>
+      <div class="flex justify-center mt-5 space-x-5">
+        @if (!authService.user()?.emailVerified) {
+        <button type="button" (click)="onConfirmEmail()" [ngClass]="buttonClass()">
+          <span class="font-semibold text-sm">{{ "verify" | translate }}</span>
+        </button>
+        }
+        <button type="button" (click)="onChangeEditEmail()" [ngClass]="buttonClass()">
+          <span class="font-semibold text-sm">{{ "change" | translate }}</span>
+        </button>
+      </div>
+    </div>
+  </fieldset>
+
+  @if (dialogService.activeModal() === 'email') {
+  <div [ngClass]="modalClass()" class="modal-center" (click)="onCloseModal()">
+    <div [ngClass]="cardModalClass()" class="mujer  w-full max-w-xl overflow-hidden"
+      (click)="($event.stopPropagation())" animate.enter="modal-animation-enter" animate.leave="modal-animation-leave">
+      <section class="p-2 sm:p-4 overflow-y-auto max-h-[80vh]">
+        <div class="flex justify-between items-center mb-4">
+          <h4 class="text-lg font-semibold">{{ 'enterNewEmail' | translate }}</h4>
+        </div>
+
+        <form [formGroup]="myFormEmail" (submit)="onSubmitChangeEmail()" novalidate class="space-y-4">
+          <div>
+            <div class="flex flex-col">
+              <label for="email" class="mb-2 font-semibold hidden">{{ 'email' | translate }}</label>
+              <div class="relative w-full">
+                <input formControlName="email" id="text" [ngClass]="inputClass(myFormEmail, 'email')" />
+                @if (existEmail) {
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <i class="fas fa-exclamation-circle text-red-500"></i>
+                </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-center space-x-5 mt-5">
+            <button type="button" (click)="onCloseModal()" [ngClass]="buttonSecondaryClass()">
+              {{'discard' | translate}}
+            </button>
+            <button type="submit" [ngClass]="buttonClass()" [disabled]="myFormEmail.status !== 'VALID'">
+              <span class="font-semibold text-sm">{{ "change" | translate }}</span>
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </div>
+  }
+
+  <!-- delete account -->
+  <fieldset [ngClass]="cardClass()" class="w-full break-inside-avoid p-4 sm:p-6">
+    <div class="flex justify-center">
+      <button (click)="onDeleteAccount()" [ngClass]="buttonClass()">
+        <span class="font-semibold text-sm">{{ "deleteAccount" | translate }}</span>
+      </button>
+    </div>
+  </fieldset>
+
+  <!-- verified -->
+  @if (authService.user()?.statusPersonal === 'APPROVED') {
+  <fieldset [ngClass]="cardClass()" class="break-inside-avoid p-6 text-center">
+    <div class="flex items-center justify-center space-x-2 mb-4">
+      <i appIcon iconName="document-regular" [size]="'w-6 h-6'" [color]="'text-zinc-600 dark:text-zinc-300'"></i>
+      <h2 class="text-xl font-semibold text-zinc-800 dark:text-zinc-100">
+        {{'verificationComplete' | translate}}
+      </h2>
+    </div>
+
+    <div class="p-4 border-2 border-dashed border-zinc-300 dark:border-zinc-500 rounded relative">
+      <span
+        class="absolute -top-3 -right-3 px-2 py-0.5 bg-primary-600 text-white text-xs font-semibold rounded-full shadow-md">
+        {{'new' | translate}}
+      </span>
+      <div class="flex items-center justify-center space-x-2 mb-2">
+        <i appIcon iconName="check-circle-regular" [size]="'w-8 h-8'" [color]="'text-green-500'"></i>
+        <span class="text-lg font-semibold text-zinc-800 dark:text-zinc-200">
+          {{'verificationApproved' | translate}}
+        </span>
+      </div>
+      <p class="text-zinc-600 dark:text-zinc-400 text-sm">
+        {{'haveQuestionsContactUs' | translate}}
+        <a href="mailto:team@yuvinka.com?subject=Hello Yuvinka" target="_blank"
+          class="text-primary-600 dark:text-primary-400 font-semibold">
+          {{'team@yuvinka.com'}}
+        </a>
+      </p>
+    </div>
+  </fieldset>
+  } @else {
+  <fieldset [ngClass]="cardClass()" class="break-inside-avoid p-6 text-center">
+    <div class="flex items-center justify-center space-x-2 mb-4">
+      <i appIcon iconName="info-circle-regular" [size]="'w-6 h-6'" [color]="'text-red-600 dark:text-red-300'"></i>
+      <h2 class="text-xl font-semibold text-zinc-800 dark:text-zinc-100">
+        {{'importantInformation' | translate}}
+      </h2>
+    </div>
+
+    <div class="p-4 border-2 border-dashed border-zinc-300 dark:border-zinc-500 rounded relative">
+      <!-- Etiqueta de Estado -->
+      <span
+        class="absolute -top-3 -right-3 px-2 py-0.5 bg-red-600 text-white text-xs font-semibold rounded-full shadow-md">
+        {{'actionRequired' | translate}}
+      </span>
+      <div class="flex items-center justify-center space-x-2 mb-2">
+        <!-- Icono de Documento de Identidad -->
+        <i appIcon iconName="document-regular" [size]="'w-8 h-8'" [color]="'text-red-600 dark:text-red-300'"></i>
+        <span class="text-lg font-semibold text-zinc-800 dark:text-zinc-100">
+          {{'submitYourDocumentation' | translate}}
+        </span>
+      </div>
+      <p class="text-zinc-600 dark:text-zinc-400 text-sm">
+        {{'pleaseUploadDocuments' | translate}}
+        <a href="mailto:team@yuvinka.com?subject=Hello Yuvinka" target="_blank"
+          class="text-primary-600 dark:text-primary-400 font-semibold">
+          {{'team@yuvinka.com'}}
+        </a>
+      </p>
+      <div class="flex justify-center mt-5">
+        <button (click)="onPersonal()" [ngClass]="buttonClass()">
+          <span class="font-semibold text-sm">{{'completeVerification' | translate}}</span>
+        </button>
+      </div>
+    </div>
+  </fieldset>
+  }
+
+</div>
+} @else if(loading) {
+<div class="py-10">
+  <div class="space-y-2">
+    <div class="flex justify-center items-center my-28">
+      <div class="w-16 h-16 border-t-4 border-primary-500 border-solid rounded-full animate-spin"></div>
+    </div>
+  </div>
+</div>
+} @else {
+<div class="py-10">
+  <div class=" text-center font-light text-3xl">
+    {{'there_is_no_data' | translate}}
+  </div>
+</div>
+}

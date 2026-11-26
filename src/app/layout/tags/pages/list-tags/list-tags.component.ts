@@ -14,7 +14,7 @@ import { DialogService } from '@services/dialog.service';
 import { CommentsPostComponent } from '@layout/post/pages/comments-post/comments-post.component';
 import { PipesModule } from '@pipes/pipes.module';
 import { CustomTranslatePipe, TranslateService } from '@ngx-translate/core';
-import { Tools } from '@core/common/tools';
+import { UIStyles } from '@core/common/uistyles';
 import { ReadMoreComponent } from '@library/read-more/read-more.component';
 import { Post } from '@interfaces/post';
 import { Subscription } from '@interfaces/subscription';

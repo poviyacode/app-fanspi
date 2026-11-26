@@ -1,0 +1,179 @@
+<div class="mx-2 space-y-6">
+
+    <fieldset
+        class="break-inside-avoid p-6 border border-yellow-300 dark:border-yellow-700/50 bg-yellow-50 dark:bg-yellow-800/40 dark:text-yellow-200 rounded shadow-lg text-center">
+        <div class="flex items-center justify-center space-x-2 mb-4">
+            <i appIcon iconName="info-circle-regular" [size]="'w-6 h-6'"
+                [color]="'text-yellow-600 dark:text-yellow-400'"></i>
+            <h2 class="text-xl font-semibold text-yellow-800 dark:text-yellow-200">
+                {{'importantInformation' | translate}}
+            </h2>
+        </div>
+
+        <div class="p-4 border-2 border-dashed border-yellow-300 dark:border-yellow-500 rounded relative">
+            <!-- Etiqueta de Estado -->
+            <span
+                class="absolute -top-3 -right-3 px-2 py-0.5 bg-yellow-600 text-white text-xs font-semibold rounded-full shadow-md">
+                {{'withdrawal' | translate}}
+            </span>
+            <div class="flex items-center justify-center space-x-2 mb-2">
+                <!-- Icono de Documento de Identidad -->
+                <i appIcon iconName="attach-money-regular" [size]="'w-8 h-8'"
+                    [color]="'text-yellow-600 dark:text-yellow-400'"></i>
+                <span class="text-lg font-semibold text-yellow-800 dark:text-yellow-200">
+                    {{ 'enterPaymentMethod' | translate }}
+                </span>
+            </div>
+            <p class="text-yellow-600 dark:text-yellow-400 text-sm">
+                <span>{{'depositProcessingInfo' | translate}}</span>
+            </p>
+        </div>
+    </fieldset>
+
+    <fieldset class="flex flex-wrap gap-3 justify-center items-center">
+        <!-- Botón de Agregar -->
+        <button (click)="onAddMethod()"
+            class="group flex flex-col items-center justify-center p-3 w-28 h-28 bg-white/5 hover:bg-white/10 dark:bg-[var(--color-secondary-900)] border border-dashed border-slate-300 dark:border-[var(--color-secondary-700)] hover:border-primary-500 rounded-2xl shadow-sm transition-all cursor-pointer">
+            <div class="p-2 rounded-xl bg-primary-500/10 text-primary-500 dark:text-primary-400 mb-1">
+                <i appIcon iconName="add-regular" [size]="'w-5 h-5'" [color]="''"></i>
+            </div>
+            <span
+                class="text-[11px] font-semibold text-slate-700 dark:text-slate-200 uppercase tracking-wider text-center group-hover:text-primary-500">
+                {{'addNew' | translate}}
+            </span>
+        </button>
+
+        <!-- Botones de métodos existentes -->
+        @for (item of paymentMethodService.paymentMethods(); track item._id) {
+        @let hasIcon = $safeNavigationMigration(item.PaymentMethodCategory?.icon?.[0]?.url);
+
+        <button (click)="onOpenMethodModal(item)"
+            class="group flex flex-col items-center justify-between p-3 w-28 h-28 bg-white/5 hover:bg-white/10 dark:bg-[var(--color-secondary-900)] border border-slate-200 dark:border-[var(--color-secondary-700)] hover:border-primary-500 rounded-2xl shadow-sm transition-all cursor-pointer">
+
+            <!-- Icono centrado -->
+            <div class="flex items-center justify-center my-auto">
+                @if(hasIcon){
+                <div class="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                    <img [src]="hasIcon" class="w-6 h-6 object-contain">
+                </div>
+                } @else {
+                <div
+                    class="p-1.5 rounded-xl bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400">
+                    <i appIcon [iconName]="'wallet-regular'" [size]="'w-6 h-6'" [color]="''"></i>
+                </div>
+                }
+            </div>
+
+            <!-- Bloque de textos con jerarquía -->
+            <div class="w-full text-center leading-tight">
+                <!-- Nombre del Método -->
+                <span
+                    class="block text-[11px] font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wide truncate group-hover:text-primary-500 transition-colors">
+                    {{ item.PaymentMethodCategory?.name }}
+                </span>
+                <!-- Titular (Subtexto más pequeño y atenuado) -->
+                @if (item.details?.holderName) {
+                <span class="block text-[10px] font-medium text-slate-400 dark:text-slate-500 truncate mt-0.5">
+                    {{ item.details.holderName }}
+                </span>
+                }
+            </div>
+        </button>
+        }
+    </fieldset>
+
+    @if (dialogService.activeModal() === 'listPaymentMethodCategories') {
+    <div [ngClass]="className.modalClass()" (click)="onCloseModal()">
+
+        <!-- Tarjeta del Modal -->
+        <div [ngClass]="className.cardModalClass()" (click)="($event.stopPropagation())"
+            animate.enter="modal-animation-enter" animate.leave="modal-animation-leave">
+
+            <section class="p-6 sm:p-8 max-h-[85vh] overflow-y-auto custom-scrollbar space-y-6">
+
+                <!-- Cabecera del Modal -->
+                <div
+                    class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-[var(--color-secondary-800)]">
+                    <div class="flex items-center space-x-3">
+                        <div
+                            class="p-2.5 rounded-xl bg-primary-50 dark:bg-[var(--color-secondary-800)] text-primary-600 dark:text-primary-400">
+                            <i appIcon iconName="wallet-regular" [size]="'w-6 h-6'" [color]="''"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wide">
+                                {{ 'addPaymentMethod' | translate }}
+                            </h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">
+                                {{ 'selectPlatformToConfigureYourData' | translate }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Botón Cerrar -->
+                    <button (click)="onCloseModal()"
+                        class="cursor-pointer flex justify-center items-center bg-slate-100 hover:bg-red-50 dark:bg-[var(--color-secondary-800)] dark:hover:bg-red-950/30 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-full p-2 w-10 h-10 transition-all active:scale-95">
+                        <i appIcon iconName="close-regular" [size]="'w-5 h-5'" [color]="''"></i>
+                    </button>
+                </div>
+
+                <!-- div search -->
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                        {{ 'selectAPaymentMethod' | translate }}
+                    </span>
+                </div>
+
+                <!-- Grid de Categorías Mejorado -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    @for (item of paymentMethodCategoryService.paymentMethodCategories(); track item._id) {
+                    @let isConfigured = isMethodConfigured(item.code!);
+
+                    <button (click)="!isConfigured && onSelectCategory(item)" [disabled]="isConfigured"
+                        class="group relative flex flex-col items-center justify-center p-5 bg-white dark:bg-[var(--color-secondary-800)] border border-slate-200 dark:border-[var(--color-secondary-700)] rounded-2xl shadow-sm transition-all duration-200 
+                            {{ isConfigured ? 'opacity-60 cursor-not-allowed bg-slate-50 dark:bg-slate-800/50' : 'hover:border-primary-500 dark:hover:border-primary-500 hover:shadow-lg cursor-pointer hover:-translate-y-1' }}">
+
+                        <!-- Badge de Configurado -->
+                        @if (isConfigured) {
+                        <span
+                            class="absolute -top-2.5 right-4 px-2.5 py-0.5 bg-emerald-500 text-white text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm flex items-center gap-1">
+                            <i appIcon iconName="check-circle-regular" [size]="'w-3 h-3'" [color]="''"></i>
+                            {{ 'configured' | translate }}
+                        </span>
+                        }
+
+                        <!-- Icono del Método -->
+                        @let hasIcon = $safeNavigationMigration(item.icon?.[0]?.url);
+                        @if(hasIcon){
+                        <img [src]="($safeNavigationMigration(item.icon?.[0]?.url)) || ''" class="h-8 w-8 object-cover">
+                        } @else{
+                        <div
+                            class="p-3 rounded-full bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 mb-3 group-hover:scale-110 transition-transform duration-200">
+                            <i appIcon [iconName]="'wallet-regular'" [size]="'w-8 h-8'" [color]="''"></i>
+                        </div>
+                        }
+
+                        <!-- Nombre del Método -->
+                        <span
+                            class="text-sm font-bold text-slate-700 dark:text-slate-200 text-center group-hover:text-primary-500 transition-colors">
+                            {{ item.name }}
+                        </span>
+                    </button>
+                    }
+
+                    <!-- Estado de Carga o Vacío -->
+                    @if (paymentMethodCategoryService.paymentMethodCategories().length === 0) {
+                    <div class="col-span-full flex flex-col items-center justify-center py-10 text-slate-400">
+                        <i appIcon iconName="spinner-solid" [size]="'w-8 h-8 animate-spin mb-3'"></i>
+                        <span class="text-sm font-medium">{{ 'loadingAvailablePaymentMethods' | translate }}...</span>
+                    </div>
+                    }
+                </div>
+
+            </section>
+        </div>
+    </div>
+    }
+
+    <app-universal-payment-method-setting [methodType]="selectedMethod()" [data]="data()!" (save)="onSaveMethod($event)"
+        (delete)="onDeleteMethod($event)" />
+</div>

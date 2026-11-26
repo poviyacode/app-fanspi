@@ -1,0 +1,230 @@
+@if (isBrowser) {
+<div class="mx-auto max-w-7xl ">
+
+    <router-outlet></router-outlet>
+    <ng-container #container></ng-container>
+
+    <ng-container #container></ng-container>
+
+    <header
+        class="sticky top-0 w-full py-3 px-4 text-xs bg-background-light dark:bg-background-dark dark:text-zinc-200 z-10">
+
+        <div class="flex justify-between items-center space-x-5 h-12">
+
+            <button (click)="goBack()"
+                class="cursor-pointer flex items-center justify-center w-10 h-10 rounded-full transition duration-300 ease-in-out hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                <i appIcon iconName="arrow-back-regular" [size]="'w-6 h-6'" [color]="''" class="flex-shrink-0 pl-1"></i>
+            </button>
+
+            <button (click)="onScrollTop()"
+                class="cursor-pointer flex items-center justify-center px-4 py-2 text-sm font-semibold text-center text-zinc-700 dark:text-zinc-200 uppercase rounded-full transition duration-300 ease-in-out hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                <span>{{'ads' | translate}}</span>
+            </button>
+        </div>
+    </header>
+
+    <section
+        class="mx-2 p-4 bg-white dark:bg-zinc-800 rounded-xl shadow-lg border border-zinc-100 dark:border-zinc-700">
+
+        <div class="flex items-center justify-between mb-4 pb-2 border-b border-zinc-200 dark:border-zinc-700">
+            <h2 class="text-lg font-semibold text-zinc-800 dark:text-white">
+                {{ 'results' | translate }}
+            </h2>
+            <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                {{'total' | translate}}: <span class="text-primary-600 dark:text-primary-400 font-bold">
+                    {{ totalPages | number:'1.0-0' }}
+                </span>
+            </div>
+        </div>
+
+        <form novalidate (ngSubmit)="onSubmitSearch()" [formGroup]="myFormSearch"
+            class="flex flex-col md:flex-row items-stretch md:space-x-4 space-y-3 md:space-y-0 w-full">
+
+            <div class="relative flex-grow">
+                <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-400">
+                    <i appIcon iconName="search-regular" [size]="'w-5 h-5'" [color]="''"></i>
+                </div>
+                <input formControlName="search" id="search" placeholder="" class="pl-10 pr-4 w-full py-2.5 text-base"
+                    [ngClass]="inputClass(myFormSearch, 'search')">
+            </div>
+
+            <div class="w-full md:w-48">
+                <select [ngClass]="selectClass(myFormSearch, 'status')" formControlName="status"
+                    (change)="onStatusSearch($event)" class="w-full py-2.5 px-3 text-base appearance-none ">
+                    <option value="ALL" class="text-sm dark:bg-zinc-700">{{'allStatus' | translate}}</option>
+                    <option value="ACTIVE" class="text-sm dark:bg-zinc-700">{{'active' | translate}}</option>
+                    <option value="SUSPENDED" class="text-sm dark:bg-zinc-700">{{'suspended' | translate}}</option>
+                    <option value="EXPIRED" class="text-sm dark:bg-zinc-700">{{'expired' | translate}}</option>
+                </select>
+            </div>
+
+            <button type="submit"
+                class="w-full md:w-32 py-2.5 px-4 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg shadow-md transition duration-200 ease-in-out flex items-center justify-center">
+                <i appIcon iconName="search-regular" [size]="'w-5 h-5'" [color]="'text-white'" class="mr-1"></i>
+                {{ 'search' | translate }}
+            </button>
+
+        </form>
+    </section>
+
+    <main class="space-y-0 px-0 md:px-0 mb-20 mt-4 sm:my-4">
+        <div class="grid grid-cols-1 gap-1 sm:gap-2 p-2">
+
+            @for (item of this.postService.postAdsUser(); track $index) {
+            <article
+                class="overflow-hidden w-full relative group border border-zinc-200 dark:border-zinc-800/50 bg-white dark:bg-zinc-700/40 hover:border-primary-500/20 dark:hover:border-primary-400/30 rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 ease-out hover:-translate-y-2 transform">
+                <!-- Contenido principal -->
+                <div class="md:flex">
+                    <!-- Imagen del anuncio -->
+                    <div (click)="onPost(item)" class="relative hover:cursor-pointer md:shrink-0 rounded-lg">
+                        @if (item.PostMedia?.[0]; as media) {
+
+                        <!-- Image Preview -->
+                        @if (media.type === 'image') {
+                        <img ngOptimizedImage [ngSrc]="(media.cloudflare?.result?.variants?.[0] || media.url) || ''"
+                            [alt]="item.title || 'Default alt text'"
+                            class="h-48 w-full object-cover md:h-60 md:w-48 transform group-hover:scale-110 transition-transform duration-500" width="500" height="500" />
+                        }
+
+                        <!-- Video Preview -->
+                        @if (media.type === 'video') {
+                        <img ngOptimizedImage [ngSrc]="(media.cloudflare?.result?.thumbnail || media.urlSnapshot) || ''"
+                            [alt]="item.title || 'Video thumbnail'"
+                            class="h-48 w-full object-cover md:h-60 md:w-48 transform group-hover:scale-110 transition-transform duration-500" width="500" height="500" />
+
+                        <!-- Play Button -->
+                        <div class="absolute inset-0 flex items-center justify-center bg-black/20">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-full bg-white/30 transition-all group-hover:bg-primary-500/80">
+                                <i appIcon iconName="play-solid" [size]="'w-8 h-8'" [color]="'text-white'"></i>
+                            </div>
+                        </div>
+                        }
+
+                        }
+
+                        <!-- user profile -->
+                        @if(item.isProfile) {
+                        <div class="absolute left-1 top-1 flex flex-col gap-1">
+                            @if (item.User!.Profile!.length > 0) {
+                            <div [ngClass]="{
+                            'border-[#ff0050] animate-pulse-border': item.User!.live,
+                            'border-green-500': item.User!.online && !item.User!.live,
+                            'border-zinc-100 dark:border-zinc-800': !item.User!.online && !item.User!.live
+                            }"
+                                class="w-12 h-12 object-cover rounded-full overflow-hidden border-2 border-zinc-100 dark:border-zinc-800">
+                                <img class="w-12 h-12 object-cover rounded-full"
+                                    [ngSrc]="(getProfileImageUrl(item.User!)) || ''" width="500" height="500" />
+                            </div>
+                            } @else {
+                            <div [ngClass]="{
+                            'border-[#ff0050] animate-pulse-border': item.User!.live,
+                            'border-green-500': item.User!.online && !item.User!.live,
+                            'border-zinc-100 dark:border-zinc-800': !item.User!.online && !item.User!.live
+                        }" class="rounded-full max-w-none w-12 h-12 object-cover border-2 bg-zinc-100 dark:bg-primary-800/10 shadow flex justify-center items-center text-3xl text-primary-500">
+                                {{ getFirstLetter(item.User?.alias!! || item.User?.username!!)}}
+                            </div>
+                            }
+                        </div>
+                        }
+
+                        <!-- Media Badges -->
+                        <div class="absolute left-1 bottom-1 flex justify-center flex-col gap-1">
+                            @if (item.PostMedia!.length > 1) {
+                            <div class="rounded-full bg-black/40  px-2.5 py-1 text-xs  text-white backdrop-blur-sm">
+                                1 / {{ item.PostMedia!.length }}
+                            </div>
+                            }
+                        </div>
+
+                    </div>
+                    <!-- Contenido textual -->
+                    <div class="p-2 w-full">
+                        <div (click)="onPost(item)" class="hover:cursor-pointer">
+                            <!-- Título -->
+                            <h1 class="font-bold text-lg line-clamp-2 sm:line-clamp-1 mb-2">{{item.title}}</h1>
+                            <!-- Descripción -->
+                            <p class="text-base text-zinc-600 dark:text-zinc-400 line-clamp-3">
+                                {{item.description}}
+                            </p>
+                            @if (item.age) {
+                            <p class="space-x-1 mt-2">
+                                <i appIcon iconName="id-card-regular" [size]="'w-5 h-5'"
+                                    [color]="'text-primary-600 dark:text-primary-400'"></i>
+                                <span class="font-semibold lowercase">
+                                    {{ 'yearsOld' | translate: { age: item.age || 18 } }}
+                                </span>
+                            </p>
+                            }
+                            <p class="space-x-1 line-clamp-1">
+                                <i appIcon iconName="map-pin-solid" [size]="'w-5 h-5'"
+                                    [color]="'text-primary-600 dark:text-primary-400'"></i>
+                                <span class="font-semibold">{{item.Country?.name}}</span>
+                                @if (item.StateCity) {
+                                <span>/</span>
+                                <span>{{item.StateCity.name}}</span>
+                                }
+                            </p>
+                        </div>
+
+                        <!-- Botones de acción -->
+                        <div class="flex justify-end space-x-4 mt-4">
+
+                            <!-- Botón de Telegram -->
+                            @if (item?.telegram) {
+                            <button (click)="openTelegram(item.telegram!)"
+                                class="cursor-pointer flex items-center justify-center bg-[#2CA5E0] text-white rounded-full px-3 py-2 text-sm font-semibold hover:bg-[#1d92c4] transition-all duration-300 ease-in-out">
+                                <img ngSrc="./public/social-media/telegram.png" class="w-5 h-5 mr-2" alt="Telegram" width="500" height="500">
+                                <span>Telegram</span>
+                            </button>
+                            }
+
+                            <!-- Botón de WhatsApp -->
+                            @if (item?.whatsapp) {
+                            <button (click)="openWhatsApp(item.phonePrefix!, $safeNavigationMigration(item?.whatsapp)!, textMessage(item))"
+                                class="cursor-pointer flex items-center justify-center bg-[#25D366] text-white rounded-full px-3 py-2 text-sm font-semibold hover:bg-[#1da851] transition-all duration-300 ease-in-out">
+                                <img ngSrc="./public/social-media/whatsapp.png" class="w-5 h-5 mr-2" alt="WhatsApp" width="500" height="500">
+                                <span>WhatsApp</span>
+                            </button>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </article>
+            }
+
+            @if (loading()) {
+            @for (item of [1,2,3,4,5,6,7,8,9]; track $index) {
+            <article
+                class="border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-background-dark p-0 w-full mx-auto space-y-2 shadow-md rounded-3xl">
+                <div class="animate-pulse w-full h-44 sm:h-56 bg-zinc-100 dark:bg-zinc-800 rounded-3xl"></div>
+            </article>
+            }
+            }
+
+        </div>
+
+        @if (!loading() && this.postService.postAdsUser().length === 0) {
+        <div
+            class="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-6 text-zinc-500 dark:text-zinc-400">
+            <!-- Ícono principal -->
+            <div class="flex items-center justify-center w-24 h-24 bg-zinc-100 dark:bg-zinc-800 rounded-full shadow-md">
+                <i appIcon iconName="grid-view-regular" [size]="'w-12 h-12'"
+                    [color]="'text-zinc-500 dark:text-zinc-400'"></i>
+            </div>
+
+            <!-- Título principal -->
+            <h2 class="text-2xl font-medium text-zinc-700 dark:text-zinc-200">{{'noPostsYet' | translate}}</h2>
+
+            <!-- Mensaje secundario -->
+            <p class="text-base font-light max-w-md hidden">
+                {{'startSavingYourFavoriteContent' | translate}}
+            </p>
+
+        </div>
+        }
+    </main>
+
+</div>
+}

@@ -1,0 +1,262 @@
+<ng-container #container></ng-container>
+
+<div class="mx-auto">
+  <div class="flex flex-col flex-auto flex-shrink-0 antialiased text-zinc-800 dark:text-zinc-100">
+    @if (isBrowser) {
+    @if (this.toolsService.headMobil()) {
+    <aside aria-label="Mobile Navigation"
+      class="fixed bottom-3 left-1/2 -translate-x-1/2 w-[92%] max-w-lg z-30 transition-all duration-300">
+
+      <nav
+        class="relative bg-white dark:bg-[var(--color-secondary-900)] border border-slate-200 dark:border-[var(--color-secondary-800)] shadow-[0_8px_32px_0_rgba(0,0,0,0.15)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] rounded-[2.5rem] px-2 py-1.5 transition-colors duration-300"
+        aria-label="Mobile Navigation Links">
+
+        <div
+          class="grid {{ authService.user() ? 'grid-cols-5' : 'grid-cols-3' }} items-center justify-items-center text-slate-500 dark:text-[var(--color-secondary-300)]">
+
+          <a (click)="onScrollTop()" [routerLink]="['/']" routerLinkActive="text-[var(--color-primary-500)]"
+            [routerLinkActiveOptions]="{exact: true}"
+            class="relative flex flex-col items-center justify-center w-12 h-12 rounded-2xl transition-all duration-200 active:scale-90 hover:text-[var(--color-primary-500)]">
+            <i appIcon iconName="home-regular" [size]="'w-6 h-6'" [color]="''" aria-hidden="true"></i>
+            <span class="text-[9px] font-bold mt-1 uppercase tracking-tighter">{{'home' | translate}}</span>
+          </a>
+
+          <a (click)="onScrollTop()" [routerLink]="['/posts']" routerLinkActive="text-[var(--color-primary-500)]"
+            [routerLinkActiveOptions]="{exact: true}"
+            class="relative flex flex-col items-center justify-center w-12 h-12 rounded-2xl transition-all duration-200 active:scale-90 hover:text-[var(--color-primary-500)]">
+            <div class="relative">
+              <i appIcon iconName="explore-regular" [size]="'w-6 h-6'" [color]="''" aria-hidden="true"></i>
+              @if (hasLiveContent) {
+              <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span
+                  class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500 border-2 border-white dark:border-[var(--color-secondary-900)]"></span>
+              </span>
+              }
+            </div>
+            <span class="text-[9px] font-bold mt-1 uppercase tracking-tighter">{{'explore' | translate}}</span>
+          </a>
+
+          @if (authService.user()) {
+          <div class="relative -top-3">
+            <button (click)="onStartLiveStream()"
+              class="flex items-center justify-center w-12 h-12 bg-gradient-to-tr from-[var(--color-primary-600)] to-[var(--color-primary-400)] text-white rounded-2xl shadow-lg shadow-[var(--color-primary-500)]/40 transform transition-all duration-300 hover:rotate-12 active:scale-75 cursor-pointer">
+              <i appIcon iconName="videocam-regular" [size]="'w-8 h-8'" [color]="''" aria-hidden="true"></i>
+            </button>
+          </div>
+          }
+
+          @if(authService.user()) {
+          <a (click)="onScrollTop()" [routerLink]="['/chats']" routerLinkActive="text-[var(--color-primary-500)]"
+            [routerLinkActiveOptions]="{exact: true}"
+            class="relative flex flex-col items-center justify-center w-12 h-12 rounded-2xl transition-all duration-200 active:scale-90 hover:text-[var(--color-primary-500)]">
+            <div class="relative">
+              <i appIcon iconName="messages-regular" [size]="'w-6 h-6'" [color]="''" aria-hidden="true"></i>
+              @if(authService.user()?.countUnreadMessages! > 0 ) {
+              <span
+                class="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center h-4 min-w-[16px] px-1 text-[10px] font-semibold text-white bg-emerald-500 dark:bg-emerald-600 rounded-full ring-2 ring-white dark:ring-[var(--color-secondary-900)]">
+                {{ authService.user()?.countUnreadMessages! > 99 ? '99+' : authService.user()?.countUnreadMessages! }}
+              </span>
+              }
+            </div>
+            <span class="text-[9px] font-bold mt-1 uppercase tracking-tighter">
+              {{'chats' | translate}}
+            </span>
+          </a>
+          }
+
+          @if (authService.user()) {
+          <a (click)="onUser()" [routerLink]="['/', $safeNavigationMigration(authService.user()?.username)]"
+            class="flex flex-col items-center justify-center w-12 h-12 rounded-2xl transition-all duration-200 active:scale-90 hover:text-[var(--color-primary-500)]">
+            <i appIcon iconName="circle-user-regular" [size]="'w-6 h-6'" [color]="''" aria-hidden="true"></i>
+            <span class="text-[9px] font-bold mt-1 uppercase tracking-tighter">{{ 'profile' | translate }}</span>
+          </a>
+
+          } @else {
+          <a [routerLink]="['/auth/login']" routerLinkActive="text-[var(--color-primary-500)]"
+            class="flex flex-col items-center justify-center w-12 h-12 rounded-2xl transition-all duration-200 active:scale-90 hover:text-[var(--color-primary-500)]">
+            <i appIcon iconName="login-regular" [size]="'w-6 h-6'" [color]="''" aria-hidden="true"></i>
+            <span class="text-[9px] font-bold mt-1 uppercase tracking-tighter whitespace-nowrap">{{'Login' |
+              translate}}</span>
+          </a>
+          }
+
+        </div>
+      </nav>
+    </aside>
+    }
+    }
+    <main class="h-full mt-0 lg:ml-[0rem]" aria-label="Main Content">
+      <router-outlet #outlet="outlet"></router-outlet>
+    </main>
+  </div>
+</div>
+
+@if (isBrowser && authService.user()! && dialogService.activeModal() === 'sidebar') {
+<aside class="fixed inset-0 z-[60] flex items-center justify-start transition-all duration-300" (click)="onCloseModal()"
+  animate.enter="backdrop-animation-enter" animate.leave="backdrop-animation-leave">
+
+  <div (click)="stopPropagation($event)" animate.enter="slide-animation-enter" animate.leave="slide-animation-leave"
+    class="bg-white dark:bg-[var(--color-secondary-900)] w-80 h-[96vh] ml-2 shadow-2xl relative overflow-hidden border border-slate-200 dark:border-[var(--color-secondary-800)] rounded-[2.5rem] flex flex-col transition-colors duration-300">
+
+    @let user = authService.user();
+    @let hasCover = $safeNavigationMigration(user?.Cover?.[0]);
+    @let hasProfile = $safeNavigationMigration(user?.Profile?.[0]);
+
+    <div class="relative min-h-[160px]">
+      <div class="h-32 w-full relative overflow-hidden">
+        @if(hasCover) {
+        <div [style.background-image]="'url(' + (getMediaDetails(hasCover)?.url || '') + ')'"
+          class="w-full h-full bg-cover bg-center transition-transform duration-700 hover:scale-110">
+        </div>
+        } @else {
+        <div
+          class="w-full h-full bg-gradient-to-tr from-[var(--color-primary-500)]/20 to-purple-500/20 dark:from-[var(--color-secondary-950)] dark:to-[var(--color-secondary-900)]">
+        </div>
+        }
+        <div class="absolute inset-0 bg-gradient-to-t from-white dark:from-[var(--color-secondary-900)] to-transparent">
+        </div>
+      </div>
+
+      <div class="absolute bottom-0 left-6 flex items-end gap-3 w-full">
+        <button (click)="socketConnect()" class="relative group cursor-pointer">
+          <div [ngClass]="socketStatus ? 'ring-green-500' : 'ring-slate-200 dark:ring-[var(--color-secondary-800)]'"
+            class="h-20 w-20 rounded-2xl p-1 bg-white dark:bg-[var(--color-secondary-900)] ring-4 transition-all group-active:scale-90 overflow-hidden shadow-xl">
+            @if(hasProfile) {
+            <img class="h-full w-full object-cover rounded-xl" [src]="getMediaDetails(hasProfile)?.url || ''"
+              width="500" height="500" />
+            } @else {
+            <div
+              class="h-full w-full flex items-center justify-center bg-slate-100 dark:bg-[var(--color-secondary-950)] text-3xl font-bold rounded-xl text-slate-400 dark:text-[var(--color-secondary-500)] uppercase">
+              {{ getFirstLetter(authService.user()?.alias! || authService.user()?.username!) }}
+            </div>
+            }
+          </div>
+          <span
+            class="absolute -bottom-1 -right-1 w-5 h-5 border-4 border-white dark:border-[var(--color-secondary-900)] rounded-full transition-colors"
+            [ngClass]="socketStatus ? 'bg-green-500' : 'bg-slate-400'"></span>
+        </button>
+
+        <div class="pb-1 max-w-[160px]">
+          <h2 class="font-black text-lg text-slate-900 dark:text-white truncate leading-tight">
+            {{ authService.user()?.alias }}
+          </h2>
+          <a [routerLink]="['/', $safeNavigationMigration(authService.user()?.username)]"
+            class="text-xs font-bold text-[var(--color-primary-600)] dark:text-[var(--color-primary-400)] hover:underline tracking-tight">
+            {{ '@' + authService.user()?.username }}
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección de Monedas / Créditos -->
+    <div
+      class="mx-6 mt-4 p-3 bg-amber-500/10 dark:bg-amber-500/5 border border-amber-500/20 rounded-2xl flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i appIcon iconName="povicoin-solid" [size]="'w-6 h-6'" [color]="'text-amber-500'"></i>
+        <div class="flex flex-col">
+          <span class="text-[10px] uppercase font-black text-amber-600 dark:text-amber-400 tracking-wider">{{ 'coins' |
+            translate }}</span>
+          <span class="text-base font-black text-slate-900 dark:text-white leading-none">
+            {{ userService.userCurrent()?.UserCredit?.current | number:'1.0-0' }}
+          </span>
+        </div>
+      </div>
+      <button type="button" (click)="onCreditPurchase()"
+        class="bg-amber-500 hover:bg-amber-600 active:scale-95 transition-all text-white text-xs font-black px-3 py-1.5 rounded-xl shadow-md shadow-amber-500/20 cursor-pointer">
+        + {{ 'reload' | translate }}
+      </button>
+    </div>
+
+    <!-- Navegación interna del Menú -->
+    <div class="flex-grow overflow-y-auto mt-4 px-4 overscroll-contain">
+      <nav class="space-y-1">
+
+        <a (click)="onUser()" [routerLink]="['/', $safeNavigationMigration(authService.user()?.username)]"
+          routerLinkActive="bg-[var(--color-primary-500)]/10 text-[var(--color-primary-600)] dark:text-[var(--color-primary-400)]"
+          class="flex items-center gap-3 h-12 px-4 rounded-2xl transition-all duration-200 hover:bg-slate-50 dark:hover:bg-[var(--color-secondary-950)] text-slate-700 dark:text-[var(--color-secondary-200)] group">
+          <i appIcon iconName="circle-user-regular" [size]="'w-5 h-5'" [color]="''"
+            class="group-hover:scale-110 transition-transform"></i>
+          <span class="text-sm font-bold">{{'profile' | translate }}</span>
+        </a>
+
+        @if(authService.user()) {
+        <a (click)="onCloseModal()" [routerLink]="['/chats']"
+          routerLinkActive="bg-[var(--color-primary-500)]/10 text-[var(--color-primary-600)] dark:text-[var(--color-primary-400)]"
+          class="hidden items-center justify-between h-12 px-4 rounded-2xl transition-all duration-200 hover:bg-slate-50 dark:hover:bg-[var(--color-secondary-950)] text-slate-700 dark:text-[var(--color-secondary-200)] group">
+          <div class="flex items-center gap-3">
+            <i appIcon iconName="messages-regular" [size]="'w-5 h-5'" [color]="''"></i>
+            <span class="text-sm font-bold">{{'messages' | translate }}</span>
+          </div>
+          @if(authService.user()?.countUnreadMessages! > 0) {
+          <span
+            class="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full ring-2 ring-white dark:ring-[var(--color-secondary-900)]">
+            {{ authService.user()?.countUnreadMessages! > 99 ? '99+' : authService.user()?.countUnreadMessages }}
+          </span>
+          }
+        </a>
+        }
+
+        @for (link of [
+        { icon: 'subscription-regular', label: 'myCommunity', path: '/admin/community' },
+        { icon: 'bookmark-heart-regular', label: 'bookmarks', path: '/admin/bookmarks' },
+        { icon: 'activity-regular', label: 'activity', path: '/admin/activity' },
+        { icon: 'metabolism-regular', label: 'iAmACashier', path: '/admin/peer-transfers/pending' },
+        { icon: 'manage-account-regular', label: 'setting', path: '/admin/setting' }
+        ]; track $index) {
+        <a (click)="onCloseModal()" [routerLink]="[link.path]"
+          routerLinkActive="bg-[var(--color-primary-500)]/10 text-[var(--color-primary-600)] dark:text-[var(--color-primary-400)]"
+          class="flex items-center gap-3 h-12 px-4 rounded-2xl transition-all hover:bg-slate-50 dark:hover:bg-[var(--color-secondary-950)] text-slate-700 dark:text-[var(--color-secondary-200)] group">
+          <i appIcon [iconName]="link.icon" [size]="'w-5 h-5'" [color]="''"></i>
+          <span class="text-sm font-bold">{{ link.label | translate }}</span>
+        </a>
+        }
+
+        @if (authService.user()?.status === 'ACTIVE') {
+        <button (click)="redirectToSite()"
+          class="w-full flex items-center gap-3 h-12 px-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-[var(--color-secondary-950)] transition-all text-slate-700 dark:text-[var(--color-secondary-200)] cursor-pointer">
+          <i appIcon iconName="lock-regular" [size]="'w-5 h-5'" [color]="''"></i>
+          <span class="text-sm font-bold">{{ 'privateContent' | translate }}</span>
+        </button>
+        }
+      </nav>
+
+      <div class="my-4 h-[1px] bg-slate-100 dark:bg-[var(--color-secondary-800)]"></div>
+
+      <!-- Selector de Idioma e Información de Cierre de Sesión -->
+      <div class="space-y-4 pb-6">
+        <form [formGroup]="myformLanguage" class="px-2">
+          <select formControlName="language" #langSelect (change)="changeLang(langSelect.value)"
+            class="w-full bg-slate-100 dark:bg-[var(--color-secondary-950)] text-slate-700 dark:text-[var(--color-secondary-200)] border border-slate-200 dark:border-[var(--color-secondary-800)] rounded-xl py-2 px-3 text-xs font-bold focus:outline-none cursor-pointer">
+            @for (lang of langs; track $index) {
+            <option [value]="lang.value" class="notranslate bg-white dark:bg-[var(--color-secondary-900)]">{{ lang.name
+              }}</option>
+            }
+          </select>
+        </form>
+
+        <button (click)="logout()"
+          class="w-full flex items-center gap-3 h-12 px-6 rounded-2xl bg-red-50 dark:bg-red-500/10 text-red-500 transition-all hover:bg-red-100 dark:hover:bg-red-500/20 font-black text-sm uppercase tracking-widest cursor-pointer">
+          <i appIcon iconName="logout-regular" [size]="'w-5 h-5'" [color]="''"></i>
+          {{ "logout" | translate }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer Legal del Menú -->
+    <div
+      class="p-6 bg-slate-50 dark:bg-[var(--color-secondary-950)]/50 flex justify-center gap-4 border-t border-slate-100 dark:border-[var(--color-secondary-800)]">
+      <a routerLink="/legal/terms" (click)="onCloseModal()"
+        class="text-[10px] font-bold text-slate-400 dark:text-[var(--color-secondary-400)] uppercase tracking-tighter hover:text-[var(--color-primary-500)] transition-colors">
+        {{ 'terms_of_service' | translate }}
+      </a>
+      <span class="text-slate-300 dark:text-[var(--color-secondary-700)]">|</span>
+      <a routerLink="/legal/policy" (click)="onCloseModal()"
+        class="text-[10px] font-bold text-slate-400 dark:text-[var(--color-secondary-400)] uppercase tracking-tighter hover:text-[var(--color-primary-500)] transition-colors">
+        {{ 'privacy' | translate }}
+      </a>
+    </div>
+
+  </div>
+</aside>
+}

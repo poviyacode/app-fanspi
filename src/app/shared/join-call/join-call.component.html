@@ -1,0 +1,78 @@
+<div
+    class="fixed inset-0 flex flex-col items-center justify-between bg-gradient-to-b from-zinc-950 via-pink-950/90 to-zinc-950 z-50 p-8 backdrop-blur-md">
+
+    <div
+        class="absolute top-1/4 left-1/2 -translate-x-1/2 w-72 h-72 bg-pink-500/10 rounded-full blur-[120px] pointer-events-none animate-pulse">
+    </div>
+
+    <div class="relative z-10 text-center mt-20 space-y-2">
+        <span
+            class="text-xs font-black tracking-widest text-pink-500 uppercase bg-pink-500/10 px-3 py-1 rounded-full border border-pink-500/20">
+            {{ (role() === 'audience' ? 'incomingCall' : 'outgoingCall') | translate }}
+        </span>
+        <h1 class="text-zinc-400 text-sm font-medium pt-2">
+            {{ (role() === 'audience' ? 'isCallingYou' : 'callingTo') | translate }}
+        </h1>
+    </div>
+    @let user = MatchedUser();
+    @let hasProfile = $safeNavigationMigration(user?.Profile?.[0]);
+    <div class="relative flex items-center justify-center w-full my-auto">
+        <div
+            class="absolute w-44 h-44 sm:w-52 sm:h-52 rounded-full bg-pink-500/20 animate-ping [animation-duration:3s]">
+        </div>
+        <div
+            class="absolute w-56 h-56 sm:w-64 sm:h-64 rounded-full bg-pink-600/10 animate-ping [animation-duration:4s] [animation-delay:1s]">
+        </div>
+
+        <div
+            class="relative p-1.5 rounded-full bg-gradient-to-tr from-pink-500 to-purple-500 shadow-[0_0_50px_0_rgba(236,72,153,0.3)] z-10 transition-transform duration-300 hover:scale-105">
+            <div
+                class="w-32 h-32 sm:w-40 sm:h-40 rounded-full flex justify-center items-center overflow-hidden bg-zinc-900 text-4xl font-black text-pink-100 border-4 border-zinc-950 uppercase">
+
+                @if (hasProfile) {
+                <img class="w-full h-full object-cover"
+                    [src]="($safeNavigationMigration(getMediaDetails(hasProfile)?.url)) || ''"
+                    [alt]="MatchedUser()?.username || MatchedUser()?.alias" width="500" height="500" />
+                } @else {
+                {{ getFirstLetter(MatchedUser()?.alias || MatchedUser()?.username || '') }}
+                }
+
+            </div>
+        </div>
+    </div>
+
+    <div class="relative z-10 w-full max-w-sm flex flex-col items-center space-y-8 mb-20">
+
+        <div class="text-center space-y-1">
+            <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                {{ MatchedUser()?.alias }}
+            </h2>
+            <p class="text-sm font-semibold text-pink-400 tracking-wide">
+                &#64;{{ MatchedUser()?.username }}
+            </p>
+        </div>
+
+        <div class="flex items-center justify-center gap-8 w-full">
+            <button (click)="onRejectCall()"
+                class="cursor-pointer bg-red-500 hover:bg-red-600 active:scale-90 text-white w-16 h-16 rounded-full flex justify-center items-center shadow-[0_8px_24px_rgba(239,68,68,0.3)] transition-all duration-300 border-0"
+                title="Decline Call">
+                <i appIcon iconName="call-regular" [size]="'w-7 h-7'" [color]="'text-white rotate-[135deg]'"></i>
+            </button>
+
+            @if(role() === 'audience') {
+            <button (click)="onAcceptCall()"
+                class="cursor-pointer bg-emerald-500 hover:bg-emerald-600 active:scale-90 text-white w-16 h-16 rounded-full flex justify-center items-center shadow-[0_8px_24px_rgba(16,185,129,0.3)] transition-all duration-300 border-0 animate-bounce [animation-iteration-count:3]"
+                title="Accept Call">
+                <i appIcon iconName="duo-regular" [size]="'w-7 h-7'" [color]="'text-white'"></i>
+            </button>
+            }
+        </div>
+
+        @if(role() === 'transmitter') {
+        <p class="text-zinc-500 text-xs tracking-wider font-medium animate-pulse text-center max-w-[250px]">
+            {{ 'waitingForUserResponse' | translate }}
+        </p>
+        }
+    </div>
+
+</div>

@@ -1,99 +1,51 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ToolsService } from '../services/tools.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Pipe({
     name: 'dateAgo',
-    pure: true,
-    standalone: false
+    standalone: true,
+    pure: false // <-- 1. Importante: Cambiar a impuro para que detecte cambios de idioma o reintentos
 })
 export class DateAgoPipe implements PipeTransform {
+    constructor(private translate: TranslateService) { }
 
-  constructor(private toolsService: ToolsService) { }
+    transform(date: string | null | undefined): string {
+        if (!date) return '';
 
-  transform(value: any, args?: any): any {
-    const lang = this.toolsService.language();
-    if (value) {
-      const seconds = Math.floor((+new Date() - +new Date(value)) / 1000);
-      if (seconds < 29) // less than 30 seconds ago will show as 'Just now'
-        //return 'Just now';
-        return 'Ahora';
-      const intervals: { [key: string]: number } = {
-        /*'year': 31536000,
-        'month': 2592000,
-        'week': 604800,
-        'day': 86400,
-        'hour': 3600,
-        'minute': 60,
-        'second': 1
-        */
-        'year': 31536000,
-        'month': 2592000,
-        'week': 604800,
-        'd': 86400,
-        'h': 3600,
-        'm': 60,
-        's': 1
-      };
-      let counter;
-      for (const i in intervals) {
-        counter = Math.floor(seconds / intervals[i]);
-        if (counter > 0)
-          // if (counter === 1) {
-          //     //return counter + ' ' + i + ' ago'; // singular (1 day ago)
-          //     //return counter + ' ' + i;
-          //     return 'hace ' + counter + ' ' + i;
-          // } else {
-          //     //return counter + ' ' + i + 's ago'; // plural (2 days ago)
-          //     return 'hace ' + counter + ' ' + i + 's';
-          // }
+        const pastDate = new Date(date);
+        const now = new Date();
+        const diffInSeconds = Math.floor((now.getTime() - pastDate.getTime()) / 1000);
 
-          if (i == 'week' || i == 'month' || i == 'year') {
-            let date = new Date(value);
-            //let x = date.toLocaleDateString('en-US');
-            let x = null;
-            if (lang == 'es') {
-              x = `${date.toLocaleDateString('es-ES')}`;
-            } else {
-              x = `${date.toLocaleDateString('en-US')}`;
+        if (diffInSeconds < 0) {
+            return this.translate.instant('inTheFuture');
+        }
+
+        const intervals: { [key: string]: number } = {
+            timeyear: 31536000,
+            timemonth: 2592000,
+            timeweek: 604800,
+            timeday: 86400,
+            timehour: 3600,
+            timeminute: 60,
+            timesecond: 1
+        };
+
+        for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+            const value = Math.floor(diffInSeconds / secondsInUnit);
+            if (value >= 1) {
+                const key = value === 1 ? unit : `${unit}_plural`;
+                const translation = this.translate.instant(key, { count: value });
+
+                // Si ngx-translate devuelve la misma clave, significa que aún no cargó el JSON
+                if (translation === key) {
+                    return ''; // O un texto de carga provisional
+                }
+
+                return translation;
             }
-            // x = x.replace('/', '-');
-            x = x.split('/');
-            const moonLanding = new Date();
-            const day = Number(x[0]) < 10 ? `0${x[0]}` : x[0];;
-            const month = Number(x[1]) < 10 ? `0${x[1]}` : x[1];
-            const year = Number(x[2]);
-            if (year == moonLanding.getFullYear()) {
-              return day + '-' + month;
-            } else {
-              return day + '-' + month + '-' + year;
-            }
-          } else {
-            //return counter + ' ' + i + 's ago'; // plural (2 days ago)
-            if (i == 's' || i == 'm' || i == 'h' || i == 'd') {
-              return counter + i;
-            }
-            else if (i == 'week' || i == 'month' || i == 'year') {
-              let date = new Date(value);
-              //let x = date.toLocaleDateString('en-US');
-              let x = null;
-              if (lang == 'es') {
-                x = `${date.toLocaleDateString('es-ES')}`;
-              } else {
-                x = `${date.toLocaleDateString('en-US')}`;
-              }
-              x = x.replace('/', '-');
-              return x.replace('/', '-');
-            }
-            else {
-              {
-                return counter + i + 's';
-              }
-            }
-            //return 'hace ' + counter + ' ' + i + 's';
-          }
-      }
+        }
+
+        const fallback = this.translate.instant('justNow');
+        return fallback === 'justNow' ? '' : fallback;
     }
-    return value;
-  }
-
 }

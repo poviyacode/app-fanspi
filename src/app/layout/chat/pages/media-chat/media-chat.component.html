@@ -1,0 +1,142 @@
+<div class="modal-center" (click)="closeModal()">
+  <div class=" bg-background-dark rounded-md shadow-lg border border-zinc-100 dark:border-zinc-800/40 "
+    (click)="($event.stopPropagation())" animate.enter="modal-animation-enter" animate.leave="modal-animation-leave">
+    <div class="w-screen full-height">
+      <div (wheel)="onScroll($event)" (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)">
+
+        <!-- image -->
+        <div
+          class="{{currentLinghtbox()?.type == 'image' ? 'block' : 'hidden'}} relative flex justify-center items-center">
+          @if (currentLinghtbox()?.type == 'image') {
+          <img ngOptimizedImage priority="high" [src]="
+              currentLinghtbox()?.cloudflare
+                ? currentLinghtbox()?.cloudflare.result.variants[0]
+                : $safeNavigationMigration(currentLinghtbox()?.url)
+            " alt="" class="full-height w-fit object-cover" />
+          }
+        </div>
+        <!-- video -->
+        <div (click)="togglePlayPause()"
+          class="relative flex justify-center items-center {{currentLinghtbox()?.type == 'video' ? 'block' : 'hidden'}}">
+          <div class="absolute text-white opacity-70">
+            @if (!isPlaying) {
+            <i appIcon iconName="play-regular" [size]="'w-20 h-20'" [color]="''"></i>
+            }
+          </div>
+          @if(this.isLoadingVideo()) {
+          <!-- Spinner de carga -->
+          @if (checkBufferingState()) {
+          <div class="video-loading-spinner">
+            <div class="video-spinner"></div>
+            <div class="buffer-stats hidden">
+              <span>Buffered: {{ getBufferedPercentage() | number:'1.0-0' }}%</span>
+              <span>Buffer restante: {{ getRemainingBufferTime() | number:'1.1-1' }}s</span>
+            </div>
+          </div>
+          }
+          }
+          <video #videoElement class="video-js vjs-fill bg-black full-height w-full flex justify-center"
+            controlsList="nodownload noplaybackrate" disablePictureInPicture playsinline>
+          </video>
+        </div>
+
+        @if (verifiedPrivate()) {
+        <div
+          class="absolute inset-0 text-white dark:text-zinc-300 bg-zinc-100/50 dark:bg-zinc-800/50 space-y-2 rounded-t-xl rounded-xl backdrop-blur-3xl m-2 sm:m-2">
+          <div class="space-x-1 flex flex-col justify-center items-center h-full space-y-1">
+            <i appIcon iconName="lock-regular" [size]="'w-20 h-20'" [color]="''"></i>
+            <button
+              class="bg-gradient-to-r from-amber-500 to-amber-600 text-white text-md font-bold px-4 py-1.5 rounded-full flex items-center gap-1 shadow-lg">
+              <span appIcon iconName="povicoin-solid" [size]="'w-4 h-4'"></span>
+              <span>{{ messageService.message()?.credit }}</span>
+            </button>
+          </div>
+        </div>
+        }
+
+      </div>
+
+      <!-- option-->
+      <div class="fixed left-1/2 top-2 md:top-5">
+        <div class="flex justify-between items-center space-x-2">
+          @if (this.postService.post()?.PostMedia && this.postService.post()?.PostMedia?.length! > 1) {
+          <div class="flex justify-center">
+            <div class="bg-black/50 rounded-2xl px-1 py-1 flex items-center">
+              <button class="text-sm md:text-sm text-white px-1" (click)="prevCarouselMedia()">
+                <i appIcon iconName="arrow-back-regular" [size]="'w-4 h-4'" [color]="'text-zinc-100'"></i>
+              </button>
+              <span class="mx-2 text-sm md:text-sm font-normal text-white">
+                {{ getCurrentSlideNumber() }} / {{getTotalSlideCount() }}
+              </span>
+              <button class="text-sm md:text-sm text-white px-1" (click)="nextCarouselMedia()">
+                <i appIcon iconName="arrow-forward-regular" [size]="'w-4 h-4'" [color]="'text-zinc-100'"></i>
+              </button>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+
+      <div [ngClass]="showFullText() ? 'bg-opacity' : ''"
+        class="fixed bottom-20 md:bottom-20 left-2 md:left-2 text-sm w-72 sm:w-72 md:w-96 rounded-md p-3 overflow-y-auto max-h-[80vh]">
+        <a routerLink="/{{this.postService.post()?.User?.username}}" class="truncate">
+          <span class="truncate text-white font-bold text-lg">
+            {{this.postService.post()?.User?.alias || this.postService.post()?.User?.username }}
+          </span>
+        </a>
+
+        <!-- Descripción (Expansible) -->
+        <div class="w-full mt-2">
+
+          @if (postService.post()?.description) {
+          <p [class.line-clamp-2]="!showFullText()"
+            class="text-white leading-relaxed transition-all duration-300 ease-in-out"
+            [innerHTML]="getSafeHtml($safeNavigationMigration(postService.post()?.description)!)">
+          </p>
+          }
+
+          @if (this.postService.post()?.age && this.showFullText()) {
+          <p class="space-x-1 mt-2">
+            <i appIcon iconName="id-card-regular" [size]="'w-5 h-5'"
+              [color]="'text-primary-600 dark:text-primary-400'"></i>
+            <span class="font-semibold lowercase">
+              {{ 'yearsOld' | translate: { age: this.postService.post()?.age || 18 } }}
+            </span>
+          </p>
+          }
+
+          @if (this.postService.post()?.Country?.name && this.showFullText()) {
+          <p [class.line-clamp-1]="!showFullText()" class="space-x-1 line-clamp-1">
+            <i appIcon iconName="map-pin-solid" [size]="'w-5 h-5'"
+              [color]="'text-primary-600 dark:text-primary-400'"></i>
+            <span class="font-semibold">{{this.postService.post()?.Country?.name}}</span>
+            <span>/</span>
+            <span>{{this.postService.post()?.CountryState?.name}}</span>
+          </p>
+          }
+
+          <!-- Botón Ver Más / Ver Menos -->
+          @if (postService.post()?.description!) {
+          <button (click)="toggleText()" class="cursor-pointer text-sm text-primary-500 transition-colors font-bold">
+            {{ showFullText() ? ('read.less' | translate) : ('read.more' | translate) }}
+          </button>
+          }
+
+        </div>
+      </div>
+
+
+      <div class="fixed right-4 md:right-4 top-2 md:top-5">
+        <button (click)="closeModal()"
+          class="text-white bg-black/50 rounded-full w-10 h-10 flex justify-center items-center cursor-pointer transition-colors duration-300 hover:bg-black/40">
+          <i appIcon iconName="close-regular" [size]="'w-6 h-6'" [color]="'text-zinc-100'"></i>
+        </button>
+      </div>
+
+      <div class="fixed top-1/2 left-1/2">
+        <ng-container #container></ng-container>
+      </div>
+
+    </div>
+  </div>
+</div>

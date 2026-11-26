@@ -1,0 +1,285 @@
+@if (isBrowser) {
+  <div class="mx-auto max-w-md md:max-w-7xl mb-20">
+    <section
+      class="sticky top-0 left-0  w-full py-2  bg-background-light dark:bg-background-dark dark:text-zinc-200 z-50 ">
+      <div class="flex justify-between items-center h-10 px-3  text-xs">
+        <div class="flex justify-between items-center space-x-5">
+          <button (click)="goBack()" class="cursor-pointer flex justify-center items-center">
+            <i class="fa-solid fa-chevron-left text-lg"></i>
+          </button>
+          <button (click)="onScrollTop()"
+            class="flex flex-col items-center cursor-pointer uppercase text-base font-semibold">
+            <span>{{'personalInformation' | translate}}</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    @if (authService.user()?.statusPersonal === 'REVIEWING') {
+      <main
+        class="flex flex-col items-center justify-center p-6 bg-primary-50 dark:bg-zinc-800 border border-primary-200 dark:border-zinc-700 rounded-lg shadow-lg max-w-md mx-auto mt-8 sm:mt-12 md:mt-16">
+        <div class="flex items-center justify-center mb-4">
+          <span appIcon iconName="alert-regular" [size]="'w-12 h-12'"
+          [color]="'text-primary-600 dark:text-primary-400'"></span>
+        </div>
+        <h2 class="text-lg font-semibold text-primary-700 dark:text-primary-300">
+          {{'informationUnderReview' | translate}}
+        </h2>
+        <p class="text-center text-zinc-600 dark:text-zinc-300 mt-2 text-sm sm:text-base">
+          {{'informationUnderReviewMessage' | translate}}
+        </p>
+      </main>
+    } @else if (authService.user()?.statusPersonal === 'REJECTED') {
+      <div
+        class="flex flex-col items-center justify-center p-6 bg-red-50 dark:bg-zinc-800 border border-red-200 dark:border-zinc-700 rounded-lg shadow-lg max-w-md mx-auto mt-8 sm:mt-12 md:mt-16">
+        <div class="flex items-center justify-center mb-4">
+          <span appIcon iconName="circle-solid" [size]="'w-12 h-12'"
+          [color]="'text-red-600 dark:text-red-400'"></span>
+        </div>
+        <h2 class="text-lg font-semibold text-red-700 dark:text-red-300">
+          {{'submissionRejected' | translate}}
+        </h2>
+        <p class="text-center text-zinc-600 dark:text-zinc-300 mt-2 text-sm sm:text-base">
+          {{'informationNotApproved' | translate}}
+        </p>
+      </div>
+    } @else {
+      <main class="mx-4 mt-2">
+        @if (authService.user()?.statusPersonal === 'RESUBMIT_DATA') {
+          <div
+            class="mb-4 flex flex-col items-center justify-center p-6 bg-yellow-50 dark:bg-gray-800 border border-yellow-200 dark:border-gray-700 rounded-lg shadow-lg w-full mx-auto">
+            <div class="flex items-center justify-center mb-4">
+              <span appIcon iconName="alert-regular" [size]="'w-12 h-12'"
+              [color]="'text-yellow-600 dark:text-yellow-400'"></span>
+            </div>
+            <h2 class="text-lg font-semibold text-yellow-700 dark:text-yellow-300">
+              {{'pleaseResubmitData' | translate}}
+            </h2>
+            <p class="text-center text-gray-600 dark:text-gray-300 mt-2 text-sm sm:text-base">
+              {{'additionalInformationNeeded' | translate}}
+            </p>
+          </div>
+        }
+
+        <div
+          class="w-full rounded-xl border border-zinc-200 dark:border-zinc-700/50  p-4 sm:p-6 shadow-xl bg-white dark:bg-zinc-800/40 dark:text-zinc-200">
+
+          <form [formGroup]="myForm" (submit)="onSubmit()" novalidate class="sm:px-0 ">
+
+            <fieldset class="mb-4 flex space-x-4">
+              <div class="w-full sm:w-1/2 flex flex-col">
+                <label for="name" class="mb-2 font-semibold">{{ 'name' | translate }}</label>
+                <div class="relative">
+                  <input formControlName="name" type="text" id="text" class="pl-7" autocomplete="off"
+                    [ngClass]="inputClass(myForm, 'name')" />
+                    <div class="flex absolute inset-y-0 left-0 items-center pl-2 pointer-events-none">
+                      <i class="fas fa-user"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="w-full sm:w-1/2 flex flex-col">
+                  <label for="lastname" class="mb-2 font-semibold">{{ 'lastname' | translate }}</label>
+                  <div class="relative">
+                    <input formControlName="lastname" type="text" id="text" class="pl-7" autocomplete="off"
+                      [ngClass]="inputClass(myForm, 'lastname')" />
+                      <div class="flex absolute inset-y-0 left-0 items-center pl-2 pointer-events-none">
+                        <i class="fas fa-user"></i>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+
+                <fieldset class="mb-4 sm:flex sm:space-x-4 space-y-4 sm:space-y-0">
+                  <div class="w-full sm:w-1/2 flex flex-col">
+                    <label for="idIdentification" class="mb-2 font-semibold">{{ 'idIdentification' | translate
+                    }}</label>
+                    <div class="relative">
+                      <input formControlName="idIdentification" type="text" id="text" class="pl-7"
+                        autocomplete="off" [ngClass]="inputClass(myForm, 'idIdentification')" />
+                        <div class="flex absolute inset-y-0 left-0 items-center pl-2 pointer-events-none">
+                          <i class="fas fa-id-card"></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="w-full sm:w-1/2 flex flex-col">
+                      <label for="dateBirth" class="mb-2 font-semibold">{{ 'dateOfBirth' | translate }}</label>
+                      <div class="relative">
+                        <input formControlName="dateBirth" type="date" id="text" class="pl-7"
+                          [ngClass]="inputClass(myForm, 'dateBirth')" />
+                          <div class="flex absolute inset-y-0 left-0 items-center pl-2 pointer-events-none">
+                            <i class="fas fa-calendar"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </fieldset>
+
+                    <fieldset class="mb-4 flex flex-col">
+                      <div class="w-full sm:w-1/2 flex flex-col">
+                        <label for="gender" class="mb-2 font-semibold">{{ 'gender' | translate }}</label>
+                        <div class="relative w-full">
+                          <select formControlName="gender" [ngClass]="inputClass(myForm, 'gender')"
+                            autocomplete="off">
+                            @for (item of genderArray; track item) {
+                              <option [value]="item.value">{{ item.name | translate
+                              }}</option>
+                            }
+                          </select>
+                        </div>
+                      </div>
+                    </fieldset>
+
+                    <fieldset class="mb-4 flex space-x-4">
+                      <div class="w-full sm:w-1/2 flex flex-col">
+                        <label for="country" class="mb-2 font-semibold">{{ 'country' | translate }}</label>
+                        <div class="relative">
+                          <select formControlName="country" [ngClass]="selectClass(myForm, 'country')"
+                            (change)="onCountryState($event)">
+                            @for (item of countries(); track item) {
+                              <option [value]="item.code">{{ item.name! | translate
+                                }}
+                              </option>
+                            }
+                          </select>
+                        </div>
+                      </div>
+                      <div class="w-full sm:w-1/2 flex flex-col">
+                        <label for="countryState" class="mb-2 font-semibold">{{ 'state' | translate }}</label>
+                        <div class="relative">
+                          <select formControlName="countryState" [ngClass]="selectClass(myForm, 'countryState')">
+                            @for (item of countryStates(); track item) {
+                              <option [value]="item.code">{{ item.name }}
+                              </option>
+                            }
+                          </select>
+                        </div>
+                      </div>
+                    </fieldset>
+
+                    <fieldset class="mb-4 flex space-x-4">
+                      <div class="w-full sm:w-1/2 flex flex-col">
+                        <label for="city" class="mb-2 font-semibold">{{ 'city' | translate }}</label>
+                        <div class="relative">
+                          <input formControlName="city" type="text" id="text" [ngClass]="inputClass(myForm, 'city')"
+                            class="pl-7" />
+                            <div class="flex absolute inset-y-0 left-0 items-center pl-2 pointer-events-none">
+                              <i class="fa-regular fa-map"></i>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="w-full sm:w-1/2 flex flex-col">
+                          <label for="addressLine1" class="mb-2 font-semibold">{{ 'address' | translate }}</label>
+                          <div class="relative">
+                            <input formControlName="addressLine1" type="text" id="text"
+                              [ngClass]="inputClass(myForm, 'addressLine1')" class="pl-7" />
+                              <div class="flex absolute inset-y-0 left-0 items-center pl-2 pointer-events-none">
+                                <i class="fa-regular fa-map"></i>
+                              </div>
+                            </div>
+                          </div>
+                        </fieldset>
+
+                        <fieldset class="mb-4 flex space-x-4">
+                          <div class="w-3/6 flex flex-col">
+                            <label for="postalCode" class="mb-2 font-semibold">{{'postalCode' |
+                              translate}}
+                            </label>
+                            <div class="relative">
+                              <input formControlName="postalCode" type="text" id="text"
+                                [ngClass]="inputClass(myForm,'postalCode')" class="pl-7" />
+                                <div class="flex absolute inset-y-0 let-0 items-center pl-1 pointer-events-none">
+                                  <i appIcon iconName="map-pin-solid" [size]="'w-5 h-5'"
+                                  [color]="'text-primary-600 dark:text-primary-400'"></i>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="sm:w-3/6 flex flex-col">
+                              <label for="phone" class="mb-2 font-semibold">{{ 'phone' | translate }}</label>
+                              <div
+                                class="flex justify-start items-center w-full bg-zinc-100 dark:bg-zinc-700 rounded-xl border border-zinc-100 dark:border-zinc-700">
+                                <input formControlName="phonePrefix" id="text" placeholder="+591" readonly
+                                  [ngClass]="{'w-16 rounded-lg py-2 px-1 focus:outline-none focus:ring bg-zinc-100 dark:bg-zinc-700 focus:ring-zinc-200 active:ring-zinc-200 focus:dark:ring-zinc-700 active:ring active:dark:ring-zinc-700 pointer-events-none': true }">
+                                  <input formControlName="phone" id="text" [ngClass]="inputClass(myForm, 'phone')"
+                                    autocomplete="off" />
+                                  </div>
+                                </div>
+                              </fieldset>
+
+                              <fieldset
+                                class="flex flex-col items-center rounded-xl border border-zinc-200 dark:border-zinc-700/50 p-6 bg-white dark:bg-zinc-800/40 dark:text-zinc-200 space-y-3 max-w-md mx-auto sm:max-w-lg lg:max-w-3xl">
+                                <legend
+                                  class="rounded-xl border border-zinc-200 dark:border-zinc-700/50 px-4 py-1 bg-white dark:bg-zinc-800/40 dark:text-zinc-200 font-semibold">
+                                  {{ 'idVerification' | translate }}
+                                </legend>
+
+                                <p class="text-center text-sm text-zinc-500 dark:text-zinc-300">
+                                  {{ 'capturePhotoWithIdInstructions' | translate }}
+                                </p>
+
+                                <div
+                                  class="relative w-full max-w-xs sm:max-w-md h-40 sm:h-64 bg-zinc-700 rounded-lg overflow-hidden shadow-inner border border-zinc-50 dark:border-zinc-600 aspect-video">
+                                  <video #video autoplay class="w-full h-full object-cover"></video>
+                                  <canvas #canvas hidden></canvas>
+                                </div>
+
+                                <div
+                                  class="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 mt-4 w-fit justify-center">
+                                  <button type="button" (click)="capturePhoto('front')"
+                                    class="cursor-pointer px-2 py-1 font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border border-blue-700 rounded-full shadow-md transition-transform transform hover:scale-105 duration-150 ease-in-out w-full sm:w-auto flex items-center justify-center space-x-2">
+                                    <span appIcon iconName="camera-front-regular" [size]="'w-5 h-5'"
+                                    [color]="'text-white'"></span>
+                                    <span>{{ 'captureFront' | translate }}</span>
+                                  </button>
+                                  <button type="button" (click)="capturePhoto('back')"
+                                    class="cursor-pointer px-2 py-1 font-medium text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border border-blue-700 rounded-full shadow-md transition-transform transform hover:scale-105 duration-150 ease-in-out w-full sm:w-auto flex items-center justify-center space-x-2">
+                                    <span appIcon iconName="camera-back-regular" [size]="'w-5 h-5'"
+                                    [color]="'text-white'"></span>
+                                    <span>{{ 'captureBack' | translate }}</span>
+                                  </button>
+                                </div>
+
+                                <div class="flex flex-col sm:flex-row sm:space-x-6 mt-6 w-full">
+                                  @if (frontImage) {
+                                    <div class="flex flex-col items-center mt-4 sm:mt-0 w-full sm:w-1/2">
+                                      <h3 class="text-lg font-medium text-zinc-800 dark:text-zinc-200 mb-2">
+                                        {{ 'frontPhoto' | translate }}
+                                      </h3>
+                                      <img [ngSrc]="(frontImage) || ''" alt="Foto del anverso"
+                                        class="w-full max-w-xs h-40 sm:h-48 rounded-lg shadow-md border border-zinc-600 object-cover" width="500" height="500" />
+                                      </div>
+                                    }
+                                    @if (backImage) {
+                                      <div class="flex flex-col items-center mt-4 sm:mt-0 w-full sm:w-1/2">
+                                        <h3 class="text-lg font-medium text-zinc-800 dark:text-zinc-200 mb-2">
+                                          {{ 'backPhoto' | translate }}
+                                        </h3>
+                                        <img [ngSrc]="(backImage) || ''" alt="Foto del reverso"
+                                          class="w-full max-w-xs h-40 sm:h-48 rounded-lg shadow-md border border-zinc-600 object-cover" width="500" height="500" />
+                                        </div>
+                                      }
+                                    </div>
+                                  </fieldset>
+
+                                  <fieldset class="flex justify-center space-x-5 mt-10 font-semibold">
+                                    <button (click)="goBack()" [ngClass]="buttonSecondaryClass()">
+                                      {{'discard' | translate}}
+                                    </button>
+
+                                    <button type="submit" [ngClass]="buttonClass()" [disabled]="myForm.status !== 'VALID'">
+                                      {{ 'send' | translate }}
+                                    </button>
+                                  </fieldset>
+
+                                  <pre class="hidden">
+                                    {{myForm.status}}
+                                    {{myForm.value| json}}
+                                  </pre>
+
+                                </form>
+                              </div>
+
+                            </main>
+                          }
+
+                        </div>
+                      }
