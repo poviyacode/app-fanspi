@@ -2,14 +2,14 @@ export const environment = {
   production: true,
   site: "63b1a7f49a2ebe3801fdb3f9",
   //prod
-  api: 'https://api.fanspi.com/api',
-  apiSocket: 'https://api.fanspi.com/socket.io/socket.io.js',
-  api2: 'https://api2.fanspi.com/api',
+  api: 'https://api.poviya.com/api',
+  apiSocket: 'https://api.poviya.com/socket.io/socket.io.js',
+  api2: 'https://api2.poviya.com/api',
   //test
   //api: 'https://apitest.fanspi.com/api/',
   //apiSocket: 'https://apitest.fanspi.com/socket.io/socket.io.js/',
 
-  apifanspiPhp: 'https://pay.fanspi.com/api/',
+  apiPoviyaPhp: 'https://pay.poviya.com/api/',
 
   // stripe INC 
   stripe_pk_inc: 'pk_live_51QAMMvBLsnGAeKC39xA2aTh9EAO7xFbWz3OwSs82apqzIYNo7RKDSEQSv7nNs7tVoGAFzpCvW3YETP5dvzRw1Xw300sdOkVZAQ',

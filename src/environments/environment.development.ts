@@ -10,8 +10,8 @@ export const environment = {
     //api: 'https://api.fanspi.com/api/',
     //apiSocket: 'https://api.fanspi.com',
 
-    apifanspiPhp: 'https://pay.fanspi.com/api/',
-    //tapifanspiPhp: 'http://127.0.0.1:8000/api/',
+    apiPoviyaPhp: 'https://pay.poviya.com/api/',
+    //tapiPoviyaPhp: 'http://127.0.0.1:8000/api/',
 
     // stripe INC
     stripe_pk_inc: 'pk_test_51QAMMvBLsnGAeKC30bOseIzyznWiYZmrVPEyCUbUqh3UvaLXXqsccDfnAvu0L0WrKQM4uSwrEDPjo2QkjD7XYMdy004mrbFLWS',
